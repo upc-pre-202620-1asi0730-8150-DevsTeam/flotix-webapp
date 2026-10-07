@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+:root {
+  --flotix-navy-700: #123258;
+  --flotix-navy-800: #0e2c4e;
+  --flotix-navy-900: #0a2a49;
+  --flotix-navy-950: #0b1f33;
+  --flotix-shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  background: var(--p-surface-50, #f8fafc);
+  color: var(--p-surface-900, #0f172a);
+}
+
+/* thin, unobtrusive scrollbar to match a dense dashboard UI */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.flotix-card {
+  background: var(--p-surface-0, #fff);
+  border: 1px solid var(--p-surface-200, #e2e8f0);
+  border-radius: 16px;
+  box-shadow: var(--flotix-shadow-card);
+}
+
+/* Small hand-authored token layer for the handful of things PrimeFlex
+   doesn't cover (brand radius/shadow/gradient) — everything else in the
+   app uses PrimeFlex utilities + PrimeVue component styling directly. */
+.rounded-lg { border-radius: 10px; }
+.rounded-xl { border-radius: 12px; }
+.rounded-2xl { border-radius: 16px; }
+.rounded-3xl { border-radius: 22px; }
+.rounded-full { border-radius: 9999px; }
+.shadow-card { box-shadow: var(--flotix-shadow-card); }
+.bg-navy-gradient { background: linear-gradient(180deg, var(--flotix-navy-900), var(--flotix-navy-950)); }
+.text-muted { color: var(--p-surface-500, #64748b); }
+.text-faint { color: var(--p-surface-400, #94a3b8); }
+.text-heading { color: var(--p-surface-900, #0f172a); }
+.surface-subtle { background: var(--p-surface-50, #f8fafc); }
+.border-subtle { border: 1px solid var(--p-surface-200, #e2e8f0); }
+.cursor-pointer { cursor: pointer; }
+.transition-colors { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+
+.flotix-link {
+  color: var(--p-primary-color, #0879e8);
+  font-weight: 600;
+  text-decoration: none;
+}
+.flotix-link:hover { text-decoration: underline; }
+
+.flotix-stat-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
