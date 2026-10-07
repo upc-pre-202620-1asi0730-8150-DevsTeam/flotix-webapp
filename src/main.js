@@ -5,12 +5,11 @@ import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
-import '../../flotix-webapp/src/assets/main.css'
-
+import './assets/main.css'
 import App from './app.vue'
-import app_router from '../../flotix-webapp/src/router/app.router.js'
-import { i18n } from '../../flotix-webapp/src/internationalization/i18n.js'
-import { FlotixPreset } from '../../flotix-webapp/src/theme/flotix-preset.js'
+import app_router from './router/app.router.js'
+import { i18n } from './internationalization/i18n.js'
+import { FlotixPreset } from './theme/flotix-preset.js'
 
 const app = createApp(App)
 
