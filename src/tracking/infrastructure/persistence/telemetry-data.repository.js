@@ -1,11 +1,36 @@
-import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-repository.js'
+import { ApiRepository } from '@/shared/infrastructure/api-repository.js'
+import { http } from '@/shared/infrastructure/http-client.js'
 
-export class TelemetryDataRepository extends LocalStorageRepository {
+/**
+ * TelemetryDataRepository — infrastructure layer, Real-Time Monitoring (/api/v1/telemetry-data).
+ * POST only enqueues the packet (HTTP 202); the API processes it in a background
+ * service and pushes the new position through the SignalR hub.
+ */
+export const telemetryFromApi = (r) => ({
+  id: r.id,
+  deviceId: r.deviceId,
+  latitude: Number(r.latitude),
+  longitude: Number(r.longitude),
+  speed: Number(r.speed),
+  timestamp: r.recordedAt
+})
+
+const toCreate = (t) => ({
+  deviceId: t.deviceId,
+  latitude: t.latitude,
+  longitude: t.longitude,
+  speed: t.speed,
+  recordedAt: t.timestamp
+})
+
+export class TelemetryDataRepository extends ApiRepository {
   constructor() {
-    // Telemetry is high-frequency data; kept in-memory only (not persisted
-    // to localStorage) to mirror how a real MQTT/HTTPS ingestion pipeline
-    // would stream to the IoT Telemetry Processor without bloating storage.
-    super('tracking.telemetry', [])
-    this.reset([])
+    super('telemetry-data', { fromApi: telemetryFromApi, toCreate })
+  }
+
+  /** Sends one packet; the API answers 202 Accepted without a body. */
+  async send(packet) {
+    await http.post(this.path, this.toCreate(packet))
+    return packet
   }
 }

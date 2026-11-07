@@ -1,12 +1,10 @@
+import { pagesEn, pagesEs } from './content-pages.js'
+
 /**
- * Static en/es copy for the parts of the app that get full i18n
- * coverage in this pass: the sidebar/header shell, the three
- * role-specific dashboards (Owner, Driver, Mechanic) and the auth
- * screens. Other detail pages keep their page-header title wired to
- * `nav` below (so navigation stays consistent when the locale is
- * switched) while their in-page content is translated incrementally.
+ * Static en/es copy for the whole app: the shell (sidebar/header), the three
+ * role dashboards, and every page (see content-pages.js).
  */
-export const content = {
+const base = {
   en: {
     nav: {
       dashboard: { label: 'Dashboard', context: 'Overview' },
@@ -24,7 +22,7 @@ export const content = {
     },
     header: {
       tagline: 'Your fleet-management, under control',
-      logout: 'Log out',
+      platform: 'Flotix Platform',
       sidebarSummaryOwner: 'Active fleet-management',
       sidebarSummaryDriver: 'My vehicle',
       sidebarSummaryMechanic: 'Pending requests',
@@ -35,46 +33,6 @@ export const content = {
       available: 'available',
       none: 'None',
       loading: 'Loading…'
-    },
-    auth: {
-      brand: 'Manage your fleet-management from a single place',
-      brandSubtitle:
-        'Real-time GPS monitoring, fuel control, preventive maintenance and more. The platform that replaces your spreadsheets and WhatsApp groups.',
-      features: [
-        'Real-time GPS monitoring',
-        'Fuel consumption control',
-        'Preventive maintenance alerts',
-        'Automatic exportable reports'
-      ],
-      login: {
-        title: 'Welcome back',
-        subtitle: 'Enter your credentials to continue',
-        email: 'Email',
-        password: 'Password',
-        forgot: 'Forgot your password?',
-        submit: 'Log in',
-        noAccount: "Don't have an account?",
-        register: 'Sign up',
-        roleTabs: { owner: { title: 'Fleet Owner', subtitle: 'Full management' }, driver: { title: 'Driver', subtitle: 'Mobile view' }, mechanic: { title: 'Workshop', subtitle: 'Requests view' } }
-      },
-      register: {
-        title: 'Create your Flotix account',
-        chooseRoleTitle: 'How will you use Flotix?',
-        chooseRoleSubtitle: "Choose your role and we'll tailor the sign-up to it.",
-        back: '← Choose a different role',
-        boundedContext: 'Bounded Context: Identity, Profiles & Security',
-        name: 'Full name',
-        email: 'Email',
-        password: 'Password',
-        role: 'UserRole',
-        licenseNumber: "Driver's license number",
-        licenseExpiry: 'License expiry date',
-        companyOptional: 'Company (optional)',
-        workshopOptional: 'Workshop name (optional)',
-        submit: 'Create account',
-        haveAccount: 'Already have an account?',
-        login: 'Log in'
-      }
     },
     notFound: {
       title: 'Page not found',
@@ -148,7 +106,7 @@ export const content = {
     },
     header: {
       tagline: 'Tu flota bajo control',
-      logout: 'Salir',
+      platform: 'Flotix Platform',
       sidebarSummaryOwner: 'Flota activa',
       sidebarSummaryDriver: 'Mi vehículo',
       sidebarSummaryMechanic: 'Solicitudes pendientes',
@@ -159,46 +117,6 @@ export const content = {
       available: 'disponibles',
       none: 'Ninguno',
       loading: 'Cargando…'
-    },
-    auth: {
-      brand: 'Gestiona tu flota desde un solo lugar',
-      brandSubtitle:
-        'Monitoreo GPS en tiempo real, control de combustible, mantenimiento preventivo y más. La plataforma que reemplaza tus hojas de cálculo y grupos de WhatsApp.',
-      features: [
-        'Monitoreo GPS en tiempo real',
-        'Control de consumo de combustible',
-        'Alertas de mantenimiento preventivo',
-        'Reportes automáticos exportables'
-      ],
-      login: {
-        title: 'Bienvenido de vuelta',
-        subtitle: 'Ingresa tus credenciales para continuar',
-        email: 'Correo electrónico',
-        password: 'Contraseña',
-        forgot: '¿Olvidaste tu contraseña?',
-        submit: 'Iniciar sesión',
-        noAccount: '¿No tienes cuenta?',
-        register: 'Regístrate',
-        roleTabs: { owner: { title: 'Dueño de flota', subtitle: 'Gestión completa' }, driver: { title: 'Conductor', subtitle: 'Vista móvil' }, mechanic: { title: 'Mecánica / Taller', subtitle: 'Vista solicitudes' } }
-      },
-      register: {
-        title: 'Crear cuenta en Flotix',
-        chooseRoleTitle: '¿Cómo vas a usar Flotix?',
-        chooseRoleSubtitle: 'Elige tu rol y adaptaremos el registro a él.',
-        back: '← Elegir otro rol',
-        boundedContext: 'Bounded Context: Identity, Profiles & Security',
-        name: 'Nombre completo',
-        email: 'Correo electrónico',
-        password: 'Contraseña',
-        role: 'Rol',
-        licenseNumber: 'N° de licencia de conducir',
-        licenseExpiry: 'Fecha de expiración de licencia',
-        companyOptional: 'Empresa (opcional)',
-        workshopOptional: 'Nombre del taller (opcional)',
-        submit: 'Crear cuenta',
-        haveAccount: '¿Ya tienes cuenta?',
-        login: 'Inicia sesión'
-      }
     },
     notFound: {
       title: 'Página no encontrada',
@@ -254,4 +172,17 @@ export const content = {
       }
     }
   }
+}
+
+function merge(a, b) {
+  const out = { ...a }
+  for (const [k, v] of Object.entries(b)) {
+    out[k] = v && typeof v === 'object' && !Array.isArray(v) && typeof out[k] === 'object' ? merge(out[k], v) : v
+  }
+  return out
+}
+
+export const content = {
+  en: merge(base.en, pagesEn),
+  es: merge(base.es, pagesEs)
 }

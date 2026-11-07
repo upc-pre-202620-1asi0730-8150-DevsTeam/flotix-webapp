@@ -1,11 +1,38 @@
-import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-repository.js'
+import { ApiRepository } from '@/shared/infrastructure/api-repository.js'
+import { IoTCatalog } from '../../domain/model/value-objects/order-status.js'
 
-const seed = [
-  { id: 'o-1', createdAt: new Date().toISOString(), ownerId: 'u-owner-demo', sku: 'gps', deviceQuantity: 2, totalAmount: 299.8, status: 'Entregado', orderDate: '2026-07-15' }
-]
+/**
+ * IoTOrderRepository — infrastructure layer, Digital Experience / IoT Commerce (/api/v1/iot-orders).
+ * The API stores quantity and total only (no product), so the product (sku) is
+ * derived from the unit price (every catalog item has a different price).
+ */
+function skuFor(quantity, totalAmount) {
+  if (!quantity) return null
+  const unit = totalAmount / quantity
+  return IoTCatalog.find((p) => Math.abs(p.unitPrice - unit) < 0.01)?.sku ?? null
+}
 
-export class IoTOrderRepository extends LocalStorageRepository {
+const fromApi = (r) => ({
+  id: r.id,
+  createdAt: r.orderDate,
+  ownerId: r.ownerId,
+  sku: skuFor(r.quantity, Number(r.totalAmount)),
+  deviceQuantity: r.quantity,
+  totalAmount: Number(r.totalAmount),
+  status: r.status,
+  orderDate: String(r.orderDate).slice(0, 10)
+})
+
+const toCreate = (o) => ({
+  ownerId: o.ownerId,
+  quantity: Number(o.deviceQuantity),
+  totalAmount: Number(o.totalAmount)
+})
+
+const toUpdate = (o) => ({ status: o.status })
+
+export class IoTOrderRepository extends ApiRepository {
   constructor() {
-    super('commerce.orders', seed)
+    super('iot-orders', { fromApi, toCreate, toUpdate })
   }
 }

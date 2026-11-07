@@ -1,25 +1,29 @@
 import { defineStore } from 'pinia'
-import { fuelControlService } from '../../application/fuel-consumption.js'
+import { fuelControlService, FuelConsumption } from '../../application/fuel-consumption.js'
 
-/** Pinia store — Fuel Control. Wraps FuelConsumption. */
+/** Pinia store — Fuel Control. Wraps FuelConsumption (REST API). */
 export const useFuelStore = defineStore('fuel', {
   state: () => ({
-    records: fuelControlService.allRecordsWithEfficiency()
+    rawRecords: []
   }),
+  getters: {
+    /** Records enriched with km/L and the anomaly flag. */
+    records: (state) => FuelConsumption.withEfficiency(state.rawRecords)
+  },
   actions: {
-    refresh() {
-      this.records = fuelControlService.allRecordsWithEfficiency()
+    async load() {
+      this.rawRecords = await fuelControlService.listRecords()
     },
-    registerFuelConsumption(payload) {
-      fuelControlService.registerFuelConsumption(payload)
-      this.refresh()
+    async registerFuelConsumption(payload) {
+      await fuelControlService.registerFuelConsumption(payload)
+      await this.load()
     },
-    removeRecord(id) {
-      fuelControlService.removeRecord(id)
-      this.refresh()
+    async removeRecord(id) {
+      await fuelControlService.removeRecord(id)
+      await this.load()
     },
     efficiencyFor(vehicleId) {
-      return fuelControlService.efficiencyFor(vehicleId)
+      return FuelConsumption.efficiencyFor(this.rawRecords, vehicleId)
     }
   }
 })

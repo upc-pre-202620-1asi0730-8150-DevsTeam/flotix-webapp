@@ -1,7 +1,7 @@
 /**
  * Session helper (Identity, Profiles & Security support infrastructure).
- * Persists the authenticated user's session in localStorage so the SPA
- * survives a page refresh, and centralizes route-guard access checks.
+ * Remembers the active demo profile in localStorage so it survives a page refresh.
+ * There is no sign-in: the app always opens with a profile.
  */
 const SESSION_KEY = 'flotix:session'
 
@@ -18,8 +18,5 @@ export const Session = {
   },
   clear() {
     localStorage.removeItem(SESSION_KEY)
-  },
-  isAuthenticated() {
-    return this.get() !== null
   }
 }

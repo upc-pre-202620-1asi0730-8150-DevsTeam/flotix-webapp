@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useConfirm } from 'primevue/useconfirm'
 import { useIncidentsStore } from '../stores/incidents.store.js'
+import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 import { IncidentStatus } from '../../domain/model/value-objects/incident-status.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 
@@ -13,24 +14,31 @@ import EmptyState from '@/shared/presentation/components/empty-state.component.v
 import StatCard from '@/shared/presentation/components/stat-card.component.vue'
 import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
+import { useI18n } from 'vue-i18n'
+import { formatDateTime, formatNumber, localeTag } from '@/internationalization/i18n.js'
 
+const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
 const incidents = useIncidentsStore()
 const fleet = useFleetStore()
+const { run } = useApiFeedback()
+
+const inspect = (id) => run(() => incidents.inspectIncident(id), { errorSummary: t('incidents.updateError') })
+const resolve = (id) => run(() => incidents.resolveIncident(id), { errorSummary: t('incidents.updateError') })
 
 function plate(id) {
   return fleet.byId(id)?.plate ?? '—'
 }
 function remove(id) {
   confirm.require({
-    message: '¿Eliminar esta incidencia?',
-    header: 'Confirmar',
+    message: t('incidents.confirmDelete'),
+    header: t('confirm.header'),
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Eliminar',
-    rejectLabel: 'Cancelar',
+    acceptLabel: t('confirm.accept'),
+    rejectLabel: t('confirm.reject'),
     acceptProps: { severity: 'danger' },
-    accept: () => incidents.removeIncident(id)
+    accept: () => run(() => incidents.removeIncident(id), { errorSummary: t('incidents.deleteError'), successMessage: t('incidents.deleted') })
   })
 }
 
@@ -42,21 +50,22 @@ const resolved = computed(() => incidents.incidents.filter((i) => i.status === I
   <ConfirmDialog />
   <PageHeader
     context-label="Incident Management"
-    title="Incidencias en ruta"
-    subtitle="Reporte y seguimiento de fallas o anomalías imprevistas durante la operación."
+    
+    :title="t('incidents.title')"
+    :subtitle="t('incidents.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/incidents/new')">+ Reportar incidencia</AppButton>
+      <AppButton @click="router.push('/incidents/new')">{{ t('incidents.report') }}</AppButton>
     </template>
   </PageHeader>
 
   <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard label="Incidencias totales" :value="incidents.incidents.length" icon="alert" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Abiertas" :value="open" icon="alert" tone="amber" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Resueltas" :value="resolved" icon="check" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.total')" :value="incidents.incidents.length" icon="alert" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.open')" :value="open" icon="alert" tone="amber" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.resolved')" :value="resolved" icon="check" /></div>
   </div>
 
-  <EmptyState v-if="!incidents.incidents.length" icon="alert" message="No hay incidencias reportadas." />
+  <EmptyState v-if="!incidents.incidents.length" icon="alert" :message="t('incidents.empty')" />
 
   <div v-else class="flex flex-column gap-3">
     <div v-for="i in incidents.incidents" :key="i.id" class="rounded-2xl border-subtle shadow-card p-3" style="background: var(--p-surface-0)">
@@ -64,13 +73,13 @@ const resolved = computed(() => incidents.incidents.filter((i) => i.status === I
         <div>
           <p class="text-sm font-semibold text-heading m-0">{{ plate(i.vehicleId) }}</p>
           <p class="text-sm text-color-secondary m-0">{{ i.description }}</p>
-          <p class="text-xs text-faint mt-1 mb-0">Reportado: {{ new Date(i.reportedAt).toLocaleString('es-PE') }}</p>
+          <p class="text-xs text-faint mt-1 mb-0">{{ t('incidents.reported', { date: formatDateTime(i.reportedAt) }) }}</p>
         </div>
         <StatusBadge :status="i.status" />
       </div>
       <div class="flex align-items-center gap-2 pt-3 mt-3" style="border-top: 1px solid var(--p-surface-100)">
-        <Button v-if="i.status === 'Abierto'" label="Marcar en inspección" severity="secondary" outlined size="small" @click="incidents.inspectIncident(i.id)" />
-        <Button v-if="i.status === 'En revisión'" label="Marcar como resuelto" size="small" @click="incidents.resolveIncident(i.id)" />
+        <Button v-if="i.status === 'Abierto'" :label="t('incidents.actions.inspect')" severity="secondary" outlined size="small" @click="inspect(i.id)" />
+        <Button v-if="i.status === 'En revisión'" :label="t('incidents.actions.resolve')" size="small" @click="resolve(i.id)" />
         <Button icon="pi pi-trash" text rounded severity="danger" class="ml-auto" @click="remove(i.id)" />
       </div>
     </div>

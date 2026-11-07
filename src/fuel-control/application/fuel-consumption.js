@@ -1,4 +1,4 @@
-import { LocalStorageFuelRecord } from '../infrastructure/persistence/local-storage-fuel-record.js'
+import { FuelRecordRepository } from '../infrastructure/persistence/fuel-record.repository.js'
 import { FuelRecord } from '../domain/model/entities/fuel-record.entity.js'
 import { getFleetPreferences } from '@/platform/infrastructure/user-preferences.js'
 
@@ -8,13 +8,14 @@ import { getFleetPreferences } from '@/platform/infrastructure/user-preferences.
  * and the anomalous-consumption business rule: if a vehicle's efficiency
  * (km/L between two consecutive refuels) falls significantly below its
  * own historical average, the record is flagged as "Consumo anómalo".
- * The drop threshold is read from Settings → Flota (fuelAnomalyDropPct),
- * not hardcoded, so tuning it there changes detection immediately.
+ * The drop threshold is read from Settings → Flota (fuelAnomalyDropPct).
+ *
+ * Persistence is asynchronous (REST API); the efficiency calculations are
+ * pure functions over already-loaded records, so views can use them synchronously.
  */
-
 export class FuelConsumption {
   constructor() {
-    this.repository = new LocalStorageFuelRecord()
+    this.repository = new FuelRecordRepository()
   }
 
   listRecords() {
@@ -22,23 +23,22 @@ export class FuelConsumption {
   }
 
   registerFuelConsumption(payload) {
-    const record = new FuelRecord(payload)
-    return this.repository.add(record)
+    return this.repository.add(new FuelRecord(payload))
   }
 
   removeRecord(id) {
-    this.repository.remove(id)
+    return this.repository.remove(id)
   }
 
   /** Computes km/L efficiency per record for a given vehicle, ordered by mileage. */
-  efficiencyFor(vehicleId) {
-    const records = this.repository
-      .findBy((r) => r.vehicleId === vehicleId)
+  static efficiencyFor(records, vehicleId) {
+    const own = records
+      .filter((r) => r.vehicleId === vehicleId)
       .sort((a, b) => a.mileageAtRefuel - b.mileageAtRefuel)
 
-    return records.map((r, idx) => {
+    return own.map((r, idx) => {
       if (idx === 0) return { ...r, kmPerLiter: null, anomalous: false }
-      const prev = records[idx - 1]
+      const prev = own[idx - 1]
       const kmDelta = r.mileageAtRefuel - prev.mileageAtRefuel
       const kmPerLiter = r.liters > 0 ? +(kmDelta / r.liters).toFixed(2) : null
       return { ...r, kmPerLiter, anomalous: false }
@@ -52,12 +52,11 @@ export class FuelConsumption {
     })
   }
 
-  allRecordsWithEfficiency() {
-    const byVehicle = {}
-    for (const r of this.repository.getAll()) {
-      byVehicle[r.vehicleId] = byVehicle[r.vehicleId] || true
-    }
-    return Object.keys(byVehicle).flatMap((vehicleId) => this.efficiencyFor(vehicleId))
+  /** Every record with its efficiency, newest first. */
+  static withEfficiency(records) {
+    const vehicleIds = [...new Set(records.map((r) => r.vehicleId))]
+    return vehicleIds
+      .flatMap((vehicleId) => FuelConsumption.efficiencyFor(records, vehicleId))
       .sort((a, b) => new Date(b.date) - new Date(a.date))
   }
 }

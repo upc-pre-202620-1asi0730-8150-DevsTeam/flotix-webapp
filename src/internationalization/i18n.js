@@ -29,6 +29,21 @@ export function toggleLocale() {
   setLocale(i18n.global.locale.value === 'en' ? 'es' : 'en')
 }
 
+/** BCP-47 tag for the active language (used for dates and numbers). */
+export function localeTag() {
+  return i18n.global.locale.value === 'es' ? 'es-PE' : 'en-US'
+}
+
+/** Locale-aware date and time, e.g. "11/5/2026, 3:04 PM" or "5/11/2026, 15:04". */
+export function formatDateTime(value) {
+  return new Date(value).toLocaleString(localeTag())
+}
+
+/** Locale-aware number (thousands separators). */
+export function formatNumber(value, options) {
+  return Number(value).toLocaleString(localeTag(), options)
+}
+
 /** Locale-aware long date, e.g. "Saturday, September 19, 2026". */
 export function formatLongDate(date = new Date()) {
   const tag = i18n.global.locale.value === 'es' ? 'es-PE' : 'en-US'

@@ -1,12 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { Session } from '@/shared/infrastructure/session.js'
 
 const MainLayout = () => import('@/platform/presentation/layouts/app-layout.vue')
 
 const routes = [
   { path: '/', redirect: '/dashboard' },
-  { path: '/login', name: 'login', component: () => import('@/identity-access/presentation/views/login.vue'), meta: { public: true } },
-  { path: '/register', name: 'register', component: () => import('@/identity-access/presentation/views/register.vue'), meta: { public: true } },
   {
     path: '/',
     component: MainLayout,
@@ -38,15 +35,6 @@ const routes = [
 const app_router = createRouter({
   history: createWebHistory(),
   routes
-})
-
-// Route guard: Identity, Profiles & Security — AuthenticateUser gate.
-app_router.beforeEach((to) => {
-  // Preparation for IAM
-  // const authenticated = Session.isAuthenticated()
-  // if (!to.meta.public && !authenticated) return '/login'
-  // if (to.meta.public && authenticated) return '/dashboard'
-  return true
 })
 
 export default app_router
