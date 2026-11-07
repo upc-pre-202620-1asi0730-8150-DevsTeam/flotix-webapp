@@ -4,7 +4,7 @@ import { UserRole } from '../value-objects/user-role.js'
 /**
  * User entity — Bounded Context: Identity, Profiles & Security.
  * Mirrors the `users` table from the AV1 Database Design (§4.8.1):
- * name, email, passwordHash, role, licenseNumber, licenseExpiry,
+ * name, email, role, licenseNumber, licenseExpiry,
  * companyName, workshopName.
  *
  * Business rule (AV1 §4.6.1): licenseNumber and licenseExpiry are
@@ -16,7 +16,6 @@ export class User extends BaseEntity {
     createdAt,
     name,
     email,
-    passwordHash,
     role = UserRole.OWNER,
     licenseNumber = null,
     licenseExpiry = null,
@@ -26,7 +25,6 @@ export class User extends BaseEntity {
     super({ id, createdAt })
     this.name = name
     this.email = email
-    this.passwordHash = passwordHash
     this.role = role
     this.licenseNumber = licenseNumber
     this.licenseExpiry = licenseExpiry

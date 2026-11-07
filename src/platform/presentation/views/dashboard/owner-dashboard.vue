@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { formatLongDate } from '@/internationalization/i18n.js'
+import { formatLongDate, formatNumber } from '@/internationalization/i18n.js'
+import { vehicleTypeLabel, notificationMessage } from '@/shared/infrastructure/domain-text.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useFuelStore } from '@/fuel-control/presentation/stores/fuel.store.js'
 import { useMaintenanceStore } from '@/maintenance/presentation/stores/maintenance.store.js'
@@ -46,7 +47,7 @@ const fuelTrend = computed(() => {
   return recent.map((r) => ({ ...r, heightPct: Math.max(6, Math.round((r.totalCost / max) * 100)) }))
 })
 
-const today = formatLongDate()
+const today = computed(() => formatLongDate())
 </script>
 
 <template>
@@ -82,7 +83,7 @@ const today = formatLongDate()
               </span>
               <div>
                 <p class="text-sm font-semibold text-heading m-0">{{ v.plate }}</p>
-                <p class="text-xs text-faint m-0">{{ v.vehicleType }} · {{ driverName(v.driverId) }}</p>
+                <p class="text-xs text-faint m-0">{{ vehicleTypeLabel(v.vehicleType) }} · {{ driverName(v.driverId) }}</p>
               </div>
             </div>
             <StatusBadge :status="v.status" />
@@ -136,7 +137,7 @@ const today = formatLongDate()
             <span class="flex align-items-center justify-content-center border-round-full flex-shrink-0 mt-1" style="width: 1.5rem; height: 1.5rem; background: var(--p-surface-100); color: var(--p-surface-500)">
               <AppIcon name="bell" :size="12" />
             </span>
-            <p class="m-0 text-color-secondary">{{ n.message }}</p>
+            <p class="m-0 text-color-secondary">{{ notificationMessage(n.message) }}</p>
           </li>
         </ul>
       </div>

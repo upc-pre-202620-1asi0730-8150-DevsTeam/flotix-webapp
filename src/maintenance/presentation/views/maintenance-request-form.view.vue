@@ -3,47 +3,64 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMaintenanceStore } from '../stores/maintenance.store.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
+import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 
 import PageHeader from '@/shared/presentation/components/page-header.component.vue'
 import AppButton from '@/shared/presentation/components/app-button.component.vue'
 import FormCard from '@/shared/presentation/components/form-card.component.vue'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
+import { useI18n } from 'vue-i18n'
+import { vehicleTypeLabel, alertTypeLabel, notificationMessage, productLabel } from '@/shared/infrastructure/domain-text.js'
 
+const { t } = useI18n()
 const router = useRouter()
 const maintenance = useMaintenanceStore()
 const fleet = useFleetStore()
+const session = useSessionStore()
+const mechanics = session.mechanics
+const { run } = useApiFeedback()
 
-const form = ref({ vehicleId: fleet.vehicles[0]?.id ?? '', faultDescription: '' })
+const form = ref({ vehicleId: fleet.vehicles[0]?.id ?? '', mechanicId: mechanics[0]?.id ?? '', faultDescription: '' })
 
-function save() {
-  maintenance.submitMaintenanceRequest({ ...form.value })
-  router.push('/maintenance')
+async function save() {
+  const { ok } = await run(() => maintenance.submitMaintenanceRequest({ ...form.value }), {
+    errorSummary: t('maintenance.form.saveError'),
+    successMessage: t('maintenance.form.saved')
+  })
+  if (ok) router.push('/maintenance')
 }
 </script>
 
 <template>
-  <PageHeader context-label="Maintenance Management" title="Nueva solicitud de mantenimiento" subtitle="Describe la falla para que un taller pueda diagnosticarla y cotizarla.">
+  <PageHeader context-label="Maintenance Management" :title="t('maintenance.form.title')" :subtitle="t('maintenance.form.subtitle')">
     <template #actions>
-      <AppButton variant="ghost" @click="router.push('/maintenance')">← Volver a mantenimiento</AppButton>
+      <AppButton variant="ghost" @click="router.push('/maintenance')">{{ t('maintenance.form.back') }}</AppButton>
     </template>
   </PageHeader>
 
   <FormCard>
     <form class="flex flex-column gap-3" @submit.prevent="save">
       <div class="flex flex-column gap-1">
-        <label class="text-sm font-medium text-heading">Vehículo</label>
+        <label class="text-sm font-medium text-heading">{{ t('maintenance.form.vehicle') }}</label>
         <Select v-model="form.vehicleId" :options="fleet.vehicles" option-label="plate" option-value="id" fluid>
-          <template #option="{ option }">{{ option.plate }} — {{ option.vehicleType }}</template>
+          <template #option="{ option }">{{ option.plate }} — {{ vehicleTypeLabel(option.vehicleType) }}</template>
         </Select>
       </div>
       <div class="flex flex-column gap-1">
-        <label class="text-sm font-medium text-heading">Descripción de la falla</label>
+        <label class="text-sm font-medium text-heading">{{ t('maintenance.form.workshop') }}</label>
+        <Select v-model="form.mechanicId" :options="mechanics" option-label="name" option-value="id" fluid>
+          <template #option="{ option }">{{ option.name }} ({{ option.workshopName }})</template>
+        </Select>
+      </div>
+      <div class="flex flex-column gap-1">
+        <label class="text-sm font-medium text-heading">{{ t('maintenance.form.fault') }}</label>
         <Textarea v-model="form.faultDescription" required rows="4" fluid />
       </div>
       <div class="flex justify-content-end gap-2 pt-3" style="border-top: 1px solid var(--p-surface-100)">
-        <AppButton variant="ghost" type="button" @click="router.push('/maintenance')">Cancelar</AppButton>
-        <AppButton type="submit">Enviar solicitud</AppButton>
+        <AppButton variant="ghost" type="button" @click="router.push('/maintenance')">{{ t('common.cancel') }}</AppButton>
+        <AppButton type="submit">{{ t('maintenance.form.submit') }}</AppButton>
       </div>
     </form>
   </FormCard>

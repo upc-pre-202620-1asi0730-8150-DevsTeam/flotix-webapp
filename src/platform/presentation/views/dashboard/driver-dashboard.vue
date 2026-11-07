@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { formatLongDate } from '@/internationalization/i18n.js'
+import { formatLongDate, formatNumber } from '@/internationalization/i18n.js'
+import { vehicleTypeLabel, notificationMessage } from '@/shared/infrastructure/domain-text.js'
 import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useFuelStore } from '@/fuel-control/presentation/stores/fuel.store.js'
@@ -44,7 +45,7 @@ const myMaintenance = computed(() =>
 )
 const unreadAlerts = computed(() => alerts.notifications.filter((n) => n.userId === user?.id && !n.isRead).length)
 
-const today = formatLongDate()
+const today = computed(() => formatLongDate())
 </script>
 
 <template>
@@ -62,8 +63,8 @@ const today = formatLongDate()
             </span>
             <div>
               <p class="text-lg font-bold text-heading m-0">{{ myVehicle.plate }}</p>
-              <p class="text-xs text-muted m-0">{{ myVehicle.vehicleType }}</p>
-              <p class="text-xs text-faint mt-1 mb-0">{{ t('dashboard.driver.mileage') }}: {{ myVehicle.currentMileage.toLocaleString() }} km</p>
+              <p class="text-xs text-muted m-0">{{ vehicleTypeLabel(myVehicle.vehicleType) }}</p>
+              <p class="text-xs text-faint mt-1 mb-0">{{ t('dashboard.driver.mileage') }}: {{ formatNumber(myVehicle.currentMileage) }} km</p>
             </div>
           </div>
           <StatusBadge :status="myVehicle.status" />
@@ -90,7 +91,7 @@ const today = formatLongDate()
   </div>
 
   <div class="grid my-1">
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.mileage')" :value="myVehicle ? `${myVehicle.currentMileage.toLocaleString()} km` : '—'" icon="pin" tone="primary" /></div>
+    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.mileage')" :value="myVehicle ? `${formatNumber(myVehicle.currentMileage)} km` : '—'" icon="pin" tone="primary" /></div>
     <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.lastEfficiency')" :value="lastEfficiency !== null ? `${lastEfficiency} ${t('dashboard.driver.kmPerLiter')}` : '—'" icon="fuel" tone="green" /></div>
     <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.openIncidents')" :value="myIncidents.length" icon="alert" tone="amber" /></div>
     <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.unreadAlerts')" :value="unreadAlerts" icon="bell" tone="red" /></div>

@@ -1,13 +1,39 @@
-import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-repository.js'
+import { ApiRepository } from '@/shared/infrastructure/api-repository.js'
 
-const seed = [
-  { id: 'v-1', createdAt: new Date().toISOString(), ownerId: 'u-owner-demo', driverId: 'u-driver-demo', plate: 'V4A-123', vehicleType: 'Camión de carga', currentMileage: 48200, status: 'Disponible' },
-  { id: 'v-2', createdAt: new Date().toISOString(), ownerId: 'u-owner-demo', driverId: null, plate: 'ABC-908', vehicleType: 'Camioneta', currentMileage: 21750, status: 'Disponible' },
-  { id: 'v-3', createdAt: new Date().toISOString(), ownerId: 'u-owner-demo', driverId: 'u-driver-demo', plate: 'MTX-556', vehicleType: 'Mototaxi', currentMileage: 15320, status: 'En mantenimiento' }
-]
+/**
+ * VehicleRepository — infrastructure layer, Vehicle & Fleet Management.
+ * Talks to GET/POST/PUT/DELETE /api/v1/vehicles. The API calls the plate
+ * `licensePlate`; the domain entity keeps `plate`.
+ */
+const fromApi = (r) => ({
+  id: r.id,
+  ownerId: r.ownerId,
+  driverId: r.driverId ?? null,
+  plate: r.licensePlate,
+  vehicleType: r.vehicleType,
+  currentMileage: Number(r.currentMileage),
+  status: r.status
+})
 
-export class VehicleRepository extends LocalStorageRepository {
+const toCreate = (v) => ({
+  ownerId: v.ownerId,
+  driverId: v.driverId || null,
+  licensePlate: v.plate,
+  vehicleType: v.vehicleType,
+  currentMileage: Number(v.currentMileage),
+  status: v.status
+})
+
+const toUpdate = (v) => ({
+  driverId: v.driverId || null,
+  licensePlate: v.plate,
+  vehicleType: v.vehicleType,
+  currentMileage: Number(v.currentMileage),
+  status: v.status
+})
+
+export class VehicleRepository extends ApiRepository {
   constructor() {
-    super('fleet-management.vehicles', seed)
+    super('vehicles', { fromApi, toCreate, toUpdate })
   }
 }

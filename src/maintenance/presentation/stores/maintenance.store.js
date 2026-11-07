@@ -1,42 +1,50 @@
 import { defineStore } from 'pinia'
 import { maintenanceService } from '../../application/maintenance-coordination.js'
+import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 
-/** Pinia store — Maintenance Management. Wraps MaintenanceCoordination. */
+/** Pinia store — Maintenance Management. Wraps MaintenanceCoordination (REST API). */
 export const useMaintenanceStore = defineStore('maintenance', {
   state: () => ({
-    requests: maintenanceService.listRequests()
+    requests: []
   }),
   getters: {
     byId: (state) => (id) => state.requests.find((r) => r.id === id) ?? null
   },
   actions: {
-    refresh() {
-      this.requests = maintenanceService.listRequests()
+    async load() {
+      this.requests = await maintenanceService.listRequests()
     },
-    submitMaintenanceRequest(payload) {
-      const r = maintenanceService.submitMaintenanceRequest(payload)
-      this.refresh()
-      return r
+    async submitMaintenanceRequest(payload) {
+      const request = await maintenanceService.submitMaintenanceRequest(payload)
+      await this.load()
+      return request
     },
-    registerDiagnosticAndQuote(id, payload) {
-      maintenanceService.registerDiagnosticAndQuote(id, payload)
-      this.refresh()
+    async registerDiagnosticAndQuote(id, payload) {
+      await maintenanceService.registerDiagnosticAndQuote(id, payload)
+      await this.load()
     },
-    approveOrRejectBudget(id, approved) {
-      maintenanceService.approveOrRejectBudget(id, approved)
-      this.refresh()
+    async approveOrRejectBudget(id, approved) {
+      await maintenanceService.approveOrRejectBudget(id, approved)
+      await this.load()
     },
-    updateRepairStatus(id, status) {
-      maintenanceService.updateRepairStatus(id, status)
-      this.refresh()
+    // Starting/finishing a repair also changes the vehicle status, so the fleet is reloaded too.
+    async updateRepairStatus(id, status) {
+      try {
+        await maintenanceService.updateRepairStatus(id, status)
+      } finally {
+        await Promise.all([this.load(), useFleetStore().load()])
+      }
     },
-    completeMaintenance(id) {
-      maintenanceService.completeMaintenance(id)
-      this.refresh()
+    async completeMaintenance(id) {
+      try {
+        await maintenanceService.completeMaintenance(id)
+      } finally {
+        await Promise.all([this.load(), useFleetStore().load()])
+      }
     },
-    removeRequest(id) {
-      maintenanceService.removeRequest(id)
-      this.refresh()
+    async removeRequest(id) {
+      await maintenanceService.removeRequest(id)
+      await this.load()
     }
   }
 })

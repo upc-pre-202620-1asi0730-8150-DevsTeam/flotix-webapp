@@ -12,7 +12,9 @@ import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Avatar from 'primevue/avatar'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const fleet = useFleetStore()
 const drivers = fleet.drivers
 
@@ -39,26 +41,26 @@ const inRoute = computed(() => filtered.value.filter((d) => vehicleFor(d.id)).le
 </script>
 
 <template>
-  <PageHeader context-label="Vehicle & Fleet Management" title="Conductores" :subtitle="`${drivers.length} conductores registrados`" />
+  <PageHeader context-label="Vehicle & Fleet Management" :title="t('drivers.title')" :subtitle="t('drivers.subtitle', { count: drivers.length })" />
 
   <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard label="Total" :value="drivers.length" icon="users" tone="primary" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="En ruta" :value="inRoute" icon="truck" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Activos" :value="drivers.length" tone="green" icon="check" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.total')" :value="drivers.length" icon="users" tone="primary" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.inRoute')" :value="inRoute" icon="truck" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.active')" :value="drivers.length" tone="green" icon="check" /></div>
   </div>
 
   <div class="mb-3" style="max-width: 24rem">
     <IconField>
       <InputIcon class="pi pi-search" />
-      <InputText v-model="search" placeholder="Buscar por nombre, email o licencia..." fluid />
+      <InputText v-model="search" :placeholder="t('drivers.search')" fluid />
     </IconField>
   </div>
 
-  <EmptyState v-if="!filtered.length" icon="users" message="No se encontraron conductores." />
+  <EmptyState v-if="!filtered.length" icon="users" :message="t('drivers.empty')" />
 
   <div v-else class="rounded-2xl border-subtle shadow-card overflow-hidden" style="background: var(--p-surface-0)">
     <DataTable :value="filtered" data-key="id" striped-rows paginator :rows="10" responsive-layout="scroll">
-      <Column header="Conductor">
+      <Column :header="t('drivers.cols.driver')">
         <template #body="{ data }">
           <div class="flex align-items-center gap-3">
             <Avatar :label="initials(data.name)" shape="circle" :style="{ background: avatarColor(data.id), color: '#fff', fontSize: '.7rem', fontWeight: 700 }" />
@@ -69,24 +71,24 @@ const inRoute = computed(() => filtered.value.filter((d) => vehicleFor(d.id)).le
           </div>
         </template>
       </Column>
-      <Column header="Licencia">
+      <Column :header="t('drivers.cols.license')">
         <template #body="{ data }">
           <span style="font-family: 'JetBrains Mono', monospace" class="text-xs text-color-secondary">{{ data.licenseNumber }}</span>
-          <p class="text-xs text-faint m-0 mt-1">Vence {{ data.licenseExpiry }}</p>
+          <p class="text-xs text-faint m-0 mt-1">{{ t('drivers.expires', { date: data.licenseExpiry }) }}</p>
         </template>
       </Column>
-      <Column header="Vehículo">
+      <Column :header="t('drivers.cols.vehicle')">
         <template #body="{ data }">
           <span v-if="vehicleFor(data.id)" class="font-semibold text-heading" style="font-family: 'JetBrains Mono', monospace">{{ vehicleFor(data.id).plate }}</span>
-          <span v-else class="text-faint">Sin asignar</span>
+          <span v-else class="text-faint">{{ t('header.unassigned') }}</span>
         </template>
       </Column>
-      <Column header="Estado">
+      <Column :header="t('drivers.cols.status')">
         <template #body="{ data }"><StatusBadge :status="statusFor(data.id)" /></template>
       </Column>
-      <Column header="Acciones" style="width: 8rem">
+      <Column :header="t('common.actions')" style="width: 8rem">
         <template #body>
-          <router-link to="/fleet-management" class="flotix-link text-sm">Ver perfil →</router-link>
+          <router-link to="/fleet-management" class="flotix-link text-sm">{{ t('drivers.viewProfile') }}</router-link>
         </template>
       </Column>
     </DataTable>

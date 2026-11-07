@@ -1,17 +1,16 @@
 import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-repository.js'
+import { DEMO_OWNER_ID, DEMO_DRIVER_ID, DEMO_MECHANIC_ID } from '../../domain/model/value-objects/demo-users.js'
 
 /**
  * LocalStorageUserRepository — infrastructure layer, Identity, Profiles & Security.
- * Seeded with one demo account per role so reviewers can log in
- * immediately without registering first.
+ * Seeded with one demo profile per role (there is no sign-in or sign-up).
  */
 const seed = [
   {
-    id: 'u-owner-demo',
+    id: DEMO_OWNER_ID,
     createdAt: new Date().toISOString(),
-    name: 'Renzo Dueño',
+    name: 'Renzo Valdivia',
     email: 'owner@flotix.pe',
-    passwordHash: '1234',
     role: 'Owner',
     licenseNumber: null,
     licenseExpiry: null,
@@ -19,11 +18,10 @@ const seed = [
     workshopName: null
   },
   {
-    id: 'u-driver-demo',
+    id: DEMO_DRIVER_ID,
     createdAt: new Date().toISOString(),
-    name: 'Luis Conductor',
+    name: 'Luis Quispe',
     email: 'driver@flotix.pe',
-    passwordHash: '1234',
     role: 'Driver',
     licenseNumber: 'Q12345678',
     licenseExpiry: '2027-05-10',
@@ -31,25 +29,21 @@ const seed = [
     workshopName: null
   },
   {
-    id: 'u-mechanic-demo',
+    id: DEMO_MECHANIC_ID,
     createdAt: new Date().toISOString(),
-    name: 'Miguel Mecánico',
+    name: 'Miguel Ramos',
     email: 'mechanic@flotix.pe',
-    passwordHash: '1234',
     role: 'Mechanic',
     licenseNumber: null,
     licenseExpiry: null,
     companyName: null,
-    workshopName: 'Taller Miguel'
+    workshopName: 'Miguel Auto Service'
   }
 ]
 
 export class LocalStorageUserRepository extends LocalStorageRepository {
   constructor() {
-    super('identity-access.users', seed)
-  }
-
-  findByEmail(email) {
-    return this.getAll().find((u) => u.email.toLowerCase() === email.toLowerCase()) ?? null
+    // v3: user ids are GUIDs (required by the API) and the demo profiles have language-neutral names.
+    super('identity-access.users.v3', seed)
   }
 }

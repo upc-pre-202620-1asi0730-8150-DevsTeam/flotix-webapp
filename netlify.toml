@@ -2,6 +2,9 @@
 command = "npm run build"
 publish = "dist"
 
+# Set VITE_API_BASE_URL (public URL of the Flotix API) in
+# Netlify > Site settings > Environment variables. Do not commit it here.
+
 [[redirects]]
 from = "/*"
 to = "/index.html"

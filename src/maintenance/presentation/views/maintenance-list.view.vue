@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useConfirm } from 'primevue/useconfirm'
 import { useMaintenanceStore } from '../stores/maintenance.store.js'
+import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 import { MaintenanceStatus } from '../../domain/model/value-objects/maintenance-status.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
@@ -14,13 +15,20 @@ import EmptyState from '@/shared/presentation/components/empty-state.component.v
 import StatCard from '@/shared/presentation/components/stat-card.component.vue'
 import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
 const maintenance = useMaintenanceStore()
 const fleet = useFleetStore()
 const session = useSessionStore()
 const mechanics = session.mechanics
+const { run } = useApiFeedback()
+
+const decide = (id, approved) => run(() => maintenance.approveOrRejectBudget(id, approved), { errorSummary: t('maintenance.decisionError') })
+const startRepair = (id) => run(() => maintenance.updateRepairStatus(id, 'En reparación'), { errorSummary: t('maintenance.startError') })
+const complete = (id) => run(() => maintenance.completeMaintenance(id), { errorSummary: t('maintenance.completeError') })
 
 function plate(id) {
   return fleet.byId(id)?.plate ?? '—'
@@ -31,13 +39,13 @@ function mechanicName(id) {
 
 function remove(id) {
   confirm.require({
-    message: '¿Eliminar esta solicitud de mantenimiento?',
-    header: 'Confirmar',
+    message: t('maintenance.confirmDelete'),
+    header: t('confirm.header'),
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Eliminar',
-    rejectLabel: 'Cancelar',
+    acceptLabel: t('confirm.accept'),
+    rejectLabel: t('confirm.reject'),
     acceptProps: { severity: 'danger' },
-    accept: () => maintenance.removeRequest(id)
+    accept: () => run(() => maintenance.removeRequest(id), { errorSummary: t('maintenance.deleteError'), successMessage: t('maintenance.deleted') })
   })
 }
 
@@ -50,21 +58,22 @@ const completed = computed(() => maintenance.requests.filter((r) => r.status ===
   <ConfirmDialog />
   <PageHeader
     context-label="Maintenance Management"
-    title="Mantenimiento preventivo y correctivo"
-    subtitle="Ciclo de vida completo: solicitud, diagnóstico, presupuesto, reparación y cierre."
+    
+    :title="t('maintenance.title')"
+    :subtitle="t('maintenance.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/maintenance/new')">+ Nueva solicitud</AppButton>
+      <AppButton @click="router.push('/maintenance/new')">{{ t('maintenance.new') }}</AppButton>
     </template>
   </PageHeader>
 
   <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard label="Solicitudes abiertas" :value="open" icon="folder" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="En reparación" :value="inRepair" icon="wrench" tone="amber" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Completadas" :value="completed" icon="check" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.open')" :value="open" icon="folder" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.inRepair')" :value="inRepair" icon="wrench" tone="amber" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.completed')" :value="completed" icon="check" /></div>
   </div>
 
-  <EmptyState v-if="!maintenance.requests.length" icon="wrench" message="No hay solicitudes de mantenimiento registradas." />
+  <EmptyState v-if="!maintenance.requests.length" icon="wrench" :message="t('maintenance.empty')" />
 
   <div v-else class="flex flex-column gap-3">
     <div v-for="r in maintenance.requests" :key="r.id" class="rounded-2xl border-subtle shadow-card p-3" style="background: var(--p-surface-0)">
@@ -73,21 +82,21 @@ const completed = computed(() => maintenance.requests.filter((r) => r.status ===
           <p class="text-sm font-semibold text-heading m-0">{{ plate(r.vehicleId) }}</p>
           <p class="text-sm text-color-secondary m-0">{{ r.faultDescription }}</p>
           <p class="text-xs text-faint mt-1 mb-0">
-            Taller: {{ r.mechanicId ? mechanicName(r.mechanicId) : 'Sin asignar' }}
-            <span v-if="r.estimatedCost"> · Presupuesto: S/ {{ r.estimatedCost.toFixed(2) }}</span>
+            {{ t('maintenance.workshop') }}: {{ r.mechanicId ? mechanicName(r.mechanicId) : t('maintenance.noWorkshop') }}
+            <span v-if="r.estimatedCost"> · {{ t('maintenance.budget') }}: S/ {{ r.estimatedCost.toFixed(2) }}</span>
           </p>
         </div>
         <StatusBadge :status="r.status" />
       </div>
 
       <div class="flex flex-wrap align-items-center gap-2 pt-3 mt-3" style="border-top: 1px solid var(--p-surface-100)">
-        <Button v-if="r.status === 'Pendiente'" label="Registrar diagnóstico y cotización" severity="secondary" outlined size="small" @click="router.push(`/maintenance/${r.id}/quote`)" />
+        <Button v-if="r.status === 'Pendiente'" :label="t('maintenance.actions.quote')" severity="secondary" outlined size="small" @click="router.push(`/maintenance/${r.id}/quote`)" />
         <template v-if="r.status === 'Presupuestado'">
-          <Button label="Aprobar presupuesto" size="small" @click="maintenance.approveOrRejectBudget(r.id, true)" />
-          <Button label="Rechazar" severity="danger" outlined size="small" @click="maintenance.approveOrRejectBudget(r.id, false)" />
+          <Button :label="t('maintenance.actions.approve')" size="small" @click="decide(r.id, true)" />
+          <Button :label="t('maintenance.actions.reject')" severity="danger" outlined size="small" @click="decide(r.id, false)" />
         </template>
-        <Button v-if="r.status === 'Aprobado'" label="Iniciar reparación" severity="warn" size="small" @click="maintenance.updateRepairStatus(r.id, 'En reparación')" />
-        <Button v-if="r.status === 'En reparación'" label="Marcar como completado" size="small" @click="maintenance.completeMaintenance(r.id)" />
+        <Button v-if="r.status === 'Aprobado'" :label="t('maintenance.actions.start')" severity="warn" size="small" @click="startRepair(r.id)" />
+        <Button v-if="r.status === 'En reparación'" :label="t('maintenance.actions.complete')" size="small" @click="complete(r.id)" />
         <Button icon="pi pi-trash" text rounded severity="danger" class="ml-auto" @click="remove(r.id)" />
       </div>
     </div>

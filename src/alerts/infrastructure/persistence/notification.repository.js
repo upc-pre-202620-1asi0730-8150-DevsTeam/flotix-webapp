@@ -1,9 +1,26 @@
-import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-repository.js'
+import { ApiRepository } from '@/shared/infrastructure/api-repository.js'
 
-export class NotificationRepository extends LocalStorageRepository {
+/** NotificationRepository — infrastructure layer, Alerts & Notifications (/api/v1/notifications). */
+const fromApi = (r) => ({
+  id: r.id,
+  createdAt: r.sentDate,
+  userId: r.userId,
+  alertId: r.alertId ?? null,
+  message: r.message,
+  isRead: r.isRead,
+  sentAt: r.sentDate
+})
+
+const toCreate = (n) => ({
+  userId: n.userId,
+  alertId: n.alertId ?? null,
+  message: String(n.message).slice(0, 500)
+})
+
+const toUpdate = (n) => ({ isRead: n.isRead })
+
+export class NotificationRepository extends ApiRepository {
   constructor() {
-    super('alerts.notifications', [
-      { id: 'n-1', createdAt: new Date().toISOString(), userId: 'u-owner-demo', alertId: 'al-1', message: 'El vehículo MTX-556 está próximo a alcanzar el 90% del kilometraje para su revisión preventiva.', isRead: false, sentAt: new Date().toISOString() }
-    ])
+    super('notifications', { fromApi, toCreate, toUpdate })
   }
 }
