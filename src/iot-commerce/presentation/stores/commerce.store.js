@@ -1,25 +1,28 @@
 import { defineStore } from 'pinia'
 import { commerceService } from '../../application/commerce.service.js'
 
-/** Pinia store — Digital Experience / IoT Commerce. Wraps CommerceService. */
+/** Pinia store — Digital Experience / IoT Commerce. Wraps CommerceService (REST API). */
 export const useCommerceStore = defineStore('commerce', {
   state: () => ({
-    orders: commerceService.listOrders()
+    orders: []
   }),
   getters: {
     catalog: () => commerceService.catalog
   },
   actions: {
-    refresh() {
-      this.orders = commerceService.listOrders()
+    async load() {
+      this.orders = await commerceService.listOrders()
     },
-    purchaseIoTDevice(payload) {
-      commerceService.purchaseIoTDevice(payload)
-      this.refresh()
+    async purchaseIoTDevice(payload) {
+      try {
+        await commerceService.purchaseIoTDevice(payload)
+      } finally {
+        await this.load()
+      }
     },
-    updateOrderStatus(id, status) {
-      commerceService.updateOrderStatus(id, status)
-      this.refresh()
+    async updateOrderStatus(id, status) {
+      await commerceService.updateOrderStatus(id, status)
+      await this.load()
     }
   }
 })

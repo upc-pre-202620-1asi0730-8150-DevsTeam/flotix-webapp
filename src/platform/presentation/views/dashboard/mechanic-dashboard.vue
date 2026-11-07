@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { formatLongDate } from '@/internationalization/i18n.js'
+import { formatLongDate, formatNumber } from '@/internationalization/i18n.js'
+import { vehicleTypeLabel, notificationMessage } from '@/shared/infrastructure/domain-text.js'
 import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useMaintenanceStore } from '@/maintenance/presentation/stores/maintenance.store.js'
@@ -34,8 +35,8 @@ function plate(id) {
   return fleet.byId(id)?.plate ?? '—'
 }
 
-const profile = { city: 'Lima', rating: 4.8, tags: ['Frenos', 'Motor', 'Transmisión'] }
-const today = formatLongDate()
+const profile = { city: 'Lima', rating: 4.8, tags: ['brakes', 'engine', 'transmission'] }
+const today = computed(() => formatLongDate())
 </script>
 
 <template>
@@ -81,7 +82,7 @@ const today = formatLongDate()
           <p class="flex align-items-center gap-2 text-xs text-faint mt-1 mb-0"><AppIcon name="pin" :size="12" /> {{ profile.city }}</p>
           <p class="flex align-items-center gap-2 text-sm font-semibold mt-2 mb-0" style="color: #d97706"><AppIcon name="star" :size="14" /> {{ profile.rating }} {{ t('dashboard.mechanic.rating') }}</p>
           <div class="flex flex-wrap gap-2 mt-3">
-            <span v-for="tag in profile.tags" :key="tag" class="border-round-full px-2 py-1 text-xs font-medium" style="background: var(--p-primary-50); color: var(--p-primary-700)">{{ tag }}</span>
+            <span v-for="tag in profile.tags" :key="tag" class="border-round-full px-2 py-1 text-xs font-medium" style="background: var(--p-primary-50); color: var(--p-primary-700)">{{ t(`workshops.tags.${tag}`) }}</span>
           </div>
         </div>
         <AppButton variant="ghost" class="w-full justify-content-center mt-3" @click="router.push('/settings')">{{ t('dashboard.mechanic.editProfile') }}</AppButton>
@@ -100,7 +101,7 @@ const today = formatLongDate()
           </span>
           <div>
             <p class="text-sm font-semibold text-heading m-0">{{ v.plate }}</p>
-            <p class="text-xs text-faint m-0">{{ v.vehicleType }}</p>
+            <p class="text-xs text-faint m-0">{{ vehicleTypeLabel(v.vehicleType) }}</p>
           </div>
         </div>
       </div>

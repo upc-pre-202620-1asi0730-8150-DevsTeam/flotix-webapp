@@ -1,0 +1,17 @@
+# Dependencies and build output
+node_modules/
+dist/
+.vite/
+
+# Environment files (may contain environment-specific values)
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.local
+npm-debug.log*

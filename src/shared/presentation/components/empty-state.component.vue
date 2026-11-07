@@ -3,7 +3,7 @@ import AppIcon from './app-icon.component.vue'
 
 defineProps({
   icon: { type: String, default: 'chart' },
-  message: { type: String, default: 'No hay registros todavía.' }
+  message: { type: String, default: '' }
 })
 </script>
 

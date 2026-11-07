@@ -8,9 +8,3 @@ export const UserRole = Object.freeze({
   DRIVER: 'Driver',
   MECHANIC: 'Mechanic'
 })
-
-export const RoleLabels = {
-  [UserRole.OWNER]: 'Dueño de flota',
-  [UserRole.DRIVER]: 'Conductor',
-  [UserRole.MECHANIC]: 'Mecánico / Taller'
-}

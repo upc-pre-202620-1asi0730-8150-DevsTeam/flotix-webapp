@@ -1,5 +1,7 @@
 <script setup>
+import { computed } from 'vue'
 import Tag from 'primevue/tag'
+import { statusLabel } from '@/shared/infrastructure/domain-text.js'
 
 /** StatusBadge — maps a domain status string to a PrimeVue Tag severity. */
 const props = defineProps({
@@ -21,9 +23,10 @@ function toneOf(status) {
   return 'gray'
 }
 
-const severity = TO_PRIME_SEVERITY[toneOf(props.status)]
+const severity = computed(() => TO_PRIME_SEVERITY[toneOf(props.status)])
+const label = computed(() => statusLabel(props.status))
 </script>
 
 <template>
-  <Tag :value="status" :severity="severity" rounded />
+  <Tag :value="label" :severity="severity" rounded />
 </template>

@@ -6,7 +6,10 @@ import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.stor
 import PageHeader from '@/shared/presentation/components/page-header.component.vue'
 import StatCard from '@/shared/presentation/components/stat-card.component.vue'
 import EmptyState from '@/shared/presentation/components/empty-state.component.vue'
+import { useI18n } from 'vue-i18n'
+import { statusLabel } from '@/shared/infrastructure/domain-text.js'
 
+const { t } = useI18n()
 const tracking = useTrackingStore()
 const fleet = useFleetStore()
 let timer = null
@@ -22,15 +25,30 @@ function positionFor(packet) {
   return { top: `${Math.min(92, Math.max(8, top))}%`, left: `${Math.min(92, Math.max(8, left))}%` }
 }
 
-function tick() {
-  for (const d of tracking.devices) tracking.receiveTelemetry(d)
+let ticking = false
+async function tick() {
+  if (ticking) return // do not stack requests if the API is slow
+  ticking = true
+  try {
+    // Until physical GPS devices are installed, each connected device sends a simulated packet to the API.
+    await Promise.all(tracking.devices.filter((d) => d.connectionStatus === 'Conectado').map((d) => tracking.receiveTelemetry(d)))
+    await tracking.refreshAlerts()
+  } catch (e) {
+    console.warn('Telemetría no enviada:', e?.message ?? e)
+  } finally {
+    ticking = false
+  }
 }
 
 onMounted(() => {
+  tracking.startRealtime() // live positions pushed by the API (SignalR)
   tick()
-  timer = setInterval(tick, 3000)
+  timer = setInterval(tick, 5000)
 })
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => {
+  clearInterval(timer)
+  tracking.stopRealtime()
+})
 
 const connected = computed(() => tracking.devices.filter((d) => d.connectionStatus === 'Conectado').length)
 const avgSpeed = computed(() => {
@@ -42,23 +60,24 @@ const avgSpeed = computed(() => {
 <template>
   <PageHeader
     context-label="Real-Time Monitoring / Fleet Tracking"
-    title="Monitoreo en tiempo real"
-    subtitle="Telemetría GPS simulada cada 3 segundos por dispositivo IoT conectado."
+    
+    :title="t('tracking.title')"
+    :subtitle="t('tracking.subtitle')"
   />
 
   <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard label="Dispositivos conectados" :value="connected" icon="signal" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Velocidad promedio" :value="`${avgSpeed} km/h`" icon="truck" /></div>
-    <div class="col-6 sm:col-4"><StatCard label="Paquetes recibidos" :value="Object.keys(tracking.latestByDevice).length" icon="signal" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.connected')" :value="connected" icon="signal" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.avgSpeed')" :value="`${avgSpeed} km/h`" icon="truck" /></div>
+    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.packets')" :value="Object.keys(tracking.latestByDevice).length" icon="signal" /></div>
   </div>
 
-  <EmptyState v-if="!tracking.devices.length" icon="signal" message="No hay dispositivos IoT conectados a la flota." />
+  <EmptyState v-if="!tracking.devices.length" icon="signal" :message="t('tracking.empty')" />
 
   <div v-else class="grid">
     <div class="col-12 lg:col-8">
       <div class="relative border-round-2xl overflow-hidden bg-navy-gradient" style="aspect-ratio: 1 / 1">
         <div class="absolute" style="inset: 0; opacity: .2; background-image: radial-gradient(circle, #0879e8 1px, transparent 1px); background-size: 24px 24px" />
-        <p class="absolute text-xs font-medium m-0" style="top: .75rem; left: .75rem; color: rgba(255,255,255,.5)">Radar de flota (simulado) · Lima, Perú</p>
+        <p class="absolute text-xs font-medium m-0" style="top: .75rem; left: .75rem; color: rgba(255,255,255,.5)">{{ t('tracking.radar') }}</p>
         <div
           v-for="d in tracking.devices"
           :key="d.id"
@@ -79,13 +98,13 @@ const avgSpeed = computed(() => {
           <div class="flex align-items-center justify-content-between">
             <p class="text-sm font-semibold text-heading m-0">{{ plate(d.vehicleId) }}</p>
             <span class="inline-flex align-items-center gap-2 text-xs font-medium" style="color: var(--p-primary-color)">
-              <span class="border-round-full" style="width: .4rem; height: .4rem; background: var(--p-primary-color)" /> {{ d.connectionStatus }}
+              <span class="border-round-full" style="width: .4rem; height: .4rem; background: var(--p-primary-color)" /> {{ statusLabel(d.connectionStatus) }}
             </span>
           </div>
-          <p class="text-xs text-faint mt-1 mb-0">S/N {{ d.serialNumber }}</p>
+          <p class="text-xs text-faint mt-1 mb-0">{{ t('tracking.serial', { serial: d.serialNumber }) }}</p>
           <div v-if="tracking.latestByDevice[d.id]" class="grid mt-2 text-xs text-color-secondary">
-            <p class="col-6 m-0">Velocidad: <span class="font-semibold" :style="{ color: tracking.latestByDevice[d.id].speed > 90 ? '#dc2626' : 'var(--p-surface-900)' }">{{ tracking.latestByDevice[d.id].speed }} km/h</span></p>
-            <p class="col-6 m-0">Lat/Lng: {{ tracking.latestByDevice[d.id].latitude }}, {{ tracking.latestByDevice[d.id].longitude }}</p>
+            <p class="col-6 m-0">{{ t('tracking.speed') }}: <span class="font-semibold" :style="{ color: tracking.latestByDevice[d.id].speed > 90 ? '#dc2626' : 'var(--p-surface-900)' }">{{ tracking.latestByDevice[d.id].speed }} km/h</span></p>
+            <p class="col-6 m-0">{{ t('tracking.latLng') }}: {{ tracking.latestByDevice[d.id].latitude }}, {{ tracking.latestByDevice[d.id].longitude }}</p>
           </div>
         </div>
       </div>

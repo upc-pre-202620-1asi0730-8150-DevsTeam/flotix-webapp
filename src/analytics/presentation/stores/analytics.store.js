@@ -1,22 +1,36 @@
 import { defineStore } from 'pinia'
-import { analyticsService } from '../../application/analytics.service.js'
+import { analyticsService, AnalyticsService } from '../../application/analytics.service.js'
+import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
+import { useFuelStore } from '@/fuel-control/presentation/stores/fuel.store.js'
+import { useMaintenanceStore } from '@/maintenance/presentation/stores/maintenance.store.js'
 
-/** Pinia store — Reporting & Analytics. Wraps AnalyticsService. */
+/** Pinia store — Reporting & Analytics. Wraps AnalyticsService (REST API). */
 export const useAnalyticsStore = defineStore('analytics', {
   state: () => ({
-    reports: analyticsService.listReports()
+    reports: []
   }),
   getters: {
-    summary: () => analyticsService.consolidateFleetData(),
-    performance: () => analyticsService.generatePerformanceReport()
+    summary() {
+      return AnalyticsService.consolidateFleetData({
+        vehicles: useFleetStore().vehicles,
+        fuelRecords: useFuelStore().rawRecords,
+        maintenanceRequests: useMaintenanceStore().requests
+      })
+    },
+    performance() {
+      return AnalyticsService.generatePerformanceReport({
+        vehicles: useFleetStore().vehicles,
+        fuelRecords: useFuelStore().rawRecords
+      })
+    }
   },
   actions: {
-    refresh() {
-      this.reports = analyticsService.listReports()
+    async load() {
+      this.reports = await analyticsService.listReports()
     },
-    exportReportToPdf(userId, title, params) {
-      const report = analyticsService.exportReportToPdf(userId, title, params)
-      this.refresh()
+    async exportReportToPdf(payload) {
+      const report = await analyticsService.exportReportToPdf(payload)
+      await this.load()
       return report
     }
   }

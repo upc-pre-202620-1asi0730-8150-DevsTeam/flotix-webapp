@@ -1,8 +1,5 @@
 import { ReportRepository } from '../infrastructure/persistence/report.repository.js'
-import { Report } from '../domain/model/entities/report.entity.js'
-import { fleetService } from '@/fleet-management/application/fleet-management.js'
-import { fuelControlService } from '@/fuel-control/application/fuel-consumption.js'
-import { maintenanceService } from '@/maintenance/application/maintenance-coordination.js'
+import { FuelConsumption } from '@/fuel-control/application/fuel-consumption.js'
 import { MaintenanceStatus } from '@/maintenance/domain/model/value-objects/maintenance-status.js'
 
 /**
@@ -12,6 +9,10 @@ import { MaintenanceStatus } from '@/maintenance/domain/model/value-objects/main
  * context. Applies the filtering rule described in the report: vehicles
  * with fewer than two historical fuel records are excluded from the
  * performance comparison to avoid statistically meaningless averages.
+ *
+ * The consolidation and performance comparison are pure functions over the
+ * data the other contexts already loaded; generating/storing a report goes
+ * through POST /reports.
  */
 export class AnalyticsService {
   constructor() {
@@ -19,11 +20,7 @@ export class AnalyticsService {
   }
 
   /** ConsolidateFleetData */
-  consolidateFleetData() {
-    const vehicles = fleetService.listVehicles()
-    const fuelRecords = fuelControlService.listRecords()
-    const maintenanceRequests = maintenanceService.listRequests()
-
+  static consolidateFleetData({ vehicles, fuelRecords, maintenanceRequests }) {
     return {
       totalVehicles: vehicles.length,
       totalFuelCost: fuelRecords.reduce((a, r) => a + r.totalCost, 0),
@@ -33,14 +30,11 @@ export class AnalyticsService {
   }
 
   /** GeneratePerformanceReport: per-vehicle fuel cost & efficiency comparison. */
-  generatePerformanceReport() {
-    const vehicles = fleetService.listVehicles()
-    const fuelRecords = fuelControlService.listRecords()
-
+  static generatePerformanceReport({ vehicles, fuelRecords }) {
     return vehicles
       .map((v) => {
         const records = fuelRecords.filter((r) => r.vehicleId === v.id)
-        const efficiencies = fuelControlService.efficiencyFor(v.id).map((r) => r.kmPerLiter).filter((v) => v !== null)
+        const efficiencies = FuelConsumption.efficiencyFor(fuelRecords, v.id).map((r) => r.kmPerLiter).filter((k) => k !== null)
         const avgEfficiency = efficiencies.length ? +(efficiencies.reduce((a, b) => a + b, 0) / efficiencies.length).toFixed(2) : null
         return {
           vehicleId: v.id,
@@ -54,11 +48,9 @@ export class AnalyticsService {
       .filter((row) => row.recordCount >= 2)
   }
 
-  /** ExportReportToPdf — simulated locally as a downloadable text export. */
-  exportReportToPdf(ownerId, reportType, filterParams = {}) {
-    const report = new Report({ ownerId, reportType, filterParams })
-    this.repository.add(report)
-    return report
+  /** ExportReportToPdf: the API generates and stores the report for the period. */
+  exportReportToPdf({ ownerId, reportType, from, to }) {
+    return this.repository.generate({ ownerId, reportType, from, to })
   }
 
   listReports() {
