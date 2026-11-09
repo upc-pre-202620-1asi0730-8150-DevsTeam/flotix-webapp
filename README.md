@@ -44,13 +44,6 @@ vista (.vue) → store (Pinia) → servicio de aplicación → repositorio (HTTP
 - Las placas de vehículos son únicas (`409` si se repite).
 - Los pedidos IoT guardan cantidad y total; el producto se deduce por el precio unitario del catálogo.
 
-### Perfiles (sin login ni registro)
-
-La aplicación **no tiene inicio de sesión ni registro**: abre directamente en el panel. El backend no tiene módulo de identidad,
-así que los tres actores de la plataforma (Dueño de flota, Conductor y Mecánico/Taller) se eligen con el selector **Ver como / View as**
-del encabezado, y el perfil elegido se recuerda en el navegador (`localStorage`). Cada perfil muestra su propio panel y menú.
-Los perfiles demo tienen GUID fijos (`identity-access/domain/model/value-objects/demo-users.js`) porque la API guarda
-referencias a usuarios como GUID.
 
 ### Idiomas (inglés y español)
 
@@ -63,25 +56,6 @@ y también se envía a la API (`Accept-Language`) para que sus mensajes de error
   se muestran traducidos con `shared/infrastructure/domain-text.js`; el dato guardado no cambia.
 - Lo que escribe el usuario (descripciones de fallas o incidencias, nombres) se muestra tal cual.
 
-## Ejecutar
-
-```bash
-npm install
-npm run dev          # http://localhost:5173  (la API debe estar en VITE_API_BASE_URL)
-npm run build        # genera dist/
-```
-
-La API debe permitir el origen del frontend en CORS (`Cors:Origins` / variable `Cors__Origins__0` del backend).
-
-### Datos de demostración (opcional)
-
-La base de datos nueva está vacía. Para cargar vehículos, combustible, una incidencia, dispositivos y un pedido de ejemplo:
-
-```bash
-npm run seed                       # contra VITE_API_BASE_URL o http://localhost:5223
-npm run seed -- https://mi-api     # contra otra API
-npm run seed -- --force            # aunque ya existan vehículos
-```
 
 ## Despliegue (Netlify)
 
