@@ -19,16 +19,6 @@ Design (DDD)** con una carpeta independiente por cada **Bounded Context**:
 Todos los contextos (excepto identidad) consumen la **API REST de Flotix** (ASP.NET Core + PostgreSQL en Neon).
 La dirección de la API se define con una variable de entorno de Vite:
 
-```bash
-cp .env.example .env        # y ajusta VITE_API_BASE_URL si hace falta
-```
-
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `VITE_API_BASE_URL` | URL base de la API (sin `/api/v1`) | `http://localhost:5223` |
-
-> Las variables `VITE_*` se incluyen en el JavaScript público del navegador: **no pongas secretos** en ellas.
-> `.env` está en `.gitignore`; solo se sube `.env.example`.
 
 ### Arquitectura de la capa de datos
 
