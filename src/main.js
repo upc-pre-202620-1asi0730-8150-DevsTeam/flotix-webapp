@@ -17,6 +17,7 @@ app.use(createPinia())
 app.use(app_router)
 app.use(i18n)
 app.use(PrimeVue, {
+  license: import.meta.env.VITE_PRIMEUI_LICENSE,
   theme: {
     preset: FlotixPreset,
     options: { darkModeSelector: false, cssLayer: false }
