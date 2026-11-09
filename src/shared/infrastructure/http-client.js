@@ -6,7 +6,7 @@ import { i18n } from '@/internationalization/i18n.js'
  * The base URL comes from the VITE_API_BASE_URL environment variable (see
  * .env.example) so no environment-specific value is hardcoded or committed.
  */
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5223').replace(/\/+$/, '')
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/+$/, '')
 
 export const http = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
