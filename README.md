@@ -19,7 +19,6 @@ Design (DDD)** con una carpeta independiente por cada **Bounded Context**:
 Todos los contextos (excepto identidad) consumen la **API REST de Flotix** (ASP.NET Core + PostgreSQL en Neon).
 La dirección de la API se define con una variable de entorno de Vite:
 
-
 ### Arquitectura de la capa de datos
 
 ```
