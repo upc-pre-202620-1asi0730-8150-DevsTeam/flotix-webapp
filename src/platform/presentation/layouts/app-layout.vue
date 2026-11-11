@@ -125,9 +125,9 @@ function changeRole(role) {
       class="fixed left-0 flex flex-column bg-navy-gradient flotix-sidebar"
       :class="mobileOpen ? 'flotix-sidebar-open' : ''"
     >
-      <div class="flex flex-column gap-1 px-3 py-4">
+      <div class="flex flex-column gap-2 px-3 pt-4 pb-3">
         <img :src="flotixLogoMark" alt="Flotix" style="height: 28px; width: auto; max-width: 11rem; object-fit: contain; object-position: left" />
-        <p class="text-xs font-medium m-0" style="color: rgba(255,255,255,.4); letter-spacing: .08em; text-transform: uppercase">{{ t('header.tagline') }}</p>
+        <p class="text-sm m-0" style="color: rgba(255,255,255,.6)">{{ t('header.tagline') }}</p>
       </div>
 
       <div class="flex flex-column flex-1 overflow-y-auto">
@@ -145,23 +145,27 @@ function changeRole(role) {
           </router-link>
         </nav>
 
-        <div class="mx-2 mt-3 border-round-xl p-3" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1)">
-          <p class="text-xs font-semibold m-0" style="color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .06em">{{ sidebarSummary.label }}</p>
-          <div class="flex align-items-center gap-2 mt-2">
-            <span class="flex align-items-center justify-content-center border-round" style="width: 1.75rem; height: 1.75rem; background: rgba(255,255,255,.1); color: #fff">
-              <AppIcon :name="sidebarSummary.icon" :size="14" />
-            </span>
-            <p class="text-sm font-bold m-0" style="color: #fff">{{ sidebarSummary.value }}</p>
-          </div>
+        <div class="flex align-items-baseline justify-content-between mx-3 mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,.12)">
+          <p class="text-sm m-0" style="color: rgba(255,255,255,.6)">{{ sidebarSummary.label }}</p>
+          <p class="flotix-sidebar-figure m-0">{{ sidebarSummary.value }}</p>
         </div>
       </div>
 
       <div class="p-2" style="border-top: 1px solid rgba(255,255,255,.1)">
+        <button
+          type="button"
+          class="flotix-lang-toggle flotix-lang-toggle-drawer"
+          :aria-label="'Language: ' + (locale === 'en' ? 'English' : 'Español')"
+          @click="toggleLocale()"
+        >
+          <span :class="{ active: locale === 'en' }">EN</span>
+          <span :class="{ active: locale === 'es' }">ES</span>
+        </button>
         <div class="flex align-items-center gap-2 border-round p-2">
-          <Avatar :label="initials(user?.name)" shape="circle" style="background: var(--p-primary-400); color: #fff; font-size: .7rem; font-weight: 700" />
+          <Avatar :label="initials(user?.name)" shape="circle" style="background: rgba(255,255,255,.14); color: #fff; font-size: .75rem; font-weight: 600" />
           <div class="min-w-0" style="line-height: 1.2">
             <p class="text-sm font-semibold m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="color: #fff; max-width: 10rem">{{ user?.name }}</p>
-            <p class="text-xs m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="color: rgba(255,255,255,.4); max-width: 10rem">
+            <p class="text-xs m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="color: rgba(255,255,255,.6); max-width: 10rem">
               {{ user?.companyName || user?.workshopName || roleLabel }}
             </p>
           </div>
@@ -173,9 +177,9 @@ function changeRole(role) {
 
     <!-- Main column -->
     <div class="flex flex-column flex-1 min-h-screen flotix-main">
-      <header class="sticky top-0 flex align-items-center justify-content-between px-3 py-2 border-subtle" style="z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(6px)">
+      <header class="sticky top-0 flex align-items-center justify-content-between px-3 py-2" style="z-index: 20; background: var(--p-surface-0); border-bottom: 1px solid var(--p-surface-200)">
         <div class="flex align-items-center gap-2">
-          <Button icon="pi pi-bars" text rounded class="flotix-mobile-toggle" @click="mobileOpen = true" />
+          <Button icon="pi pi-bars" text rounded class="flotix-mobile-toggle" aria-label="Menu" @click="mobileOpen = true" />
           <div class="text-sm text-muted flotix-context-label">
             {{ nav.find(n => route.path.startsWith(n.to))?.context || t('header.platform') }}
           </div>
@@ -202,7 +206,7 @@ function changeRole(role) {
             @update:model-value="changeRole"
           />
 
-          <Button text rounded severity="secondary" @click="toggleNotif">
+          <Button text rounded severity="secondary" :aria-label="t('notifications.title')" @click="toggleNotif">
             <template #icon>
               <span class="relative">
                 <AppIcon name="bell" :size="19" />
@@ -244,7 +248,7 @@ function changeRole(role) {
         </div>
       </header>
 
-      <main class="flex-1 p-3">
+      <main class="flex-1 p-3 lg:p-4">
         <div
           v-if="apiStatus.ready && apiStatus.hasError"
           class="flex align-items-center gap-3 p-3 mb-3 border-round-xl"
@@ -273,25 +277,38 @@ function changeRole(role) {
   width: 16rem;
   z-index: 40;
   transform: translateX(-100%);
-  transition: transform .2s ease;
+  transition: transform .28s var(--flotix-ease-drawer);
 }
 .flotix-sidebar-open { transform: translateX(0); }
-.flotix-main { margin-left: 0; }
+.flotix-main { margin-left: 0; min-width: 0; }
 
 .flotix-nav-link {
   display: flex;
   align-items: center;
   gap: .75rem;
   padding: .6rem .75rem;
-  border-radius: 10px;
-  font-size: .875rem;
+  border-radius: var(--flotix-radius-control);
+  font-size: .9375rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, .6);
+  color: rgba(255, 255, 255, .72);
   text-decoration: none;
   transition: background-color .15s ease, color .15s ease;
 }
-.flotix-nav-link:hover { background: rgba(255, 255, 255, .06); color: #fff; }
-.flotix-nav-link-active { background: var(--p-primary-color); color: #fff; }
+@media (hover: hover) {
+  .flotix-nav-link:hover { background: rgba(255, 255, 255, .07); color: #fff; }
+}
+.flotix-nav-link:focus-visible { outline-color: #fff; outline-offset: -2px; }
+.flotix-nav-link-active,
+.flotix-nav-link-active:hover { background: var(--p-primary-color); color: #fff; }
+
+.flotix-sidebar-figure {
+  font-family: var(--flotix-font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
 
 .flotix-notif-dot {
   position: absolute; top: -1px; right: -2px;
@@ -301,7 +318,7 @@ function changeRole(role) {
 .flotix-notif-item {
   display: flex; align-items: flex-start; gap: .6rem; width: 100%;
   padding: .6rem 0; background: none; border: 0; border-bottom: 1px solid var(--p-surface-100);
-  cursor: pointer;
+  cursor: pointer; font-family: inherit;
 }
 .flotix-notif-item:last-child { border-bottom: 0; }
 .flotix-notif-item:hover { background: var(--p-surface-50); }
@@ -317,8 +334,12 @@ function changeRole(role) {
   background: none;
   cursor: pointer;
 }
-.flotix-lang-toggle span { padding: .15rem .5rem; border-radius: 999px; font-size: .7rem; font-weight: 700; color: var(--p-surface-900); }
+.flotix-lang-toggle span { padding: .15rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 600; color: var(--p-surface-600); transition: background-color .15s ease, color .15s ease; }
 .flotix-lang-toggle span.active { background: var(--p-surface-900); color: #fff; }
+
+.flotix-lang-toggle-drawer { display: inline-flex; margin: .25rem .5rem .5rem; border-color: rgba(255, 255, 255, .25); }
+.flotix-lang-toggle-drawer span { color: rgba(255, 255, 255, .72); }
+.flotix-lang-toggle-drawer span.active { background: #fff; color: var(--flotix-navy-900); }
 
 .flotix-mobile-toggle { display: inline-flex; }
 .flotix-context-label, .flotix-user-summary { display: none; }
@@ -330,5 +351,6 @@ function changeRole(role) {
   .flotix-context-label { display: block; }
   .flotix-user-summary { display: block; }
   .flotix-lang-toggle { display: flex; }
+  .flotix-lang-toggle-drawer { display: none; }
 }
 </style>

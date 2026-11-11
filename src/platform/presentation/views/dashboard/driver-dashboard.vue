@@ -49,7 +49,7 @@ const today = computed(() => formatLongDate())
 </script>
 
 <template>
-  <PageHeader :title="`${t('dashboard.driver.title')}, ${user?.name?.split(' ')[0] ?? ''}`" :subtitle="t('dashboard.driver.subtitle') + ' · ' + today" />
+  <PageHeader :title="`${t('dashboard.driver.title')}, ${user?.name?.split(' ')[0] ?? ''}`" :subtitle="t('dashboard.driver.subtitle') + ', ' + today" />
 
   <div class="grid">
     <div class="col-12 lg:col-8">
@@ -58,12 +58,9 @@ const today = computed(() => formatLongDate())
         <EmptyState v-if="!myVehicle" icon="truck" :message="t('dashboard.driver.noVehicle')" />
         <div v-else class="flex align-items-center justify-content-between border-round-xl p-3" style="background: var(--p-surface-50)">
           <div class="flex align-items-center gap-3">
-            <span class="flex align-items-center justify-content-center border-round-xl" style="width: 3rem; height: 3rem; background: var(--p-primary-100); color: var(--p-primary-700)">
-              <AppIcon name="truck" :size="22" />
-            </span>
             <div>
-              <p class="text-lg font-bold text-heading m-0">{{ myVehicle.plate }}</p>
-              <p class="text-xs text-muted m-0">{{ vehicleTypeLabel(myVehicle.vehicleType) }}</p>
+              <p class="flotix-plate flotix-plate-lg m-0">{{ myVehicle.plate }}</p>
+              <p class="text-sm text-muted mt-2 mb-0">{{ vehicleTypeLabel(myVehicle.vehicleType) }}</p>
               <p class="text-xs text-faint mt-1 mb-0">{{ t('dashboard.driver.mileage') }}: {{ formatNumber(myVehicle.currentMileage) }} km</p>
             </div>
           </div>
@@ -90,11 +87,11 @@ const today = computed(() => formatLongDate())
     </div>
   </div>
 
-  <div class="grid my-1">
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.mileage')" :value="myVehicle ? `${formatNumber(myVehicle.currentMileage)} km` : '—'" icon="pin" tone="primary" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.lastEfficiency')" :value="lastEfficiency !== null ? `${lastEfficiency} ${t('dashboard.driver.kmPerLiter')}` : '—'" icon="fuel" tone="green" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.openIncidents')" :value="myIncidents.length" icon="alert" tone="amber" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.driver.stats.unreadAlerts')" :value="unreadAlerts" icon="bell" tone="red" /></div>
+  <div class="flotix-stats mt-4 mb-3">
+    <StatCard :label="t('dashboard.driver.stats.mileage')" :value="myVehicle ? `${formatNumber(myVehicle.currentMileage)} km` : '—'" icon="pin" tone="primary" />
+    <StatCard :label="t('dashboard.driver.stats.lastEfficiency')" :value="lastEfficiency !== null ? `${lastEfficiency} ${t('dashboard.driver.kmPerLiter')}` : '—'" icon="fuel" tone="green" />
+    <StatCard :label="t('dashboard.driver.stats.openIncidents')" :value="myIncidents.length" icon="alert" tone="amber" />
+    <StatCard :label="t('dashboard.driver.stats.unreadAlerts')" :value="unreadAlerts" icon="bell" tone="red" />
   </div>
 
   <div class="grid">
@@ -105,7 +102,7 @@ const today = computed(() => formatLongDate())
         <div v-else class="flex flex-column gap-3">
           <div v-for="m in myMaintenance" :key="m.id" class="pb-3 flotix-row-divider">
             <div class="flex align-items-center justify-content-between">
-              <p class="text-sm font-semibold text-heading m-0">{{ myVehicle.plate }}</p>
+              <p class="flotix-plate m-0">{{ myVehicle.plate }}</p>
               <StatusBadge :status="m.status" />
             </div>
             <p class="text-xs text-faint mt-1 mb-0 white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ m.faultDescription }}</p>
@@ -118,7 +115,7 @@ const today = computed(() => formatLongDate())
       <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
         <div class="flex align-items-center justify-content-between mb-3">
           <h2 class="text-sm font-bold text-heading m-0">{{ t('dashboard.driver.recentFuel') }}</h2>
-          <router-link to="/fuel" class="flotix-link text-xs">{{ t('common.viewAll') }} →</router-link>
+          <router-link to="/fuel" class="flotix-link text-xs">{{ t('common.viewAll') }}</router-link>
         </div>
         <div v-if="!myFuelRecords.length" class="text-center text-sm text-faint py-4">{{ t('dashboard.driver.noFuel') }}</div>
         <div v-else class="flex flex-column gap-3">
@@ -134,13 +131,10 @@ const today = computed(() => formatLongDate())
     </div>
 
     <div class="col-12 lg:col-4">
-      <div class="flex flex-column justify-content-between border-round-2xl p-3 h-full" style="border: 1px solid var(--p-primary-200); background: var(--p-primary-50)">
+      <div class="flex flex-column justify-content-between border-round-2xl p-3 h-full" style="background: var(--p-primary-50)">
         <div>
-          <span class="flex align-items-center justify-content-center border-round-lg" style="width: 2.25rem; height: 2.25rem; background: var(--p-primary-color); color: #fff">
-            <AppIcon name="signal" :size="17" />
-          </span>
-          <h2 class="text-sm font-bold text-heading mt-3 mb-0">{{ t('dashboard.driver.tipTitle') }}</h2>
-          <p class="text-xs text-muted mt-2 mb-0" style="line-height: 1.6">{{ t('dashboard.driver.tip') }}</p>
+          <h2 class="text-sm font-bold text-heading m-0">{{ t('dashboard.driver.tipTitle') }}</h2>
+          <p class="text-sm text-color-secondary mt-2 mb-0" style="line-height: 1.55">{{ t('dashboard.driver.tip') }}</p>
         </div>
       </div>
     </div>

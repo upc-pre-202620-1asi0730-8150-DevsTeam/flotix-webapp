@@ -18,7 +18,8 @@ const { t } = useI18n()
 const fleet = useFleetStore()
 const drivers = fleet.drivers
 
-const palette = ['#0879e8', '#059669', '#d97706', '#7c3aed', '#e11d48', '#0891b2']
+// One family of brand blues: the avatar identifies a row, it does not encode anything.
+const palette = ['#123258', '#0662bd', '#094f94', '#0a2a49']
 function avatarColor(id) {
   const idx = drivers.findIndex((d) => d.id === id)
   return palette[idx % palette.length]
@@ -43,10 +44,10 @@ const inRoute = computed(() => filtered.value.filter((d) => vehicleFor(d.id)).le
 <template>
   <PageHeader context-label="Vehicle & Fleet Management" :title="t('drivers.title')" :subtitle="t('drivers.subtitle', { count: drivers.length })" />
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.total')" :value="drivers.length" icon="users" tone="primary" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.inRoute')" :value="inRoute" icon="truck" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('drivers.stats.active')" :value="drivers.length" tone="green" icon="check" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('drivers.stats.total')" :value="drivers.length" icon="users" tone="primary" />
+    <StatCard :label="t('drivers.stats.inRoute')" :value="inRoute" icon="truck" />
+    <StatCard :label="t('drivers.stats.active')" :value="drivers.length" tone="green" icon="check" />
   </div>
 
   <div class="mb-3" style="max-width: 24rem">
@@ -73,13 +74,13 @@ const inRoute = computed(() => filtered.value.filter((d) => vehicleFor(d.id)).le
       </Column>
       <Column :header="t('drivers.cols.license')">
         <template #body="{ data }">
-          <span style="font-family: 'JetBrains Mono', monospace" class="text-xs text-color-secondary">{{ data.licenseNumber }}</span>
+          <span class="text-sm text-color-secondary" style="font-variant-numeric: tabular-nums">{{ data.licenseNumber }}</span>
           <p class="text-xs text-faint m-0 mt-1">{{ t('drivers.expires', { date: data.licenseExpiry }) }}</p>
         </template>
       </Column>
       <Column :header="t('drivers.cols.vehicle')">
         <template #body="{ data }">
-          <span v-if="vehicleFor(data.id)" class="font-semibold text-heading" style="font-family: 'JetBrains Mono', monospace">{{ vehicleFor(data.id).plate }}</span>
+          <span v-if="vehicleFor(data.id)" class="flotix-plate">{{ vehicleFor(data.id).plate }}</span>
           <span v-else class="text-faint">{{ t('header.unassigned') }}</span>
         </template>
       </Column>

@@ -51,14 +51,14 @@ const inMaintenance = computed(() => fleet.vehicles.filter((v) => v.status === V
     :subtitle="t('fleet.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/fleet-management/new')">{{ t('fleet.register') }}</AppButton>
+      <AppButton icon="pi pi-plus" @click="router.push('/fleet-management/new')">{{ t('fleet.register') }}</AppButton>
     </template>
   </PageHeader>
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('fleet.stats.total')" :value="total" icon="truck" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('fleet.stats.available')" :value="available" icon="check" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('fleet.stats.inMaintenance')" :value="inMaintenance" icon="wrench" tone="amber" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('fleet.stats.total')" :value="total" icon="truck" />
+    <StatCard :label="t('fleet.stats.available')" :value="available" icon="check" />
+    <StatCard :label="t('fleet.stats.inMaintenance')" :value="inMaintenance" icon="wrench" tone="amber" />
   </div>
 
   <EmptyState v-if="!fleet.vehicles.length" icon="truck" :message="t('fleet.empty')" />
@@ -66,7 +66,7 @@ const inMaintenance = computed(() => fleet.vehicles.filter((v) => v.status === V
   <div v-else class="rounded-2xl border-subtle shadow-card overflow-hidden" style="background: var(--p-surface-0)">
     <DataTable :value="fleet.vehicles" data-key="id" striped-rows paginator :rows="10" responsive-layout="scroll">
       <Column field="plate" :header="t('fleet.cols.plate')">
-        <template #body="{ data }"><span class="font-semibold text-heading">{{ data.plate }}</span></template>
+        <template #body="{ data }"><span class="flotix-plate">{{ data.plate }}</span></template>
       </Column>
       <Column field="vehicleType" :header="t('fleet.cols.type')">
         <template #body="{ data }">{{ vehicleTypeLabel(data.vehicleType) }}</template>

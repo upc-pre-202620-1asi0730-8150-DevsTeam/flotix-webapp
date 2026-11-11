@@ -63,14 +63,14 @@ const completed = computed(() => maintenance.requests.filter((r) => r.status ===
     :subtitle="t('maintenance.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/maintenance/new')">{{ t('maintenance.new') }}</AppButton>
+      <AppButton icon="pi pi-plus" @click="router.push('/maintenance/new')">{{ t('maintenance.new') }}</AppButton>
     </template>
   </PageHeader>
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.open')" :value="open" icon="folder" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.inRepair')" :value="inRepair" icon="wrench" tone="amber" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('maintenance.stats.completed')" :value="completed" icon="check" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('maintenance.stats.open')" :value="open" icon="folder" />
+    <StatCard :label="t('maintenance.stats.inRepair')" :value="inRepair" icon="wrench" tone="amber" />
+    <StatCard :label="t('maintenance.stats.completed')" :value="completed" icon="check" />
   </div>
 
   <EmptyState v-if="!maintenance.requests.length" icon="wrench" :message="t('maintenance.empty')" />
@@ -79,11 +79,11 @@ const completed = computed(() => maintenance.requests.filter((r) => r.status ===
     <div v-for="r in maintenance.requests" :key="r.id" class="rounded-2xl border-subtle shadow-card p-3" style="background: var(--p-surface-0)">
       <div class="flex flex-wrap align-items-start justify-content-between gap-2">
         <div>
-          <p class="text-sm font-semibold text-heading m-0">{{ plate(r.vehicleId) }}</p>
-          <p class="text-sm text-color-secondary m-0">{{ r.faultDescription }}</p>
+          <p class="flotix-plate m-0">{{ plate(r.vehicleId) }}</p>
+          <p class="text-sm text-color-secondary mt-2 mb-0">{{ r.faultDescription }}</p>
           <p class="text-xs text-faint mt-1 mb-0">
             {{ t('maintenance.workshop') }}: {{ r.mechanicId ? mechanicName(r.mechanicId) : t('maintenance.noWorkshop') }}
-            <span v-if="r.estimatedCost"> · {{ t('maintenance.budget') }}: S/ {{ r.estimatedCost.toFixed(2) }}</span>
+            <span v-if="r.estimatedCost" class="ml-3">{{ t('maintenance.budget') }}: S/ {{ r.estimatedCost.toFixed(2) }}</span>
           </p>
         </div>
         <StatusBadge :status="r.status" />

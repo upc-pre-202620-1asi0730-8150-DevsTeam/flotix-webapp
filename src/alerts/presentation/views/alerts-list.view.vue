@@ -33,10 +33,10 @@ const unread = computed(() => alerts.notifications.filter((n) => !n.isRead).leng
     :subtitle="t('alerts.subtitle')"
   />
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('alerts.stats.active')" :value="alerts.alerts.length" icon="bell" tone="amber" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('alerts.stats.notifications')" :value="alerts.notifications.length" icon="mail" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('alerts.stats.unread')" :value="unread" icon="bell" tone="red" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('alerts.stats.active')" :value="alerts.alerts.length" icon="bell" tone="amber" />
+    <StatCard :label="t('alerts.stats.notifications')" :value="alerts.notifications.length" icon="mail" />
+    <StatCard :label="t('alerts.stats.unread')" :value="unread" icon="bell" tone="red" />
   </div>
 
   <div class="grid">
@@ -45,7 +45,7 @@ const unread = computed(() => alerts.notifications.filter((n) => !n.isRead).leng
       <EmptyState v-if="!alerts.alerts.length" icon="bell" :message="t('alerts.emptyAlerts')" />
       <ul v-else class="list-none p-0 m-0 flex flex-column gap-2">
         <li v-for="a in alerts.alerts" :key="a.id" class="border-round-lg p-3 text-sm" style="border: 1px solid #fde68a; background: #fffbeb">
-          <p class="font-semibold m-0" style="color: #92400e">{{ plate(a.vehicleId) }}</p>
+          <p class="flotix-plate m-0 mb-1">{{ plate(a.vehicleId) }}</p>
           <p class="m-0" style="color: #b45309">{{ alertTypeLabel(a.alertType) }}</p>
           <p class="text-xs mt-1 mb-0" style="color: #d97706">{{ formatDateTime(a.activatedAt) }}</p>
         </li>

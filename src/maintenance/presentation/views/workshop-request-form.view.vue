@@ -40,7 +40,7 @@ async function save() {
   <template v-if="workshop">
     <PageHeader context-label="Maintenance Management" :title="t('workshops.request.title')" :subtitle="t('workshops.request.subtitle', { name: workshop.workshopName })">
       <template #actions>
-        <AppButton variant="ghost" @click="router.push('/workshops')">{{ t('workshops.request.back') }}</AppButton>
+        <AppButton variant="ghost" icon="pi pi-arrow-left" @click="router.push('/workshops')">{{ t('workshops.request.back') }}</AppButton>
       </template>
     </PageHeader>
 
@@ -49,7 +49,7 @@ async function save() {
         <div class="flex flex-column gap-1">
           <label class="text-sm font-medium text-heading">{{ t('workshops.request.vehicle') }}</label>
           <Select v-model="form.vehicleId" :options="fleet.vehicles" option-label="plate" option-value="id" fluid>
-            <template #option="{ option }">{{ option.plate }} — {{ vehicleTypeLabel(option.vehicleType) }}</template>
+            <template #option="{ option }"><span class="flotix-plate mr-2">{{ option.plate }}</span>{{ vehicleTypeLabel(option.vehicleType) }}</template>
           </Select>
         </div>
         <div class="flex flex-column gap-1">

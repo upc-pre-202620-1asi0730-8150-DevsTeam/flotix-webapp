@@ -75,15 +75,15 @@ async function exportReport() {
     :subtitle="t('reports.subtitle')"
   >
     <template #actions>
-      <AppButton @click="exportReport">{{ t('reports.export') }}</AppButton>
+      <AppButton icon="pi pi-download" @click="exportReport">{{ t('reports.export') }}</AppButton>
     </template>
   </PageHeader>
 
-  <div class="grid mb-3">
-    <div class="col-6 md:col-3"><StatCard :label="t('reports.stats.vehicles')" :value="summary.totalVehicles" icon="truck" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('reports.stats.fuel')" :value="`S/ ${summary.totalFuelCost.toFixed(0)}`" icon="fuel" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('reports.stats.maintenance')" :value="`S/ ${summary.totalMaintenanceCost.toFixed(0)}`" icon="wrench" tone="amber" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('reports.stats.completed')" :value="summary.completedMaintenance" icon="check" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('reports.stats.vehicles')" :value="summary.totalVehicles" icon="truck" />
+    <StatCard :label="t('reports.stats.fuel')" :value="`S/ ${summary.totalFuelCost.toFixed(0)}`" icon="fuel" />
+    <StatCard :label="t('reports.stats.maintenance')" :value="`S/ ${summary.totalMaintenanceCost.toFixed(0)}`" icon="wrench" tone="amber" />
+    <StatCard :label="t('reports.stats.completed')" :value="summary.completedMaintenance" icon="check" />
   </div>
 
   <div class="rounded-2xl border-subtle shadow-card p-3 mb-3" style="background: var(--p-surface-0)">
@@ -91,7 +91,7 @@ async function exportReport() {
     <EmptyState v-if="!performance.length" icon="chart" :message="t('reports.needMore')" />
     <div v-else class="flex flex-column gap-3">
       <div v-for="p in performance" :key="p.vehicleId" class="flex align-items-center gap-3">
-        <span class="text-sm font-medium text-color-secondary flex-shrink-0" style="width: 5rem">{{ p.plate }}</span>
+        <span class="flex-shrink-0" style="width: 5.5rem"><span class="flotix-plate">{{ p.plate }}</span></span>
         <div class="flex-1 overflow-hidden border-round-full" style="height: .75rem; background: var(--p-surface-100)">
           <div class="h-full border-round-full" :style="{ width: `${(p.totalCost / maxCost) * 100}%`, background: 'var(--p-primary-color)' }" />
         </div>
