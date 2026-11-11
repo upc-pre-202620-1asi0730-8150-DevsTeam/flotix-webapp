@@ -40,13 +40,13 @@ const today = computed(() => formatLongDate())
 </script>
 
 <template>
-  <PageHeader :title="`${t('dashboard.mechanic.title')}, ${user?.name?.split(' ')[0] ?? ''}`" :subtitle="t('dashboard.mechanic.subtitle') + ' · ' + today" />
+  <PageHeader :title="`${t('dashboard.mechanic.title')}, ${user?.name?.split(' ')[0] ?? ''}`" :subtitle="t('dashboard.mechanic.subtitle') + ', ' + today" />
 
-  <div class="grid mb-1">
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.mechanic.stats.pending')" :value="pending.length" icon="alert" tone="amber" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.mechanic.stats.inRepair')" :value="inRepair.length" icon="wrench" tone="primary" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.mechanic.stats.completedMonth')" :value="completedThisMonth.length" icon="check" tone="green" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.mechanic.stats.revenueMonth')" :value="`S/ ${revenueThisMonth.toFixed(0)}`" icon="cash" tone="green" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('dashboard.mechanic.stats.pending')" :value="pending.length" icon="alert" tone="amber" />
+    <StatCard :label="t('dashboard.mechanic.stats.inRepair')" :value="inRepair.length" icon="wrench" tone="primary" />
+    <StatCard :label="t('dashboard.mechanic.stats.completedMonth')" :value="completedThisMonth.length" icon="check" tone="green" />
+    <StatCard :label="t('dashboard.mechanic.stats.revenueMonth')" :value="`S/ ${revenueThisMonth.toFixed(0)}`" icon="cash" tone="green" />
   </div>
 
   <div class="grid">
@@ -54,18 +54,15 @@ const today = computed(() => formatLongDate())
       <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
         <div class="flex align-items-center justify-content-between mb-3">
           <h2 class="text-sm font-bold text-heading m-0">{{ t('dashboard.mechanic.recentRequests') }}</h2>
-          <router-link to="/maintenance" class="flotix-link text-xs">{{ t('dashboard.mechanic.viewAllRequests') }} →</router-link>
+          <router-link to="/maintenance" class="flotix-link text-xs">{{ t('dashboard.mechanic.viewAllRequests') }}</router-link>
         </div>
         <EmptyState v-if="!myRequests.length" icon="wrench" :message="t('dashboard.mechanic.noRequests')" />
         <div v-else class="flex flex-column gap-3">
           <div v-for="r in myRequests.slice(0, 5)" :key="r.id" class="flex align-items-center justify-content-between pb-3 flotix-row-divider">
             <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center justify-content-center border-round-lg" style="width: 2.25rem; height: 2.25rem; background: var(--p-surface-100); color: var(--p-surface-500)">
-                <AppIcon name="wrench" :size="16" />
-              </span>
               <div>
-                <p class="text-sm font-semibold text-heading m-0">{{ plate(r.vehicleId) }}</p>
-                <p class="text-xs text-faint m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="max-width: 16rem">{{ r.faultDescription }}</p>
+                <p class="flotix-plate m-0">{{ plate(r.vehicleId) }}</p>
+                <p class="text-sm text-muted mt-1 mb-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="max-width: 28rem">{{ r.faultDescription }}</p>
               </div>
             </div>
             <StatusBadge :status="r.status" />
@@ -90,17 +87,14 @@ const today = computed(() => formatLongDate())
     </div>
   </div>
 
-  <div class="rounded-2xl border-subtle p-3 shadow-card mt-1" style="background: var(--p-surface-0)">
+  <div class="rounded-2xl border-subtle p-3 shadow-card mt-3" style="background: var(--p-surface-0)">
     <h2 class="text-sm font-bold text-heading m-0 mb-3">{{ t('dashboard.mechanic.vehiclesInShop') }}</h2>
     <EmptyState v-if="!vehiclesInShop.length" icon="truck" :message="t('dashboard.mechanic.noVehiclesInShop')" />
     <div v-else class="grid">
       <div v-for="v in vehiclesInShop" :key="v.id" class="col-12 sm:col-6 lg:col-4">
         <div class="flex align-items-center gap-3 border-round-xl border-subtle p-3">
-          <span class="flex align-items-center justify-content-center border-round-lg" style="width: 2.25rem; height: 2.25rem; background: #fef3c7; color: #b45309">
-            <AppIcon name="truck" :size="16" />
-          </span>
           <div>
-            <p class="text-sm font-semibold text-heading m-0">{{ v.plate }}</p>
+            <p class="flotix-plate m-0">{{ v.plate }}</p>
             <p class="text-xs text-faint m-0">{{ vehicleTypeLabel(v.vehicleType) }}</p>
           </div>
         </div>

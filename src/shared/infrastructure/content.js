@@ -21,9 +21,9 @@ const base = {
       settings: { label: 'Settings', context: 'Platform' }
     },
     header: {
-      tagline: 'Your fleet-management, under control',
+      tagline: 'Your fleet, under control',
       platform: 'Flotix Platform',
-      sidebarSummaryOwner: 'Active fleet-management',
+      sidebarSummaryOwner: 'Active fleet',
       sidebarSummaryDriver: 'My vehicle',
       sidebarSummaryMechanic: 'Pending requests',
       unassigned: 'Not assigned'
@@ -45,15 +45,15 @@ const base = {
         urgentPrefix: 'Urgent:',
         urgentSuffix: 'requires immediate attention.',
         viewNow: 'View now',
-        stats: { activeFleet: 'Active fleet-management', inMaintenance: 'In maintenance', fuelMonth: 'Fuel (this month)', openAlerts: 'Open alerts' },
+        stats: { activeFleet: 'Active fleet', inMaintenance: 'In maintenance', fuelMonth: 'Fuel (this month)', openAlerts: 'Open alerts' },
         fleetStatus: 'Fleet status',
         pendingMaintenance: 'Pending maintenance',
-        noPending: 'Nothing pending 🎉',
+        noPending: 'Nothing pending',
         recentActivity: 'Recent activity',
         noActivity: 'No recent activity yet.',
         quickActions: 'Quick actions',
         actions: { registerVehicle: 'Register vehicle', viewReports: 'View reports', buyIot: 'Buy IoT device', workshops: 'Affiliated workshops' },
-        fuelTrend: 'Fuel spend — last refuels'
+        fuelTrend: 'Fuel spend, last refuels'
       },
       driver: {
         title: 'Hello',
@@ -132,12 +132,12 @@ const base = {
         stats: { activeFleet: 'Flota activa', inMaintenance: 'En mantenimiento', fuelMonth: 'Combustible (mes)', openAlerts: 'Alertas abiertas' },
         fleetStatus: 'Estado de flota',
         pendingMaintenance: 'Mantenimientos pendientes',
-        noPending: 'Sin pendientes 🎉',
+        noPending: 'Sin pendientes',
         recentActivity: 'Actividad reciente',
         noActivity: 'Aún no hay actividad reciente.',
         quickActions: 'Accesos rápidos',
         actions: { registerVehicle: 'Registrar vehículo', viewReports: 'Ver reportes', buyIot: 'Comprar dispositivo IoT', workshops: 'Talleres afiliados' },
-        fuelTrend: 'Gasto en combustible — últimas cargas'
+        fuelTrend: 'Gasto en combustible, últimas cargas'
       },
       driver: {
         title: 'Hola',

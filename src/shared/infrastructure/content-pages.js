@@ -42,7 +42,7 @@ export const pagesEn = {
   fleet: {
     title: 'Vehicle fleet',
     subtitle: 'Registration, operating status and driver assignment of the vehicle pool.',
-    register: '+ Register vehicle',
+    register: 'Register vehicle',
     stats: { total: 'Vehicles in fleet', available: 'Available', inMaintenance: 'In maintenance' },
     empty: "You haven't registered any vehicles yet.",
     cols: { plate: 'Plate', type: 'Type', driver: 'Assigned driver', mileage: 'Mileage', status: 'Status' },
@@ -52,7 +52,7 @@ export const pagesEn = {
     form: {
       titleNew: 'Register vehicle', titleEdit: 'Edit vehicle',
       subtitle: 'Operating data of the vehicle and its assigned driver.',
-      back: '← Back to fleet', plate: 'Plate', type: 'Vehicle type', mileage: 'Current mileage',
+      back: 'Back to fleet', plate: 'Plate', type: 'Vehicle type', mileage: 'Current mileage',
       driver: 'Assigned driver', status: 'Status',
       saveError: 'Could not save the vehicle', savedNew: 'Vehicle registered', savedEdit: 'Vehicle updated'
     }
@@ -60,14 +60,14 @@ export const pagesEn = {
   drivers: {
     title: 'Drivers', subtitle: '{count} registered drivers',
     stats: { total: 'Total', inRoute: 'On the road', active: 'Active' },
-    search: 'Search by name, email or license...', empty: 'No drivers found.',
+    search: 'Search by name, email or license', empty: 'No drivers found.',
     cols: { driver: 'Driver', license: 'License', vehicle: 'Vehicle', status: 'Status' },
-    expires: 'Expires {date}', viewProfile: 'View profile →'
+    expires: 'Expires {date}', viewProfile: 'View profile'
   },
   fuel: {
     title: 'Fuel control',
     subtitle: 'Refuel log, associated cost and abnormal-consumption detection per unit.',
-    register: '+ Log refuel',
+    register: 'Log refuel',
     stats: { liters: 'Liters loaded', cost: 'Total spend (S/)', anomalies: 'Abnormal consumption' },
     empty: 'No fuel refuels logged yet.',
     cols: { date: 'Date', vehicle: 'Vehicle', liters: 'Liters', cost: 'Cost (S/)', odometer: 'Odometer', efficiency: 'Efficiency' },
@@ -75,7 +75,7 @@ export const pagesEn = {
     confirmDelete: 'Delete this fuel record?', deleteError: 'Could not delete the record', deleted: 'Record deleted',
     form: {
       title: 'Log fuel refuel', subtitle: 'Liters loaded, associated cost and mileage at the time of the refuel.',
-      back: '← Back to fuel', vehicle: 'Vehicle', liters: 'Liters', cost: 'Total cost (S/)',
+      back: 'Back to fuel', vehicle: 'Vehicle', liters: 'Liters', cost: 'Total cost (S/)',
       odometer: 'Current mileage (odometer)', date: 'Date',
       saveError: 'Could not log the refuel', saved: 'Fuel refuel logged'
     }
@@ -83,7 +83,7 @@ export const pagesEn = {
   maintenance: {
     title: 'Preventive and corrective maintenance',
     subtitle: 'Full lifecycle: request, diagnosis, quote, repair and closure.',
-    new: '+ New request',
+    new: 'New request',
     stats: { open: 'Open requests', inRepair: 'In repair', completed: 'Completed' },
     empty: 'No maintenance requests registered.',
     workshop: 'Workshop', noWorkshop: 'Not assigned', budget: 'Quote',
@@ -95,7 +95,7 @@ export const pagesEn = {
     decisionError: 'Could not record the decision', startError: 'Could not start the repair', completeError: 'Could not complete the maintenance',
     form: {
       title: 'New maintenance request', subtitle: 'Describe the fault so a workshop can diagnose and quote it.',
-      back: '← Back to maintenance', vehicle: 'Vehicle', workshop: 'Workshop / mechanic',
+      back: 'Back to maintenance', vehicle: 'Vehicle', workshop: 'Workshop / mechanic',
       fault: 'Fault description', submit: 'Submit request',
       saveError: 'Could not submit the request', saved: 'Request submitted'
     },
@@ -106,12 +106,12 @@ export const pagesEn = {
   },
   workshops: {
     title: 'Affiliated workshops', subtitle: '{count} workshops available in the Flotix network',
-    search: 'Search by name, city or specialty...', empty: 'No affiliated workshops yet.',
+    search: 'Search by name, city or specialty', empty: 'No affiliated workshops yet.',
     details: 'View details', requestService: 'Request service',
     noAddress: 'Address not registered', generalMaintenance: 'General maintenance',
     tags: { brakes: 'Brakes', engine: 'Engine', transmission: 'Transmission', electrical: 'Electrical' },
     request: {
-      title: 'Request service', subtitle: 'Workshop: {name}', back: '← Back to workshops',
+      title: 'Request service', subtitle: 'Workshop: {name}', back: 'Back to workshops',
       vehicle: 'Vehicle', problem: 'Problem description', submit: 'Submit request',
       saveError: 'Could not submit the request', saved: 'Request sent to the workshop'
     }
@@ -119,7 +119,7 @@ export const pagesEn = {
   incidents: {
     title: 'On-road incidents',
     subtitle: 'Report and follow-up of unexpected faults or anomalies during operation.',
-    report: '+ Report incident',
+    report: 'Report incident',
     stats: { total: 'Total incidents', open: 'Open', resolved: 'Resolved' },
     empty: 'No incidents reported.', reported: 'Reported: {date}',
     actions: { inspect: 'Mark as under inspection', resolve: 'Mark as resolved' },
@@ -127,7 +127,7 @@ export const pagesEn = {
     updateError: 'Could not update the incident',
     form: {
       title: 'Report incident', subtitle: 'Describe the fault or anomaly detected during operation.',
-      back: '← Back to incidents', vehicle: 'Vehicle', description: 'Problem description', submit: 'Report',
+      back: 'Back to incidents', vehicle: 'Vehicle', description: 'Problem description', submit: 'Report',
       saveError: 'Could not report the incident', saved: 'Incident reported'
     }
   },
@@ -136,7 +136,7 @@ export const pagesEn = {
     subtitle: 'Simulated GPS telemetry sent every few seconds by each connected IoT device.',
     stats: { connected: 'Connected devices', avgSpeed: 'Average speed', packets: 'Packets received' },
     empty: 'No IoT devices connected to the fleet.',
-    radar: 'Fleet radar (simulated) · Lima, Peru',
+    radar: 'Fleet radar, Lima (simulated)',
     serial: 'S/N {serial}', speed: 'Speed', latLng: 'Lat/Lng'
   },
   alerts: {
@@ -156,18 +156,18 @@ export const pagesEn = {
   commerce: {
     title: 'Telematics hardware store',
     subtitle: 'Purchase GPS devices, odometers and fuel sensors to equip your fleet.',
-    badgeNew: 'NEW', buyNow: 'Buy now →',
+    badgeNew: 'New', buyNow: 'Buy now',
     products: { gps: 'Flotix GPS tracker', odometer: 'Flotix digital odometer', 'fuel-sensor': 'Flotix fuel sensor' },
     orders: 'Order history', emptyOrders: "You haven't placed any orders yet.",
     cols: { date: 'Date', product: 'Product', quantity: 'Quantity', total: 'Total', status: 'Status' },
-    advance: 'Advance status →',
+    advance: 'Advance status',
     success: 'Purchase of {qty} unit(s) of "{name}" processed successfully.',
     purchaseError: 'Could not process the purchase', updateError: 'Could not update the order'
   },
   reports: {
     title: 'Reports and analytics',
     subtitle: 'Consolidation of operating and historical data for management decisions.',
-    export: '⬇ Export report',
+    export: 'Export report',
     stats: { vehicles: 'Vehicles', fuel: 'Fuel spend', maintenance: 'Maintenance spend', completed: 'Completed maint.' },
     fuelByVehicle: 'Fuel spend by vehicle',
     needMore: 'At least 2 fuel records per vehicle are needed to generate the comparison.',
@@ -175,21 +175,21 @@ export const pagesEn = {
     exportError: 'Could not generate the report', exported: 'Report generated',
     reportTypeFuel: 'Reporte de consumo de combustible',
     file: {
-      title: 'FLOTIX — Fleet Performance Report (simulated export)',
+      title: 'FLOTIX: Fleet Performance Report (simulated export)',
       generated: 'Generated: {date}', type: 'Type: {type}', period: 'Period: {period}',
       vehicles: 'Vehicles in fleet: {n}', fuelSpend: 'Total fuel spend: S/ {n}',
       maintenanceSpend: 'Total maintenance spend: S/ {n}', completedMaintenance: 'Completed maintenance: {n}',
-      totals: 'Records in period: {records} · Liters: {liters} · Cost: S/ {cost}',
-      line: '{plate}: {records} records · {liters} L · S/ {cost}',
+      totals: 'Records in period: {records} | Liters: {liters} | Cost: S/ {cost}',
+      line: '{plate}: {records} records | {liters} L | S/ {cost}',
       comparison: 'Per-vehicle comparison (min. 2 fuel records):',
-      comparisonLine: '{plate}: S/ {cost} · {eff} km/L',
+      comparisonLine: '{plate}: S/ {cost} | {eff} km/L',
       fileName: 'flotix-report-{id}.txt'
     }
   },
   settings: {
     title: 'Settings', subtitle: 'Manage your account, fleet and preferences',
     tabs: { account: 'My account', fleet: 'Fleet', notifications: 'Notifications', billing: 'Billing' },
-    saved: '✅ Changes saved', prefsSaved: '✅ Preferences saved', saveChanges: 'Save changes',
+    saved: 'Changes saved', prefsSaved: 'Preferences saved', saveChanges: 'Save changes',
     account: {
       personal: 'Personal information', name: 'Full name', email: 'Email',
       company: 'Company information', companyName: 'Company name', workshopName: 'Workshop name'
@@ -219,7 +219,7 @@ export const pagesEn = {
   },
   notifications: {
     title: 'Notifications', markAllRead: 'Mark all as read', empty: "You don't have notifications.",
-    viewAll: 'View all alerts →'
+    viewAll: 'View all alerts'
   }
 }
 
@@ -266,7 +266,7 @@ export const pagesEs = {
   fleet: {
     title: 'Flota de vehículos',
     subtitle: 'Registro, estado operativo y asignación de conductores del parque automotor.',
-    register: '+ Registrar vehículo',
+    register: 'Registrar vehículo',
     stats: { total: 'Vehículos en flota', available: 'Disponibles', inMaintenance: 'En mantenimiento' },
     empty: 'Aún no registras vehículos en tu flota.',
     cols: { plate: 'Placa', type: 'Tipo', driver: 'Conductor asignado', mileage: 'Kilometraje', status: 'Estado' },
@@ -276,7 +276,7 @@ export const pagesEs = {
     form: {
       titleNew: 'Registrar vehículo', titleEdit: 'Editar vehículo',
       subtitle: 'Datos operativos del vehículo y su conductor asignado.',
-      back: '← Volver a la flota', plate: 'Placa', type: 'Tipo de vehículo', mileage: 'Kilometraje actual',
+      back: 'Volver a la flota', plate: 'Placa', type: 'Tipo de vehículo', mileage: 'Kilometraje actual',
       driver: 'Conductor asignado', status: 'Estado',
       saveError: 'No se pudo guardar el vehículo', savedNew: 'Vehículo registrado', savedEdit: 'Vehículo actualizado'
     }
@@ -284,14 +284,14 @@ export const pagesEs = {
   drivers: {
     title: 'Conductores', subtitle: '{count} conductores registrados',
     stats: { total: 'Total', inRoute: 'En ruta', active: 'Activos' },
-    search: 'Buscar por nombre, email o licencia...', empty: 'No se encontraron conductores.',
+    search: 'Buscar por nombre, email o licencia', empty: 'No se encontraron conductores.',
     cols: { driver: 'Conductor', license: 'Licencia', vehicle: 'Vehículo', status: 'Estado' },
-    expires: 'Vence {date}', viewProfile: 'Ver perfil →'
+    expires: 'Vence {date}', viewProfile: 'Ver perfil'
   },
   fuel: {
     title: 'Control de combustible',
     subtitle: 'Registro de recargas, costo asociado y detección de consumo anómalo por unidad.',
-    register: '+ Registrar recarga',
+    register: 'Registrar recarga',
     stats: { liters: 'Litros cargados', cost: 'Gasto total (S/)', anomalies: 'Consumos anómalos' },
     empty: 'Aún no hay recargas de combustible registradas.',
     cols: { date: 'Fecha', vehicle: 'Vehículo', liters: 'Litros', cost: 'Costo (S/)', odometer: 'Odómetro', efficiency: 'Rendimiento' },
@@ -299,7 +299,7 @@ export const pagesEs = {
     confirmDelete: '¿Eliminar este registro de combustible?', deleteError: 'No se pudo eliminar el registro', deleted: 'Registro eliminado',
     form: {
       title: 'Registrar recarga de combustible', subtitle: 'Litros cargados, costo asociado y kilometraje al momento de la recarga.',
-      back: '← Volver a combustible', vehicle: 'Vehículo', liters: 'Litros', cost: 'Costo total (S/)',
+      back: 'Volver a combustible', vehicle: 'Vehículo', liters: 'Litros', cost: 'Costo total (S/)',
       odometer: 'Kilometraje actual (odómetro)', date: 'Fecha',
       saveError: 'No se pudo registrar la carga', saved: 'Carga de combustible registrada'
     }
@@ -307,7 +307,7 @@ export const pagesEs = {
   maintenance: {
     title: 'Mantenimiento preventivo y correctivo',
     subtitle: 'Ciclo de vida completo: solicitud, diagnóstico, presupuesto, reparación y cierre.',
-    new: '+ Nueva solicitud',
+    new: 'Nueva solicitud',
     stats: { open: 'Solicitudes abiertas', inRepair: 'En reparación', completed: 'Completadas' },
     empty: 'No hay solicitudes de mantenimiento registradas.',
     workshop: 'Taller', noWorkshop: 'Sin asignar', budget: 'Presupuesto',
@@ -319,7 +319,7 @@ export const pagesEs = {
     decisionError: 'No se pudo registrar la decisión', startError: 'No se pudo iniciar la reparación', completeError: 'No se pudo completar el mantenimiento',
     form: {
       title: 'Nueva solicitud de mantenimiento', subtitle: 'Describe la falla para que un taller pueda diagnosticarla y cotizarla.',
-      back: '← Volver a mantenimiento', vehicle: 'Vehículo', workshop: 'Taller / mecánico',
+      back: 'Volver a mantenimiento', vehicle: 'Vehículo', workshop: 'Taller / mecánico',
       fault: 'Descripción de la falla', submit: 'Enviar solicitud',
       saveError: 'No se pudo enviar la solicitud', saved: 'Solicitud enviada'
     },
@@ -330,12 +330,12 @@ export const pagesEs = {
   },
   workshops: {
     title: 'Talleres afiliados', subtitle: '{count} talleres disponibles en la red Flotix',
-    search: 'Buscar por nombre, ciudad o especialidad...', empty: 'No hay talleres afiliados todavía.',
+    search: 'Buscar por nombre, ciudad o especialidad', empty: 'No hay talleres afiliados todavía.',
     details: 'Ver detalle', requestService: 'Solicitar servicio',
     noAddress: 'Dirección no registrada', generalMaintenance: 'Mantenimiento general',
     tags: { brakes: 'Frenos', engine: 'Motor', transmission: 'Transmisión', electrical: 'Eléctrico' },
     request: {
-      title: 'Solicitar servicio', subtitle: 'Taller: {name}', back: '← Volver a talleres',
+      title: 'Solicitar servicio', subtitle: 'Taller: {name}', back: 'Volver a talleres',
       vehicle: 'Vehículo', problem: 'Descripción del problema', submit: 'Enviar solicitud',
       saveError: 'No se pudo enviar la solicitud', saved: 'Solicitud enviada al taller'
     }
@@ -343,7 +343,7 @@ export const pagesEs = {
   incidents: {
     title: 'Incidencias en ruta',
     subtitle: 'Reporte y seguimiento de fallas o anomalías imprevistas durante la operación.',
-    report: '+ Reportar incidencia',
+    report: 'Reportar incidencia',
     stats: { total: 'Incidencias totales', open: 'Abiertas', resolved: 'Resueltas' },
     empty: 'No hay incidencias reportadas.', reported: 'Reportado: {date}',
     actions: { inspect: 'Marcar en inspección', resolve: 'Marcar como resuelto' },
@@ -351,7 +351,7 @@ export const pagesEs = {
     updateError: 'No se pudo actualizar la incidencia',
     form: {
       title: 'Reportar incidencia', subtitle: 'Describe la falla o anomalía detectada durante la operación.',
-      back: '← Volver a incidencias', vehicle: 'Vehículo', description: 'Descripción del problema', submit: 'Reportar',
+      back: 'Volver a incidencias', vehicle: 'Vehículo', description: 'Descripción del problema', submit: 'Reportar',
       saveError: 'No se pudo reportar la incidencia', saved: 'Incidencia reportada'
     }
   },
@@ -360,7 +360,7 @@ export const pagesEs = {
     subtitle: 'Telemetría GPS simulada cada pocos segundos por cada dispositivo IoT conectado.',
     stats: { connected: 'Dispositivos conectados', avgSpeed: 'Velocidad promedio', packets: 'Paquetes recibidos' },
     empty: 'No hay dispositivos IoT conectados a la flota.',
-    radar: 'Radar de flota (simulado) · Lima, Perú',
+    radar: 'Radar de flota, Lima (simulado)',
     serial: 'S/N {serial}', speed: 'Velocidad', latLng: 'Lat/Lng'
   },
   alerts: {
@@ -380,18 +380,18 @@ export const pagesEs = {
   commerce: {
     title: 'Tienda de hardware telemático',
     subtitle: 'Adquisición de dispositivos GPS, odómetro y sensores de combustible para equipar tu flota.',
-    badgeNew: 'NUEVO', buyNow: 'Comprar ahora →',
+    badgeNew: 'Nuevo', buyNow: 'Comprar ahora',
     products: { gps: 'Rastreador GPS Flotix', odometer: 'Odómetro digital Flotix', 'fuel-sensor': 'Sensor de combustible Flotix' },
     orders: 'Historial de pedidos', emptyOrders: 'Aún no has realizado pedidos.',
     cols: { date: 'Fecha', product: 'Producto', quantity: 'Cantidad', total: 'Total', status: 'Estado' },
-    advance: 'Avanzar estado →',
+    advance: 'Avanzar estado',
     success: 'Compra de {qty} unidad(es) de "{name}" procesada correctamente.',
     purchaseError: 'No se pudo procesar la compra', updateError: 'No se pudo actualizar el pedido'
   },
   reports: {
     title: 'Reportes y analítica',
     subtitle: 'Consolidación de datos operativos e históricos para la toma de decisiones gerenciales.',
-    export: '⬇ Exportar reporte',
+    export: 'Exportar reporte',
     stats: { vehicles: 'Vehículos', fuel: 'Gasto combustible', maintenance: 'Gasto mantenimiento', completed: 'Mant. completados' },
     fuelByVehicle: 'Gasto de combustible por vehículo',
     needMore: 'Se necesitan al menos 2 registros de combustible por vehículo para generar el comparativo.',
@@ -399,21 +399,21 @@ export const pagesEs = {
     exportError: 'No se pudo generar el reporte', exported: 'Reporte generado',
     reportTypeFuel: 'Reporte de consumo de combustible',
     file: {
-      title: 'FLOTIX — Reporte de Rendimiento de Flota (exportación simulada)',
+      title: 'FLOTIX: Reporte de Rendimiento de Flota (exportación simulada)',
       generated: 'Generado: {date}', type: 'Tipo: {type}', period: 'Período: {period}',
       vehicles: 'Vehículos en flota: {n}', fuelSpend: 'Gasto total en combustible: S/ {n}',
       maintenanceSpend: 'Gasto total en mantenimiento: S/ {n}', completedMaintenance: 'Mantenimientos completados: {n}',
-      totals: 'Registros del período: {records} · Litros: {liters} · Costo: S/ {cost}',
-      line: '{plate}: {records} registros · {liters} L · S/ {cost}',
+      totals: 'Registros del período: {records} | Litros: {liters} | Costo: S/ {cost}',
+      line: '{plate}: {records} registros | {liters} L | S/ {cost}',
       comparison: 'Comparativo por vehículo (mín. 2 registros de combustible):',
-      comparisonLine: '{plate}: S/ {cost} · {eff} km/L',
+      comparisonLine: '{plate}: S/ {cost} | {eff} km/L',
       fileName: 'flotix-reporte-{id}.txt'
     }
   },
   settings: {
     title: 'Configuración', subtitle: 'Gestiona tu cuenta, flota y preferencias',
     tabs: { account: 'Mi cuenta', fleet: 'Flota', notifications: 'Notificaciones', billing: 'Facturación' },
-    saved: '✅ Cambios guardados', prefsSaved: '✅ Preferencias guardadas', saveChanges: 'Guardar cambios',
+    saved: 'Cambios guardados', prefsSaved: 'Preferencias guardadas', saveChanges: 'Guardar cambios',
     account: {
       personal: 'Información personal', name: 'Nombre completo', email: 'Correo electrónico',
       company: 'Información de empresa', companyName: 'Nombre de la empresa', workshopName: 'Nombre del taller'
@@ -443,6 +443,6 @@ export const pagesEs = {
   },
   notifications: {
     title: 'Notificaciones', markAllRead: 'Marcar todas como leídas', empty: 'No tienes notificaciones.',
-    viewAll: 'Ver todas las alertas →'
+    viewAll: 'Ver todas las alertas'
   }
 }

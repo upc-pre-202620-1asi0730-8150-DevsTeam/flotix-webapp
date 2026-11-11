@@ -65,7 +65,7 @@ function submit() {
           </li>
         </ul>
       </div>
-      <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix — UPC Developers Team</p>
+      <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix, UPC Developers Team</p>
     </div>
 
     <div class="col-12 lg:col-6 flex flex-column justify-content-center px-4 py-6 sm:px-7">
@@ -106,8 +106,8 @@ function submit() {
 
         <!-- Step 2: role-specific form -->
         <template v-else>
-          <button type="button" class="flotix-link text-xs mb-3" style="font-weight: 500; color: var(--p-surface-500)" @click="step = 1">
-            {{ t('auth.register.back') }}
+          <button type="button" class="flotix-link text-xs mb-3 inline-flex align-items-center gap-1" style="font-weight: 500; color: var(--p-surface-500)" @click="step = 1">
+            <i class="pi pi-arrow-left" style="font-size: .7rem" aria-hidden="true" />{{ t('auth.register.back') }}
           </button>
 
           <h2 class="text-2xl font-bold text-heading m-0" style="letter-spacing: -0.02em">{{ t('auth.register.title') }}</h2>

@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { formatLongDate, formatNumber } from '@/internationalization/i18n.js'
+import { formatLongDate, formatDateTime } from '@/internationalization/i18n.js'
 import { vehicleTypeLabel, notificationMessage } from '@/shared/infrastructure/domain-text.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useFuelStore } from '@/fuel-control/presentation/stores/fuel.store.js'
@@ -17,9 +16,7 @@ import PageHeader from '@/shared/presentation/components/page-header.component.v
 import StatCard from '@/shared/presentation/components/stat-card.component.vue'
 import StatusBadge from '@/shared/presentation/components/status-badge.component.vue'
 import AppIcon from '@/shared/presentation/components/app-icon.component.vue'
-import AppButton from '@/shared/presentation/components/app-button.component.vue'
 
-const router = useRouter()
 const { t } = useI18n()
 const fleet = useFleetStore()
 const fuel = useFuelStore()
@@ -48,44 +45,48 @@ const fuelTrend = computed(() => {
 })
 
 const today = computed(() => formatLongDate())
+
+const quickActions = [
+  { to: '/fleet-management/new', icon: 'plus', key: 'registerVehicle' },
+  { to: '/reports', icon: 'chart', key: 'viewReports' },
+  { to: '/commerce', icon: 'chip', key: 'buyIot' },
+  { to: '/workshops', icon: 'building', key: 'workshops' }
+]
 </script>
 
 <template>
   <PageHeader :title="t('dashboard.owner.title')" :subtitle="today" />
 
-  <div v-if="urgentIncident" class="flex align-items-center gap-3 border-round-xl px-3 py-3 mb-4" style="border: 1px solid #fecaca; background: #fef2f2">
-    <AppIcon name="alert" :size="18" style="color: #dc2626; flex-shrink: 0" />
-    <p class="text-sm m-0" style="color: #b91c1c">
-      <span class="font-semibold">{{ t('dashboard.owner.urgentPrefix') }}</span> {{ plate(urgentIncident.vehicleId) }} {{ t('dashboard.owner.urgentSuffix') }}
+  <div v-if="urgentIncident" role="alert" class="flex align-items-center gap-3 border-round-xl px-3 py-3 mb-3" style="background: #fde4e1; color: #a52a1c">
+    <AppIcon name="alert" :size="18" style="flex-shrink: 0" />
+    <p class="text-sm m-0">
+      <span class="font-semibold">{{ t('dashboard.owner.urgentPrefix') }}</span>
+      <span class="flotix-plate mx-2">{{ plate(urgentIncident.vehicleId) }}</span>{{ t('dashboard.owner.urgentSuffix') }}
     </p>
-    <router-link to="/incidents" class="ml-auto text-sm font-semibold flex-shrink-0" style="color: #b91c1c">{{ t('dashboard.owner.viewNow') }} →</router-link>
+    <router-link to="/incidents" class="ml-auto text-sm font-semibold flex-shrink-0" style="color: inherit">{{ t('dashboard.owner.viewNow') }}</router-link>
   </div>
 
-  <div class="grid mb-3">
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.owner.stats.activeFleet')" :value="`${available}/${fleet.vehicles.length}`" :hint="`${available} ${t('common.available')}`" icon="truck" tone="primary" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.owner.stats.inMaintenance')" :value="inMaintenance" icon="wrench" tone="amber" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.owner.stats.fuelMonth')" :value="`S/ ${monthFuelCost.toFixed(0)}`" icon="fuel" tone="green" /></div>
-    <div class="col-6 md:col-3"><StatCard :label="t('dashboard.owner.stats.openAlerts')" :value="alerts.alerts.length" icon="bell" tone="red" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('dashboard.owner.stats.activeFleet')" :value="`${available}/${fleet.vehicles.length}`" :hint="`${available} ${t('common.available')}`" icon="truck" tone="primary" />
+    <StatCard :label="t('dashboard.owner.stats.inMaintenance')" :value="inMaintenance" icon="wrench" tone="amber" />
+    <StatCard :label="t('dashboard.owner.stats.fuelMonth')" :value="`S/ ${monthFuelCost.toFixed(0)}`" icon="fuel" />
+    <StatCard :label="t('dashboard.owner.stats.openAlerts')" :value="alerts.alerts.length" icon="bell" :tone="alerts.alerts.length ? 'red' : 'ink'" />
   </div>
 
   <div class="grid">
     <div class="col-12 lg:col-8">
-      <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
-        <div class="flex align-items-center justify-content-between mb-3">
+      <div class="rounded-2xl border-subtle p-3 h-full" style="background: var(--p-surface-0)">
+        <div class="flex align-items-center justify-content-between mb-2">
           <h2 class="text-sm font-bold text-heading m-0">{{ t('dashboard.owner.fleetStatus') }}</h2>
-          <router-link to="/fleet-management" class="flotix-link text-xs">{{ t('common.viewAll') }} →</router-link>
+          <router-link to="/fleet-management" class="flotix-link text-sm">{{ t('common.viewAll') }}</router-link>
         </div>
-        <div class="flex flex-column gap-3">
-          <div v-for="v in fleet.vehicles.slice(0, 5)" :key="v.id" class="flex align-items-center justify-content-between pb-3 flotix-row-divider">
-            <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center justify-content-center border-round-lg" style="width: 2.25rem; height: 2.25rem; background: var(--p-surface-100); color: var(--p-surface-500)">
-                <AppIcon name="truck" :size="16" />
-              </span>
-              <div>
-                <p class="text-sm font-semibold text-heading m-0">{{ v.plate }}</p>
-                <p class="text-xs text-faint m-0">{{ vehicleTypeLabel(v.vehicleType) }} · {{ driverName(v.driverId) }}</p>
-              </div>
-            </div>
+        <div class="flex flex-column">
+          <div v-for="v in fleet.vehicles.slice(0, 5)" :key="v.id" class="flex align-items-center gap-3 py-2 flotix-row-divider">
+            <span class="flotix-plate flex-shrink-0">{{ v.plate }}</span>
+            <p class="text-sm m-0 flex-1 min-w-0 white-space-nowrap overflow-hidden text-overflow-ellipsis">
+              <span class="text-heading">{{ vehicleTypeLabel(v.vehicleType) }}</span>
+              <span class="text-muted ml-2">{{ driverName(v.driverId) }}</span>
+            </p>
             <StatusBadge :status="v.status" />
           </div>
         </div>
@@ -93,19 +94,19 @@ const today = computed(() => formatLongDate())
     </div>
 
     <div class="col-12 lg:col-4">
-      <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
-        <div class="flex align-items-center justify-content-between mb-3">
+      <div class="rounded-2xl border-subtle p-3 h-full" style="background: var(--p-surface-0)">
+        <div class="flex align-items-center justify-content-between mb-2">
           <h2 class="text-sm font-bold text-heading m-0">{{ t('dashboard.owner.pendingMaintenance') }}</h2>
-          <router-link to="/maintenance" class="flotix-link text-xs">{{ t('common.viewAll') }} →</router-link>
+          <router-link to="/maintenance" class="flotix-link text-sm">{{ t('common.viewAll') }}</router-link>
         </div>
-        <div v-if="!openMaintenance.length" class="text-center text-sm text-faint py-4">{{ t('dashboard.owner.noPending') }}</div>
-        <div v-else class="flex flex-column gap-3">
-          <div v-for="m in openMaintenance.slice(0, 5)" :key="m.id" class="pb-3 flotix-row-divider">
+        <p v-if="!openMaintenance.length" class="text-sm text-muted py-3 m-0">{{ t('dashboard.owner.noPending') }}</p>
+        <div v-else class="flex flex-column">
+          <div v-for="m in openMaintenance.slice(0, 5)" :key="m.id" class="py-2 flotix-row-divider">
             <div class="flex align-items-center justify-content-between">
-              <p class="text-sm font-semibold text-heading m-0">{{ plate(m.vehicleId) }}</p>
+              <span class="flotix-plate">{{ plate(m.vehicleId) }}</span>
               <StatusBadge :status="m.status" />
             </div>
-            <p class="text-xs text-faint mt-1 mb-0 white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ m.faultDescription }}</p>
+            <p class="text-sm text-muted mt-1 mb-0 white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ m.faultDescription }}</p>
           </div>
         </div>
       </div>
@@ -114,64 +115,44 @@ const today = computed(() => formatLongDate())
 
   <div class="grid mt-1">
     <div class="col-12 lg:col-4">
-      <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
+      <div class="rounded-2xl border-subtle p-3 h-full" style="background: var(--p-surface-0)">
         <h2 class="text-sm font-bold text-heading m-0 mb-3">{{ t('dashboard.owner.fuelTrend') }}</h2>
-        <div v-if="!fuelTrend.length" class="text-center text-sm text-faint py-5">{{ t('dashboard.owner.noActivity') }}</div>
-        <div v-else class="flex align-items-end gap-2" style="height: 8rem">
-          <div v-for="r in fuelTrend" :key="r.id" class="flex flex-column align-items-center gap-2 flex-1">
-            <div class="flex align-items-end justify-content-center w-full" style="height: 96px">
-              <div class="w-full border-round-top" :style="{ height: r.heightPct + '%', background: 'var(--p-primary-400)', maxWidth: '26px' }" :title="`S/ ${r.totalCost.toFixed(0)}`" />
+        <p v-if="!fuelTrend.length" class="text-sm text-muted py-3 m-0">{{ t('dashboard.owner.noActivity') }}</p>
+        <div v-else class="flex align-items-end gap-2" style="height: 9.5rem">
+          <div v-for="r in fuelTrend" :key="r.id" class="flex flex-column align-items-center gap-1 flex-1 h-full">
+            <div class="flex flex-column align-items-center justify-content-end w-full flex-1">
+              <span class="text-xs text-color-secondary mb-1" style="font-variant-numeric: tabular-nums">{{ r.totalCost.toFixed(0) }}</span>
+              <div class="w-full" :style="{ height: r.heightPct * 0.8 + '%', background: 'var(--p-primary-color)', maxWidth: '28px', borderRadius: '2px 2px 0 0' }" />
             </div>
-            <p class="text-xs font-medium text-faint m-0" style="font-size: 10px">{{ r.date.slice(5) }}</p>
+            <p class="text-xs text-muted m-0 pt-1 w-full text-center" style="border-top: 1px solid var(--p-surface-200)">{{ r.date.slice(8) }}/{{ r.date.slice(5, 7) }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-12 lg:col-4">
-      <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
-        <h2 class="text-sm font-bold text-heading m-0 mb-3">{{ t('dashboard.owner.recentActivity') }}</h2>
-        <div v-if="!notifications.length" class="text-center text-sm text-faint py-5">{{ t('dashboard.owner.noActivity') }}</div>
-        <ul v-else class="list-none p-0 m-0 flex flex-column gap-3">
-          <li v-for="n in notifications.slice(0, 4)" :key="n.id" class="flex align-items-start gap-2 pb-3 text-xs flotix-row-divider">
-            <span class="flex align-items-center justify-content-center border-round-full flex-shrink-0 mt-1" style="width: 1.5rem; height: 1.5rem; background: var(--p-surface-100); color: var(--p-surface-500)">
-              <AppIcon name="bell" :size="12" />
-            </span>
-            <p class="m-0 text-color-secondary">{{ notificationMessage(n.message) }}</p>
+      <div class="rounded-2xl border-subtle p-3 h-full" style="background: var(--p-surface-0)">
+        <h2 class="text-sm font-bold text-heading m-0 mb-2">{{ t('dashboard.owner.recentActivity') }}</h2>
+        <p v-if="!notifications.length" class="text-sm text-muted py-3 m-0">{{ t('dashboard.owner.noActivity') }}</p>
+        <ul v-else class="list-none p-0 m-0 flex flex-column">
+          <li v-for="n in notifications.slice(0, 4)" :key="n.id" class="py-2 flotix-row-divider">
+            <p class="text-sm m-0 text-color-secondary">{{ notificationMessage(n.message) }}</p>
+            <p class="text-xs text-muted mt-1 mb-0">{{ formatDateTime(n.sentAt) }}</p>
           </li>
         </ul>
       </div>
     </div>
 
     <div class="col-12 lg:col-4">
-      <div class="rounded-2xl border-subtle p-3 shadow-card h-full" style="background: var(--p-surface-0)">
-        <h2 class="text-sm font-bold text-heading m-0 mb-3">{{ t('dashboard.owner.quickActions') }}</h2>
-        <div class="grid">
-          <div class="col-6">
-            <AppButton variant="ghost" class="w-full flex-column align-items-start gap-2 py-3" @click="router.push('/fleet-management')">
-              <AppIcon name="plus" :size="15" />
-              <span class="text-xs font-semibold">{{ t('dashboard.owner.actions.registerVehicle') }}</span>
-            </AppButton>
-          </div>
-          <div class="col-6">
-            <AppButton variant="ghost" class="w-full flex-column align-items-start gap-2 py-3" @click="router.push('/reports')">
-              <AppIcon name="chart" :size="15" />
-              <span class="text-xs font-semibold">{{ t('dashboard.owner.actions.viewReports') }}</span>
-            </AppButton>
-          </div>
-          <div class="col-6">
-            <AppButton variant="ghost" class="w-full flex-column align-items-start gap-2 py-3" @click="router.push('/commerce')">
-              <AppIcon name="chip" :size="15" />
-              <span class="text-xs font-semibold">{{ t('dashboard.owner.actions.buyIot') }}</span>
-            </AppButton>
-          </div>
-          <div class="col-6">
-            <AppButton variant="ghost" class="w-full flex-column align-items-start gap-2 py-3" @click="router.push('/workshops')">
-              <AppIcon name="building" :size="15" />
-              <span class="text-xs font-semibold">{{ t('dashboard.owner.actions.workshops') }}</span>
-            </AppButton>
-          </div>
-        </div>
+      <div class="rounded-2xl border-subtle p-3 h-full" style="background: var(--p-surface-0)">
+        <h2 class="text-sm font-bold text-heading m-0 mb-2">{{ t('dashboard.owner.quickActions') }}</h2>
+        <nav class="flex flex-column">
+          <router-link v-for="a in quickActions" :key="a.to" :to="a.to" class="flotix-action flotix-row-divider">
+            <AppIcon :name="a.icon" :size="15" />
+            <span class="flex-1">{{ t(`dashboard.owner.actions.${a.key}`) }}</span>
+            <AppIcon name="chevronRight" :size="12" class="flotix-action-chevron" />
+          </router-link>
+        </nav>
       </div>
     </div>
   </div>
@@ -179,5 +160,25 @@ const today = computed(() => formatLongDate())
 
 <style scoped>
 .flotix-row-divider { border-bottom: 1px solid var(--p-surface-100); }
-.flotix-row-divider:last-child { border-bottom: 0; padding-bottom: 0; }
+.flotix-row-divider:last-child { border-bottom: 0; }
+
+.flotix-action {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .65rem 0;
+  font-size: .9375rem;
+  font-weight: 500;
+  color: var(--p-surface-800);
+  text-decoration: none;
+  transition: color .15s ease;
+}
+.flotix-action-chevron {
+  color: var(--p-surface-400);
+  transition: transform .15s var(--flotix-ease-out);
+}
+@media (hover: hover) {
+  .flotix-action:hover { color: var(--p-primary-color); }
+  .flotix-action:hover .flotix-action-chevron { transform: translateX(3px); color: var(--p-primary-color); }
+}
 </style>

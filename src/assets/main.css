@@ -1,11 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap');
 
 :root {
   --flotix-navy-700: #123258;
   --flotix-navy-800: #0e2c4e;
   --flotix-navy-900: #0a2a49;
   --flotix-navy-950: #0b1f33;
-  --flotix-shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+
+  /* Type: Barlow is drawn from road signage and licence plates, which is
+     the world this product lives in. The semi-condensed cut carries
+     headings, figures and plates; the regular cut carries everything else. */
+  --flotix-font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --flotix-font-display: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif;
+
+  /* Radius follows hierarchy: panels > controls > chips. */
+  --flotix-radius-panel: 10px;
+  --flotix-radius-control: 6px;
+  --flotix-radius-chip: 4px;
+
+  /* Panels are separated by a border, not by a shadow. */
+  --flotix-shadow-card: none;
+
+  /* Motion: short, ease-out, and only on the properties that change. */
+  --flotix-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --flotix-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 html, body, #app {
@@ -14,10 +31,31 @@ html, body, #app {
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  font-feature-settings: 'cv11', 'ss01';
+  font-family: var(--flotix-font-body);
+  font-size: 15px;
   background: var(--p-surface-50, #f8fafc);
   color: var(--p-surface-900, #0f172a);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* PrimeVue components inherit the body face instead of the preset default. */
+.p-component, .p-inputtext, .p-button, .p-select, .p-datatable {
+  font-family: var(--flotix-font-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--flotix-font-display);
+}
+h2.text-sm {
+  margin-top: 0;
+  font-size: 1.0625rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.005em;
+}
+
+/* Figures line up in columns. */
+.p-datatable, .flotix-stat-value, .flotix-plate {
+  font-variant-numeric: tabular-nums;
 }
 
 /* thin, unobtrusive scrollbar to match a dense dashboard UI */
@@ -28,22 +66,24 @@ body {
 .flotix-card {
   background: var(--p-surface-0, #fff);
   border: 1px solid var(--p-surface-200, #e2e8f0);
-  border-radius: 16px;
-  box-shadow: var(--flotix-shadow-card);
+  border-radius: var(--flotix-radius-panel);
 }
 
 /* Small hand-authored token layer for the handful of things PrimeFlex
-   doesn't cover (brand radius/shadow/gradient) — everything else in the
+   doesn't cover (brand radius, navy shell). Everything else in the
    app uses PrimeFlex utilities + PrimeVue component styling directly. */
-.rounded-lg { border-radius: 10px; }
-.rounded-xl { border-radius: 12px; }
-.rounded-2xl { border-radius: 16px; }
-.rounded-3xl { border-radius: 22px; }
+.rounded-lg { border-radius: var(--flotix-radius-control); }
+.rounded-xl { border-radius: 8px; }
+.rounded-2xl { border-radius: var(--flotix-radius-panel); }
+.rounded-3xl { border-radius: 14px; }
 .rounded-full { border-radius: 9999px; }
+.border-round-lg { border-radius: var(--flotix-radius-control) !important; }
+.border-round-xl { border-radius: 8px !important; }
+.border-round-2xl { border-radius: var(--flotix-radius-panel) !important; }
 .shadow-card { box-shadow: var(--flotix-shadow-card); }
-.bg-navy-gradient { background: linear-gradient(180deg, var(--flotix-navy-900), var(--flotix-navy-950)); }
+.bg-navy-gradient { background: var(--flotix-navy-900); }
 .text-muted { color: var(--p-surface-500, #64748b); }
-.text-faint { color: var(--p-surface-400, #94a3b8); }
+.text-faint { color: var(--p-surface-500, #64748b); }
 .text-heading { color: var(--p-surface-900, #0f172a); }
 .surface-subtle { background: var(--p-surface-50, #f8fafc); }
 .border-subtle { border: 1px solid var(--p-surface-200, #e2e8f0); }
@@ -54,15 +94,112 @@ body {
   color: var(--p-primary-color, #0879e8);
   font-weight: 600;
   text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 .flotix-link:hover { text-decoration: underline; }
 
-.flotix-stat-icon {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Licence plate: the one recurring object in every screen, so it gets
+   its own treatment instead of being plain bold text. */
+.flotix-plate {
+  display: inline-block;
+  font-family: var(--flotix-font-display);
+  font-weight: 600;
+  font-size: .9375rem;
+  line-height: 1.35;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  color: var(--p-surface-900, #0f172a);
+  background: var(--p-surface-0, #fff);
+  border: 1px solid var(--p-surface-300, #cbd5e1);
+  border-radius: var(--flotix-radius-chip);
+  padding: 0 .4rem;
+}
+p.flotix-plate { width: fit-content; }
+.flotix-plate-lg { font-size: 1.25rem; padding: .05rem .55rem; }
+
+/* Stat strip: figures sit in one ruled band instead of floating cards. */
+.flotix-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  background: var(--p-surface-0, #fff);
+  border: 1px solid var(--p-surface-200, #e2e8f0);
+  border-radius: var(--flotix-radius-panel);
+  overflow: hidden;
+}
+.flotix-stat {
+  background: var(--p-surface-0, #fff);
+  border: 1px solid var(--p-surface-200, #e2e8f0);
+  border-radius: var(--flotix-radius-panel);
+  padding: .9rem 1rem;
+}
+.flotix-stats > .flotix-stat {
+  border: 0;
+  border-radius: 0;
+  border-left: 1px solid var(--p-surface-200, #e2e8f0);
+  border-top: 1px solid var(--p-surface-200, #e2e8f0);
+  margin: -1px 0 0 -1px;
+}
+.flotix-stat-value {
+  font-family: var(--flotix-font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--p-surface-900, #0f172a);
+}
+
+/* Status tags: tinted, not saturated, so a table full of them stays calm. */
+.p-tag {
+  font-family: var(--flotix-font-body);
+  font-size: .8125rem;
+  font-weight: 600;
+  border-radius: var(--flotix-radius-chip);
+  padding: .15rem .5rem;
+  gap: .4rem;
+}
+.p-tag::before {
+  content: '';
+  width: .4rem;
+  height: .4rem;
+  border-radius: 9999px;
+  background: currentColor;
   flex-shrink: 0;
+}
+.p-tag.p-tag-info { background: #e0efff; color: #0a56a3; }
+.p-tag.p-tag-success { background: #dcf5e7; color: #17663a; }
+.p-tag.p-tag-warn { background: #fdf0d0; color: #8a5300; }
+.p-tag.p-tag-danger { background: #fde4e1; color: #a52a1c; }
+.p-tag.p-tag-secondary { background: var(--p-surface-100, #f1f5f9); color: var(--p-surface-600, #475569); }
+
+/* Inline confirmation ("Changes saved") shown next to a save button. */
+.flotix-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: #17663a;
+}
+
+/* Buttons answer the press. */
+.p-button {
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s var(--flotix-ease-out);
+}
+.p-button:not(:disabled):active { transform: scale(0.97); }
+
+/* Keyboard focus is always visible on hand-built controls. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--p-primary-color, #0879e8);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .p-button:not(:disabled):active { transform: none; }
 }

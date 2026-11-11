@@ -1,4 +1,6 @@
 <script setup>
+// `contextLabel` is still accepted so existing call sites keep working, but it
+// is no longer rendered here: the top bar already names the current area.
 defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },
@@ -7,16 +9,21 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex flex-column sm:flex-row sm:align-items-end sm:justify-content-between mb-4 gap-2">
+  <div class="flex flex-column sm:flex-row sm:align-items-end sm:justify-content-between mb-4 gap-3">
     <div>
-      <p v-if="contextLabel" class="text-xs font-semibold uppercase m-0 mb-1" style="color: var(--p-primary-color); letter-spacing: .06em">
-        {{ contextLabel }}
-      </p>
-      <h1 class="text-2xl font-bold text-heading m-0" style="letter-spacing: -0.02em">{{ title }}</h1>
-      <p v-if="subtitle" class="text-sm text-muted mt-1 mb-0">{{ subtitle }}</p>
+      <h1 class="flotix-page-title text-heading m-0">{{ title }}</h1>
+      <p v-if="subtitle" class="text-sm text-muted mt-1 mb-0" style="max-width: 42rem">{{ subtitle }}</p>
     </div>
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-shrink-0">
       <slot name="actions" />
     </div>
   </div>
 </template>
+
+<style scoped>
+.flotix-page-title {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+</style>
