@@ -57,22 +57,20 @@ function advance(order) {
     :subtitle="t('commerce.subtitle')"
   />
 
-  <p v-if="successMsg" class="text-sm px-3 py-2 border-round-lg mb-3" style="background: var(--p-primary-50); color: var(--p-primary-700); border: 1px solid var(--p-primary-200)">
-    ✅ {{ successMsg }}
+  <p v-if="successMsg" role="status" class="flex align-items-center gap-2 text-sm px-3 py-2 border-round-lg mb-3" style="background: #dcf5e7; color: #17663a">
+    <i class="pi pi-check" aria-hidden="true" />{{ successMsg }}
   </p>
 
   <div class="grid mb-5">
     <div v-for="(p, idx) in catalog" :key="p.sku" class="col-12 sm:col-4">
       <div class="flex flex-column overflow-hidden rounded-2xl border-subtle shadow-card h-full" style="background: var(--p-surface-0)">
         <div class="relative flex align-items-center justify-content-center bg-navy-gradient" style="height: 7rem">
-          <span v-if="idx === 0" class="absolute border-round-full px-2 py-1 text-xs font-bold" style="top: .75rem; left: .75rem; background: #10b981; color: #fff">{{ t('commerce.badgeNew') }}</span>
-          <div class="flex align-items-center justify-content-center border-round-xl" style="width: 3.5rem; height: 3.5rem; background: rgba(255,255,255,.1); color: #fff">
-            <AppIcon :name="p.iconName" :size="26" />
-          </div>
+          <span v-if="idx === 0" class="absolute text-xs font-semibold" style="top: .75rem; left: .75rem; padding: .1rem .45rem; border-radius: var(--flotix-radius-chip); background: #fff; color: var(--flotix-navy-900)">{{ t('commerce.badgeNew') }}</span>
+          <AppIcon :name="p.iconName" :size="34" style="color: rgba(255,255,255,.85)" />
         </div>
         <div class="flex flex-column flex-1 p-3">
-          <p class="font-bold text-heading m-0">{{ productName(p.sku) }}</p>
-          <p class="text-lg font-bold mt-1 mb-0" style="color: var(--p-primary-color)">S/ {{ p.unitPrice.toFixed(2) }}</p>
+          <p class="font-semibold text-heading m-0">{{ productName(p.sku) }}</p>
+          <p class="flotix-stat-value mt-1 mb-0" style="font-size: 1.375rem">S/ {{ p.unitPrice.toFixed(2) }}</p>
           <div class="flex align-items-center gap-2 pt-3 mt-auto">
             <InputNumber v-model="quantities[p.sku]" :min="1" :input-style="{ width: '3.5rem' }" />
             <Button :label="t('commerce.buyNow')" class="flex-1 justify-content-center" @click="buy(p)" />
@@ -82,7 +80,7 @@ function advance(order) {
     </div>
   </div>
 
-  <h2 class="text-sm font-semibold text-heading mb-2">{{ t('commerce.orders') }}</h2>
+  <h2 class="text-sm font-semibold text-heading mt-0 mb-2">{{ t('commerce.orders') }}</h2>
   <EmptyState v-if="!commerce.orders.length" icon="cart" :message="t('commerce.emptyOrders')" />
   <div v-else class="rounded-2xl border-subtle shadow-card overflow-hidden" style="background: var(--p-surface-0)">
     <DataTable :value="commerce.orders" data-key="id" striped-rows responsive-layout="scroll">

@@ -50,7 +50,7 @@ function submit() {
         </ul>
       </div>
 
-      <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix — UPC Developers Team</p>
+      <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix, UPC Developers Team</p>
     </div>
 
     <!-- Form panel -->

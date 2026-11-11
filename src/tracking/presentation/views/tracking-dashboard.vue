@@ -65,28 +65,28 @@ const avgSpeed = computed(() => {
     :subtitle="t('tracking.subtitle')"
   />
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.connected')" :value="connected" icon="signal" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.avgSpeed')" :value="`${avgSpeed} km/h`" icon="truck" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('tracking.stats.packets')" :value="Object.keys(tracking.latestByDevice).length" icon="signal" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('tracking.stats.connected')" :value="connected" icon="signal" />
+    <StatCard :label="t('tracking.stats.avgSpeed')" :value="`${avgSpeed} km/h`" icon="truck" />
+    <StatCard :label="t('tracking.stats.packets')" :value="Object.keys(tracking.latestByDevice).length" icon="signal" />
   </div>
 
   <EmptyState v-if="!tracking.devices.length" icon="signal" :message="t('tracking.empty')" />
 
   <div v-else class="grid">
     <div class="col-12 lg:col-8">
-      <div class="relative border-round-2xl overflow-hidden bg-navy-gradient" style="aspect-ratio: 1 / 1">
+      <div class="relative border-round-2xl overflow-hidden bg-navy-gradient" style="aspect-ratio: 4 / 3">
         <div class="absolute" style="inset: 0; opacity: .2; background-image: radial-gradient(circle, #0879e8 1px, transparent 1px); background-size: 24px 24px" />
-        <p class="absolute text-xs font-medium m-0" style="top: .75rem; left: .75rem; color: rgba(255,255,255,.5)">{{ t('tracking.radar') }}</p>
+        <p class="absolute text-xs font-medium m-0" style="top: .75rem; left: .75rem; color: rgba(255,255,255,.65)">{{ t('tracking.radar') }}</p>
         <div
           v-for="d in tracking.devices"
           :key="d.id"
           class="absolute"
-          :style="{ ...positionFor(tracking.latestByDevice[d.id]), transform: 'translate(-50%, -50%)', transition: 'all 1s linear' }"
+          :style="{ ...positionFor(tracking.latestByDevice[d.id]), transform: 'translate(-50%, -50%)', transition: 'top 1s linear, left 1s linear' }"
         >
           <div class="flex flex-column align-items-center">
             <span class="border-round-full" style="width: .75rem; height: .75rem; background: var(--p-primary-400); box-shadow: 0 0 0 6px rgba(8,121,232,.25)" />
-            <span class="border-round mt-1 px-2 py-1 text-xs font-medium" style="background: rgba(0,0,0,.5); color: #fff; font-size: 10px">{{ plate(d.vehicleId) }}</span>
+            <span class="flotix-plate mt-2" style="font-size: .75rem">{{ plate(d.vehicleId) }}</span>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ const avgSpeed = computed(() => {
       <div class="flex flex-column gap-3">
         <div v-for="d in tracking.devices" :key="d.id" class="rounded-2xl border-subtle shadow-card p-3" style="background: var(--p-surface-0)">
           <div class="flex align-items-center justify-content-between">
-            <p class="text-sm font-semibold text-heading m-0">{{ plate(d.vehicleId) }}</p>
+            <p class="flotix-plate m-0">{{ plate(d.vehicleId) }}</p>
             <span class="inline-flex align-items-center gap-2 text-xs font-medium" style="color: var(--p-primary-color)">
               <span class="border-round-full" style="width: .4rem; height: .4rem; background: var(--p-primary-color)" /> {{ statusLabel(d.connectionStatus) }}
             </span>

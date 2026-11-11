@@ -53,7 +53,7 @@ async function save() {
 <template>
   <PageHeader context-label="Vehicle & Fleet Management" :title="title" :subtitle="t('fleet.form.subtitle')">
     <template #actions>
-      <AppButton variant="ghost" @click="router.push('/fleet-management')">{{ t('fleet.form.back') }}</AppButton>
+      <AppButton variant="ghost" icon="pi pi-arrow-left" @click="router.push('/fleet-management')">{{ t('fleet.form.back') }}</AppButton>
     </template>
   </PageHeader>
 

@@ -47,7 +47,7 @@ async function save() {
 <template>
   <PageHeader context-label="Fuel Control" :title="t('fuel.form.title')" :subtitle="t('fuel.form.subtitle')">
     <template #actions>
-      <AppButton variant="ghost" @click="router.push('/fuel')">{{ t('fuel.form.back') }}</AppButton>
+      <AppButton variant="ghost" icon="pi pi-arrow-left" @click="router.push('/fuel')">{{ t('fuel.form.back') }}</AppButton>
     </template>
   </PageHeader>
 
@@ -56,7 +56,7 @@ async function save() {
       <div class="flex flex-column gap-1">
         <label class="text-sm font-medium text-heading">{{ t('fuel.form.vehicle') }}</label>
         <Select v-model="form.vehicleId" :options="fleet.vehicles" option-label="plate" option-value="id" fluid>
-          <template #option="{ option }">{{ option.plate }} — {{ vehicleTypeLabel(option.vehicleType) }}</template>
+          <template #option="{ option }"><span class="flotix-plate mr-2">{{ option.plate }}</span>{{ vehicleTypeLabel(option.vehicleType) }}</template>
         </Select>
       </div>
       <div class="grid">

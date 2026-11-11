@@ -48,9 +48,9 @@ async function save() {
 
 <template>
   <template v-if="request">
-    <PageHeader context-label="Maintenance Management"   :title="t('maintenance.quote.title')" :subtitle="`${plate(request.vehicleId)} — ${request.faultDescription}`">
+    <PageHeader context-label="Maintenance Management"   :title="t('maintenance.quote.title')" :subtitle="`${plate(request.vehicleId)}: ${request.faultDescription}`">
       <template #actions>
-        <AppButton variant="ghost" @click="router.push('/maintenance')">{{ t('maintenance.form.back') }}</AppButton>
+        <AppButton variant="ghost" icon="pi pi-arrow-left" @click="router.push('/maintenance')">{{ t('maintenance.form.back') }}</AppButton>
       </template>
     </PageHeader>
 

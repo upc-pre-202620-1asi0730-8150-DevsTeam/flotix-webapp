@@ -55,14 +55,14 @@ const resolved = computed(() => incidents.incidents.filter((i) => i.status === I
     :subtitle="t('incidents.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/incidents/new')">{{ t('incidents.report') }}</AppButton>
+      <AppButton icon="pi pi-plus" @click="router.push('/incidents/new')">{{ t('incidents.report') }}</AppButton>
     </template>
   </PageHeader>
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.total')" :value="incidents.incidents.length" icon="alert" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.open')" :value="open" icon="alert" tone="amber" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('incidents.stats.resolved')" :value="resolved" icon="check" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('incidents.stats.total')" :value="incidents.incidents.length" icon="alert" />
+    <StatCard :label="t('incidents.stats.open')" :value="open" icon="alert" tone="amber" />
+    <StatCard :label="t('incidents.stats.resolved')" :value="resolved" icon="check" />
   </div>
 
   <EmptyState v-if="!incidents.incidents.length" icon="alert" :message="t('incidents.empty')" />
@@ -71,8 +71,8 @@ const resolved = computed(() => incidents.incidents.filter((i) => i.status === I
     <div v-for="i in incidents.incidents" :key="i.id" class="rounded-2xl border-subtle shadow-card p-3" style="background: var(--p-surface-0)">
       <div class="flex flex-wrap align-items-start justify-content-between gap-2">
         <div>
-          <p class="text-sm font-semibold text-heading m-0">{{ plate(i.vehicleId) }}</p>
-          <p class="text-sm text-color-secondary m-0">{{ i.description }}</p>
+          <p class="flotix-plate m-0">{{ plate(i.vehicleId) }}</p>
+          <p class="text-sm text-color-secondary mt-2 mb-0">{{ i.description }}</p>
           <p class="text-xs text-faint mt-1 mb-0">{{ t('incidents.reported', { date: formatDateTime(i.reportedAt) }) }}</p>
         </div>
         <StatusBadge :status="i.status" />

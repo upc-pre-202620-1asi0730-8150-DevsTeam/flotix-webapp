@@ -53,14 +53,14 @@ const anomalies = computed(() => fuel.records.filter((r) => r.anomalous).length)
     :subtitle="t('fuel.subtitle')"
   >
     <template #actions>
-      <AppButton @click="router.push('/fuel/new')">{{ t('fuel.register') }}</AppButton>
+      <AppButton icon="pi pi-plus" @click="router.push('/fuel/new')">{{ t('fuel.register') }}</AppButton>
     </template>
   </PageHeader>
 
-  <div class="grid mb-3">
-    <div class="col-6 sm:col-4"><StatCard :label="t('fuel.stats.liters')" :value="totalLiters" icon="fuel" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('fuel.stats.cost')" :value="totalCost" icon="cash" /></div>
-    <div class="col-6 sm:col-4"><StatCard :label="t('fuel.stats.anomalies')" :value="anomalies" icon="alert" tone="red" /></div>
+  <div class="flotix-stats mb-3">
+    <StatCard :label="t('fuel.stats.liters')" :value="totalLiters" icon="fuel" />
+    <StatCard :label="t('fuel.stats.cost')" :value="totalCost" icon="cash" />
+    <StatCard :label="t('fuel.stats.anomalies')" :value="anomalies" icon="alert" tone="red" />
   </div>
 
   <EmptyState v-if="!fuel.records.length" icon="fuel" :message="t('fuel.empty')" />
@@ -69,7 +69,7 @@ const anomalies = computed(() => fuel.records.filter((r) => r.anomalous).length)
     <DataTable :value="fuel.records" data-key="id" striped-rows paginator :rows="10" responsive-layout="scroll" :row-class="(r) => r.anomalous ? 'flotix-row-anomaly' : ''">
       <Column field="date" :header="t('fuel.cols.date')" />
       <Column :header="t('fuel.cols.vehicle')">
-        <template #body="{ data }"><span class="font-semibold text-heading">{{ plate(data.vehicleId) }}</span></template>
+        <template #body="{ data }"><span class="flotix-plate">{{ plate(data.vehicleId) }}</span></template>
       </Column>
       <Column :header="t('fuel.cols.liters')">
         <template #body="{ data }">{{ data.liters }} L</template>
@@ -83,8 +83,8 @@ const anomalies = computed(() => fuel.records.filter((r) => r.anomalous).length)
       <Column :header="t('fuel.cols.efficiency')">
         <template #body="{ data }">
           <span v-if="data.kmPerLiter === null" class="text-faint">—</span>
-          <span v-else :style="{ color: data.anomalous ? '#dc2626' : undefined, fontWeight: data.anomalous ? 600 : 400 }">
-            {{ data.kmPerLiter }} km/L <span v-if="data.anomalous">⚠️ {{ t('fuel.anomalous') }}</span>
+          <span v-else :style="{ color: data.anomalous ? '#b91c1c' : undefined, fontWeight: data.anomalous ? 600 : 400 }">
+            {{ data.kmPerLiter }} km/L <span v-if="data.anomalous" class="inline-flex align-items-center gap-1 ml-2"><i class="pi pi-exclamation-triangle" style="font-size: .8rem" aria-hidden="true" />{{ t('fuel.anomalous') }}</span>
           </span>
         </template>
       </Column>

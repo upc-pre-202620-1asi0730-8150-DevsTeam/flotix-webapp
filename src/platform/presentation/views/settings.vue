@@ -72,7 +72,7 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
 <template>
   <PageHeader context-label="Platform" :title="t('settings.title')" :subtitle="t('settings.subtitle')" />
 
-  <div class="flex gap-5 mb-4" style="border-bottom: 1px solid var(--p-surface-100)">
+  <div class="flex gap-5 mb-4" style="border-bottom: 1px solid var(--p-surface-200)">
     <button
       v-for="tab in tabs"
       :key="tab.id"
@@ -118,7 +118,7 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
         </div>
 
         <div class="flex align-items-center justify-content-end gap-3">
-          <p v-if="accountSaved" class="text-sm font-medium m-0" style="color: #059669">{{ t('settings.saved') }}</p>
+          <p v-if="accountSaved" class="flotix-saved text-sm font-medium m-0" role="status"><i class="pi pi-check" aria-hidden="true" />{{ t('settings.saved') }}</p>
           <AppButton @click="saveAccount">{{ t('settings.saveChanges') }}</AppButton>
         </div>
       </div>
@@ -158,7 +158,7 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
         </div>
         <p class="text-xs text-faint mt-3 mb-0" v-html="t('settings.fleet.explanation', { pct: fleetForm.fuelAnomalyDropPct })"></p>
         <div class="flex align-items-center justify-content-end gap-3 pt-3 mt-3" style="border-top: 1px solid var(--p-surface-100)">
-          <p v-if="fleetSaved" class="text-sm font-medium m-0" style="color: #059669">{{ t('settings.prefsSaved') }}</p>
+          <p v-if="fleetSaved" class="flotix-saved text-sm font-medium m-0" role="status"><i class="pi pi-check" aria-hidden="true" />{{ t('settings.prefsSaved') }}</p>
           <AppButton @click="saveFleetPrefs">{{ t('settings.saveChanges') }}</AppButton>
         </div>
       </div>
@@ -207,7 +207,7 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
       </div>
 
       <div class="flex align-items-center justify-content-end gap-3 pt-3 mt-3" style="border-top: 1px solid var(--p-surface-100)">
-        <p v-if="notifSaved" class="text-sm font-medium m-0" style="color: #059669">{{ t('settings.prefsSaved') }}</p>
+        <p v-if="notifSaved" class="flotix-saved text-sm font-medium m-0" role="status"><i class="pi pi-check" aria-hidden="true" />{{ t('settings.prefsSaved') }}</p>
         <AppButton @click="saveNotifPrefs">{{ t('settings.saveChanges') }}</AppButton>
       </div>
     </div>
@@ -215,10 +215,10 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
 
   <!-- Billing -->
   <div v-else-if="activeTab === 'billing'">
-    <div class="grid mb-3">
-      <div class="col-6 sm:col-4"><StatCard :label="t('settings.billing.spent')" :value="`S/ ${totalSpent.toFixed(2)}`" icon="cash" /></div>
-      <div class="col-6 sm:col-4"><StatCard :label="t('settings.billing.orders')" :value="commerce.orders.length" icon="cart" /></div>
-      <div class="col-6 sm:col-4"><StatCard :label="t('settings.billing.plan')" value="Growth" icon="shield" tone="primary" /></div>
+    <div class="flotix-stats mb-3">
+      <StatCard :label="t('settings.billing.spent')" :value="`S/ ${totalSpent.toFixed(2)}`" icon="cash" />
+      <StatCard :label="t('settings.billing.orders')" :value="commerce.orders.length" icon="cart" />
+      <StatCard :label="t('settings.billing.plan')" value="Growth" icon="shield" tone="primary" />
     </div>
 
     <div class="grid">
@@ -262,7 +262,9 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
 .flotix-tab-btn {
   background: none; border: none; border-bottom: 2px solid transparent;
   padding: 0 0 .75rem 0; margin-bottom: -1px; font-size: .875rem; font-weight: 500;
-  color: var(--p-surface-400); cursor: pointer;
+  color: var(--p-surface-500); cursor: pointer;
+  font-family: inherit; transition: color .15s ease, border-color .15s ease;
 }
+@media (hover: hover) { .flotix-tab-btn:hover { color: var(--p-surface-900); } }
 .flotix-tab-btn-active { border-bottom-color: var(--p-primary-color); color: var(--p-primary-color); }
 </style>
