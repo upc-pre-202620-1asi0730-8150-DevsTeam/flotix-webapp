@@ -12,7 +12,6 @@ export const pagesEn = {
     prototype: 'Frontend preview · Authentication is not connected to the backend yet.',
     tabsLabel: 'Authentication',
     showPassword: 'Show password', hidePassword: 'Hide password',
-    demo: { title: 'Demo accounts', description: 'These accounts are for the local preview. Choose Use to fill in the form.', use: 'Use' },
     legal: {
       close: 'Close',
       terms: {
@@ -44,7 +43,6 @@ export const pagesEn = {
       emailPlaceholder: 'name{\'@\'}company.com', passwordPlaceholder: 'Your password', forgot: 'Forgot your password?',
       submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
       google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in',
-      demoHint: 'Demo accounts for this local preview:'
     },
     register: {
       tab: 'Sign up',
@@ -66,7 +64,9 @@ export const pagesEn = {
       existing: 'Continue with demo profile', new: 'Continue as a new profile', close: 'Close'
     },
     errors: {
-      invalidCredentials: 'Email or password is incorrect. Try one of the demo accounts below.',
+      invalidCredentials: 'Email or password is incorrect.',
+      notConfigured: 'Sign-in is unavailable because the authentication service is not connected yet.',
+      googleNotConfigured: 'Google sign-in is not configured yet.',
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.'
     }
@@ -338,7 +338,6 @@ export const pagesEs = {
       emailPlaceholder: 'nombre{\'@\'}empresa.com', passwordPlaceholder: 'Tu contraseña', forgot: '¿Olvidaste tu contraseña?',
       submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
       google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada',
-      demoHint: 'Cuentas demo para esta vista previa local:'
     },
     register: {
       tab: 'Registrarse',
@@ -360,7 +359,9 @@ export const pagesEs = {
       existing: 'Continuar con perfil demo', new: 'Continuar como perfil nuevo', close: 'Cerrar'
     },
     errors: {
-      invalidCredentials: 'El correo o la contraseña no son correctos. Prueba una de las cuentas demo.',
+      invalidCredentials: 'El correo o la contraseña no son correctos.',
+      notConfigured: 'No es posible iniciar sesión porque el servicio de autenticación aún no está conectado.',
+      googleNotConfigured: 'El inicio de sesión con Google aún no está configurado.',
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.'
     }
