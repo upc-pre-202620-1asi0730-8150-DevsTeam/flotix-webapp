@@ -19,7 +19,7 @@ export class UserAuthentication {
   }
 
   currentUser() {
-    return null
+    return Session.get()
   }
 
   signOut() {
@@ -28,6 +28,14 @@ export class UserAuthentication {
 
   async signInWithGoogle() {
     return this.provider.signInWithGoogle()
+  }
+
+  switchRole() {
+    throw new Error('auth.errors.notConfigured')
+  }
+
+  updateProfile() {
+    throw new Error('auth.errors.notConfigured')
   }
 }
 
