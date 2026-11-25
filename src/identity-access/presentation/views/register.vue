@@ -1,21 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '../stores/session.store.js'
 import { UserRole } from '../../domain/model/value-objects/user-role.js'
 import AuthShell from '../components/auth-shell.component.vue'
-import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 import LegalDocumentModal from '../components/legal-document-modal.component.vue'
 
 const router = useRouter()
-const route = useRoute()
 const { t } = useI18n()
 const session = useSessionStore()
-const googlePickerOpen = ref(false)
 const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
-const googleSignup = ref(false)
 const error = ref('')
 const form = ref({
   role: UserRole.OWNER,
@@ -32,9 +28,9 @@ function showLegalDocument(kind) {
   legalModalOpen.value = true
 }
 
-function submit() {
+async function submit() {
   error.value = ''
-  if (!googleSignup.value && form.value.password !== form.value.confirmPassword) {
+  if (form.value.password !== form.value.confirmPassword) {
     error.value = 'auth.errors.passwordMismatch'
     return
   }
@@ -43,9 +39,11 @@ function submit() {
     return
   }
   try {
-    session.register({
-      name: `${form.value.firstName.trim()} ${form.value.lastName.trim()}`.trim(),
-      email: form.value.email,
+    await session.register({
+      firstName: form.value.firstName.trim(),
+      lastName: form.value.lastName.trim(),
+      email: form.value.email.trim(),
+      password: form.value.password,
       role: form.value.role
     })
     router.push('/dashboard')
@@ -54,47 +52,26 @@ function submit() {
   }
 }
 
-function selectGoogleAccount(account) {
-  googlePickerOpen.value = false
-  if (account.existing) {
-    router.push({ path: '/login', query: { email: account.email } })
-    return
+async function signUpWithGoogle() {
+  error.value = ''
+  try {
+    await session.loginWithGoogle()
+  } catch (exception) {
+    error.value = exception.message
   }
-  const [firstName = '', ...lastName] = account.name.split(' ')
-  form.value.email = account.email
-  form.value.firstName = firstName
-  form.value.lastName = lastName.join(' ')
-  googleSignup.value = true
 }
-
-onMounted(() => {
-  if (typeof route.query.email === 'string') {
-    form.value.email = route.query.email
-    const [firstName = '', ...lastName] = (typeof route.query.name === 'string' ? route.query.name : '').split(' ')
-    form.value.firstName = firstName
-    form.value.lastName = lastName.join(' ')
-    googleSignup.value = route.query.mode === 'google'
-  }
-})
 </script>
 
 <template>
   <AuthShell active-tab="register">
     <section class="auth-view">
-      <template v-if="!googleSignup">
-        <h2 class="auth-title">{{ t('auth.register.title') }}</h2>
-        <p class="auth-subtitle">{{ t('auth.register.subtitle') }}</p>
-        <button type="button" class="auth-button auth-button-outline google-button" @click="googlePickerOpen = true">
-          <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-          <span>{{ t('auth.register.google') }}</span>
-        </button>
-        <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
-      </template>
-      <template v-else>
-        <h2 class="auth-title">{{ t('auth.google.lastStep') }}</h2>
-        <p class="auth-subtitle">{{ t('auth.google.lastStepSubtitle') }}</p>
-        <div class="google-email-chip"><i class="pi pi-envelope" aria-hidden="true" /><span>{{ form.email }}</span></div>
-      </template>
+      <h2 class="auth-title">{{ t('auth.register.title') }}</h2>
+      <p class="auth-subtitle">{{ t('auth.register.subtitle') }}</p>
+      <button type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
+        <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>{{ t('auth.register.google') }}</span>
+      </button>
+      <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
 
       <form class="register-form" @submit.prevent="submit">
         <div class="auth-field">
@@ -118,26 +95,22 @@ onMounted(() => {
         </div>
         <div class="auth-field">
           <label for="register-email">{{ t('auth.register.email') }} <span class="required">*</span></label>
-          <div class="auth-input-wrap"><i class="pi pi-envelope field-icon" aria-hidden="true" /><input id="register-email" v-model="form.email" type="email" :placeholder="t('auth.register.emailPlaceholder')" autocomplete="email" autocapitalize="none" spellcheck="false" inputmode="email" maxlength="100" :readonly="googleSignup" required /></div>
+          <div class="auth-input-wrap"><i class="pi pi-envelope field-icon" aria-hidden="true" /><input id="register-email" v-model="form.email" type="email" :placeholder="t('auth.register.emailPlaceholder')" autocomplete="email" autocapitalize="none" spellcheck="false" inputmode="email" maxlength="100" required /></div>
         </div>
-        <template v-if="!googleSignup">
-          <div class="auth-field">
-            <label for="register-password">{{ t('auth.register.password') }} <span class="required">*</span></label>
-            <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-password" v-model="form.password" type="password" :placeholder="t('auth.register.passwordPlaceholder')" autocomplete="new-password" required /></div>
-          </div>
-          <div class="auth-field">
-            <label for="register-confirm-password">{{ t('auth.register.confirmPassword') }} <span class="required">*</span></label>
-            <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-confirm-password" v-model="form.confirmPassword" type="password" :placeholder="t('auth.register.confirmPlaceholder')" autocomplete="new-password" required /></div>
-          </div>
-        </template>
+        <div class="auth-field">
+          <label for="register-password">{{ t('auth.register.password') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-password" v-model="form.password" type="password" :placeholder="t('auth.register.passwordPlaceholder')" autocomplete="new-password" required /></div>
+        </div>
+        <div class="auth-field">
+          <label for="register-confirm-password">{{ t('auth.register.confirmPassword') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-confirm-password" v-model="form.confirmPassword" type="password" :placeholder="t('auth.register.confirmPlaceholder')" autocomplete="new-password" required /></div>
+        </div>
         <label class="terms-check"><input v-model="form.acceptedTerms" type="checkbox" /><span>{{ t('auth.register.agreePrefix') }} <button class="legal-link" type="button" @click="showLegalDocument('terms')">{{ t('auth.register.termsLink') }}</button> {{ t('auth.register.agreeJoin') }} <button class="legal-link" type="button" @click="showLegalDocument('privacy')">{{ t('auth.register.privacyLink') }}</button></span></label>
         <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ t(error) }}</span></p>
-        <button class="auth-button auth-button-primary" type="submit">{{ t(googleSignup ? 'auth.google.finish' : 'auth.register.submit') }}</button>
-        <button v-if="googleSignup" type="button" class="cancel-link" @click="googleSignup = false">{{ t('auth.google.cancel') }}</button>
+        <button class="auth-button auth-button-primary" type="submit">{{ t('auth.register.submit') }}</button>
       </form>
-      <p v-if="!googleSignup" class="auth-foot">{{ t('auth.register.haveAccount') }} <RouterLink class="auth-link" to="/login">{{ t('auth.register.login') }}</RouterLink></p>
+      <p class="auth-foot">{{ t('auth.register.haveAccount') }} <RouterLink class="auth-link" to="/login">{{ t('auth.register.login') }}</RouterLink></p>
     </section>
-    <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
     <LegalDocumentModal v-model="legalModalOpen" :kind="legalDocument" />
   </AuthShell>
 </template>
@@ -166,7 +139,6 @@ onMounted(() => {
 .auth-input-wrap input::placeholder { color: #94a3b8; }
 .auth-input-wrap input:hover { border-color: #94a3b8; }
 .auth-input-wrap input:focus { border-color: #0879e8; box-shadow: 0 0 0 3px rgba(8,121,232,.18); }
-.auth-input-wrap input[readonly] { background: #f8fafc; color: #64748b; }
 .field-icon { position: absolute; left: .8rem; color: #64748b; font-size: 1.05rem; pointer-events: none; }
 .role-segment { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 3px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
 .role-segment label { position: relative; display: flex; min-height: 40px; align-items: center; justify-content: center; padding: .55rem .25rem; border-radius: 6px; color: #64748b; font-size: .8rem; font-weight: 600; text-align: center; cursor: pointer; }
@@ -185,8 +157,5 @@ onMounted(() => {
 .auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
 .auth-link { color: #0879e8; font-size: inherit; font-weight: 600; text-decoration: none; }
 .auth-link:hover { text-decoration: underline; }
-.google-email-chip { display: flex; align-items: center; gap: .6rem; margin: 1rem 0 0; padding: .6rem .8rem; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; font-size: .9rem; }
-.cancel-link { border: 0; background: none; color: #0879e8; font: inherit; font-size: .9rem; cursor: pointer; }
-.cancel-link:hover { text-decoration: underline; }
 @media (max-width: 520px) { .name-grid { grid-template-columns: 1fr; } }
 </style>
