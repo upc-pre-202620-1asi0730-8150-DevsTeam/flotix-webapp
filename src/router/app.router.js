@@ -3,7 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 const MainLayout = () => import('@/platform/presentation/layouts/app-layout.vue')
 
 const routes = [
-  { path: '/', redirect: '/dashboard' },
+  { path: '/', redirect: '/login' },
+  { path: '/login', name: 'login', component: () => import('@/identity-access/presentation/views/login.vue') },
+  { path: '/register', name: 'register', component: () => import('@/identity-access/presentation/views/register.vue') },
   {
     path: '/',
     component: MainLayout,
