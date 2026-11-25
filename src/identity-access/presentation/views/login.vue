@@ -39,7 +39,7 @@ function selectGoogleAccount(account) {
     submit()
     return
   }
-  router.push({ path: '/register', query: { email: account.email, name: account.name } })
+  router.push({ path: '/register', query: { email: account.email, name: account.name, mode: 'google' } })
 }
 
 onMounted(() => {
