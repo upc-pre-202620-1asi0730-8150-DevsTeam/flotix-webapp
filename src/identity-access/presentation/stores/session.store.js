@@ -27,6 +27,12 @@ export const useSessionStore = defineStore('session', {
     updateProfile(patch) {
       identityService.updateProfile(this.user.id, patch)
       this.user = identityService.currentUser()
+    },
+    login(email, password) {
+      this.user = identityService.signIn(email, password)
+    },
+    register(profile) {
+      this.user = identityService.register(profile)
     }
   }
 })
