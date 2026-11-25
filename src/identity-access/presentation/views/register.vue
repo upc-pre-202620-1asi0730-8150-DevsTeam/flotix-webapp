@@ -21,6 +21,7 @@ const session = useSessionStore()
 
 const step = ref(1)
 const googlePickerOpen = ref(false)
+const googleSignup = ref(false)
 
 const roleCards = computed(() => [
   { role: UserRole.OWNER, icon: 'truck', title: t('auth.register.owner') },
@@ -43,7 +44,7 @@ function chooseRole(role) {
 
 function submit() {
   error.value = ''
-  if (form.value.password !== form.value.confirmPassword) {
+  if (!googleSignup.value && form.value.password !== form.value.confirmPassword) {
     error.value = 'auth.errors.passwordMismatch'
     return
   }
@@ -64,6 +65,7 @@ function selectGoogleAccount(account) {
   form.value.name = account.name
   form.value.email = account.email
   form.value.role = UserRole.OWNER
+  googleSignup.value = true
   step.value = 2
 }
 
@@ -71,6 +73,7 @@ onMounted(() => {
   if (typeof route.query.email === 'string') {
     form.value.email = route.query.email
     form.value.name = typeof route.query.name === 'string' ? route.query.name : ''
+    googleSignup.value = route.query.mode === 'google'
     step.value = 2
   }
 })
@@ -158,11 +161,11 @@ onMounted(() => {
               <label for="register-email" class="text-sm font-medium text-heading">{{ t('auth.register.email') }} <span class="text-red-500">*</span></label>
               <InputText id="register-email" v-model="form.email" type="email" autocomplete="email" required fluid />
             </div>
-            <div class="flex flex-column gap-1">
+            <div v-if="!googleSignup" class="flex flex-column gap-1">
               <label for="register-password" class="text-sm font-medium text-heading">{{ t('auth.register.password') }} <span class="text-red-500">*</span></label>
               <Password input-id="register-password" v-model="form.password" :feedback="false" toggle-mask fluid autocomplete="new-password" required />
             </div>
-            <div class="flex flex-column gap-1">
+            <div v-if="!googleSignup" class="flex flex-column gap-1">
               <label for="register-confirm-password" class="text-sm font-medium text-heading">{{ t('auth.register.confirmPassword') }} <span class="text-red-500">*</span></label>
               <Password input-id="register-confirm-password" v-model="form.confirmPassword" :feedback="false" toggle-mask fluid autocomplete="new-password" required />
             </div>
