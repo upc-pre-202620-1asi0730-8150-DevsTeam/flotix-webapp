@@ -1,7 +1,7 @@
 /**
  * Session helper (Identity, Profiles & Security support infrastructure).
  * Remembers the active demo profile in localStorage so it survives a page refresh.
- * There is no sign-in: the app always opens with a profile.
+ * The current sign-in preview uses this local profile; it is not an IAM session.
  */
 const SESSION_KEY = 'flotix:session'
 
