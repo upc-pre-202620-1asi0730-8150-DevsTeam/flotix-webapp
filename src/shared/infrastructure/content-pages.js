@@ -9,7 +9,8 @@ export const pagesEn = {
     login: {
       title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
       submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
-      google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in'
+      google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in',
+      demoHint: 'Demo accounts for this local preview:'
     },
     register: {
       title: 'Create your account', subtitle: 'Join Flotix and start managing your fleet.', name: 'Full name',
@@ -260,7 +261,8 @@ export const pagesEs = {
     login: {
       title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
       submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
-      google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada'
+      google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada',
+      demoHint: 'Cuentas demo para esta vista previa local:'
     },
     register: {
       title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a gestionar tu flota.', name: 'Nombre completo',
