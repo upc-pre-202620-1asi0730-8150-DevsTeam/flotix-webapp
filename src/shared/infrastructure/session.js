@@ -1,9 +1,7 @@
 /**
- * Session helper (Identity, Profiles & Security support infrastructure).
- * Remembers the active demo profile in localStorage so it survives a page refresh.
- * The current sign-in preview uses this local profile; it is not an IAM session.
+ * Stores the authenticated user returned by the configured identity provider.
  */
-const SESSION_KEY = 'flotix:session'
+const SESSION_KEY = 'flotix:auth-session.v1'
 
 export const Session = {
   set(user) {
