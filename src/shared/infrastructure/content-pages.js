@@ -16,7 +16,7 @@ export const pagesEn = {
     login: {
       tab: 'Sign in',
       title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
-      emailPlaceholder: 'name@company.com', passwordPlaceholder: 'Your password', forgot: 'Forgot your password?',
+      emailPlaceholder: 'name{\'@\'}company.com', passwordPlaceholder: 'Your password', forgot: 'Forgot your password?',
       submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
       google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in',
       demoHint: 'Demo accounts for this local preview:'
@@ -26,7 +26,7 @@ export const pagesEn = {
       title: 'Create your account', subtitle: 'Join Flotix and start tracking your fleet.', name: 'Full name',
       chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
       firstName: 'First name', lastName: 'Last name', roleLabel: 'I am a…',
-      firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name@company.com',
+      firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name{\'@\'}company.com',
       passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
       owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Company (optional)',
@@ -285,7 +285,7 @@ export const pagesEs = {
     login: {
       tab: 'Iniciar sesión',
       title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
-      emailPlaceholder: 'nombre@empresa.com', passwordPlaceholder: 'Tu contraseña', forgot: '¿Olvidaste tu contraseña?',
+      emailPlaceholder: 'nombre{\'@\'}empresa.com', passwordPlaceholder: 'Tu contraseña', forgot: '¿Olvidaste tu contraseña?',
       submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
       google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada',
       demoHint: 'Cuentas demo para esta vista previa local:'
@@ -295,7 +295,7 @@ export const pagesEs = {
       title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a monitorear tu flota.', name: 'Nombre completo',
       chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
       firstName: 'Nombre', lastName: 'Apellido', roleLabel: 'Soy…',
-      firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre@empresa.com',
+      firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre{\'@\'}empresa.com',
       passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
       owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Empresa (opcional)',
