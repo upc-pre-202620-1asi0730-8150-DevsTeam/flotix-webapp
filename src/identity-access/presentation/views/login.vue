@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '../stores/session.store.js'
 import AuthShell from '../components/auth-shell.component.vue'
-import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -14,38 +13,23 @@ const password = ref('')
 const showPassword = ref(false)
 const remember = ref(false)
 const error = ref('')
-const googlePickerOpen = ref(false)
-
-const demoAccounts = [
-  { name: 'Carlos Rojas', email: 'owner@flotix.com', password: 'Owner123' },
-  { name: 'Luis Quispe', email: 'driver@flotix.com', password: 'Driver123' },
-  { name: 'Ana Torres', email: 'mechanic@flotix.com', password: 'Mechanic123' }
-]
-
-function submit() {
+async function submit() {
   error.value = ''
   try {
-    session.login(email.value, password.value)
+    await session.login(email.value, password.value)
     router.push('/dashboard')
   } catch (exception) {
     error.value = exception.message
   }
 }
 
-function useDemo(account) {
-  email.value = account.email
-  password.value = account.password
-}
-
-function selectGoogleAccount(account) {
-  googlePickerOpen.value = false
-  if (account.existing) {
-    const demo = demoAccounts[0]
-    useDemo(demo)
-    submit()
-    return
+async function signInWithGoogle() {
+  error.value = ''
+  try {
+    await session.loginWithGoogle()
+  } catch (exception) {
+    error.value = exception.message
   }
-  router.push({ path: '/register', query: { email: account.email, name: account.name, mode: 'google' } })
 }
 </script>
 
@@ -55,7 +39,7 @@ function selectGoogleAccount(account) {
       <h2 class="auth-title">{{ t('auth.login.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
 
-      <button type="button" class="auth-button auth-button-outline google-button" @click="googlePickerOpen = true">
+      <button type="button" class="auth-button auth-button-outline google-button" @click="signInWithGoogle">
         <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         <span>{{ t('auth.login.google') }}</span>
       </button>
@@ -86,17 +70,7 @@ function selectGoogleAccount(account) {
       </form>
 
       <p class="auth-foot">{{ t('auth.login.noAccount') }} <RouterLink class="auth-link" to="/register">{{ t('auth.login.register') }}</RouterLink></p>
-      <details class="auth-demo">
-        <summary><i class="pi pi-user" aria-hidden="true" /><span>{{ t('auth.demo.title') }}</span></summary>
-        <p>{{ t('auth.demo.description') }}</p>
-        <div v-for="account in demoAccounts" :key="account.email" class="demo-account">
-          <span>{{ account.name }}</span>
-          <code>{{ account.email }} · {{ account.password }}</code>
-          <button type="button" @click="useDemo(account)">{{ t('auth.demo.use') }}</button>
-        </div>
-      </details>
     </section>
-    <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
   </AuthShell>
 </template>
 
@@ -136,12 +110,5 @@ function selectGoogleAccount(account) {
 .auth-alert { display: flex; align-items: flex-start; gap: .6rem; margin: 0; padding: .7rem .85rem; border-radius: 6px; background: #fde4e1; color: #a52a1c; font-size: .875rem; font-weight: 500; }
 .auth-alert i { margin-top: .2rem; }
 .auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
-.auth-demo { margin-top: 1.25rem; padding: .2rem .85rem; border: 1px dashed #cbd5e1; border-radius: 10px; color: #64748b; font-size: .82rem; }
-.auth-demo summary { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; color: #0f172a; font-weight: 600; cursor: pointer; }
-.auth-demo > p { margin: 0 0 .6rem; }
-.demo-account { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .2rem .6rem; padding: .45rem 0; border-top: 1px solid #e2e8f0; }
-.demo-account code { grid-column: 1; overflow-wrap: anywhere; padding: 0 .4rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: .78rem; font-weight: 600; letter-spacing: .02em; }
-.demo-account button { grid-column: 2; grid-row: 1 / 3; min-height: 32px; padding: .3rem .65rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #0f172a; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
-.demo-account button:hover { border-color: #0879e8; color: #0879e8; }
 @media (max-width: 520px) { .auth-row { align-items: flex-start; flex-direction: column; gap: .65rem; } }
 </style>
