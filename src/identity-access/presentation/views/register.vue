@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { toggleLocale } from '@/internationalization/i18n.js'
 import { useSessionStore } from '../stores/session.store.js'
@@ -12,21 +12,24 @@ import Button from 'primevue/button'
 import AppIcon from '@/shared/presentation/components/app-icon.component.vue'
 import flotixLogoMark from '@/assets/brand/flotix-logo-mark.png'
 import flotixIcon from '@/assets/brand/flotix-icon.png'
+import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 
 const router = useRouter()
-const { t, tm, locale } = useI18n()
+const route = useRoute()
+const { t, locale } = useI18n()
 const session = useSessionStore()
 
 const step = ref(1)
+const googlePickerOpen = ref(false)
 
 const roleCards = computed(() => [
-  { role: UserRole.OWNER, icon: 'truck', ...tm('auth.login.roleTabs.owner') },
-  { role: UserRole.DRIVER, icon: 'pin', ...tm('auth.login.roleTabs.driver') },
-  { role: UserRole.MECHANIC, icon: 'wrench', ...tm('auth.login.roleTabs.mechanic') }
+  { role: UserRole.OWNER, icon: 'truck', title: t('auth.register.owner') },
+  { role: UserRole.DRIVER, icon: 'pin', title: t('auth.register.driver') },
+  { role: UserRole.MECHANIC, icon: 'wrench', title: t('auth.register.mechanic') }
 ])
 
 const form = ref({
-  name: '', email: '', password: '', role: UserRole.OWNER,
+  name: '', email: '', password: '', confirmPassword: '', role: UserRole.OWNER,
   licenseNumber: '', licenseExpiry: '', companyName: '', workshopName: ''
 })
 const error = ref('')
@@ -40,6 +43,10 @@ function chooseRole(role) {
 
 function submit() {
   error.value = ''
+  if (form.value.password !== form.value.confirmPassword) {
+    error.value = 'auth.errors.passwordMismatch'
+    return
+  }
   try {
     session.register({ ...form.value })
     router.push('/dashboard')
@@ -47,6 +54,26 @@ function submit() {
     error.value = e.message
   }
 }
+
+function selectGoogleAccount(account) {
+  googlePickerOpen.value = false
+  if (account.existing) {
+    router.push({ path: '/login', query: { email: account.email } })
+    return
+  }
+  form.value.name = account.name
+  form.value.email = account.email
+  form.value.role = UserRole.OWNER
+  step.value = 2
+}
+
+onMounted(() => {
+  if (typeof route.query.email === 'string') {
+    form.value.email = route.query.email
+    form.value.name = typeof route.query.name === 'string' ? route.query.name : ''
+    step.value = 2
+  }
+})
 </script>
 
 <template>
@@ -86,6 +113,12 @@ function submit() {
           <h2 class="text-2xl font-bold text-heading m-0" style="letter-spacing: -0.02em">{{ t('auth.register.chooseRoleTitle') }}</h2>
           <p class="text-sm text-muted mt-1">{{ t('auth.register.chooseRoleSubtitle') }}</p>
 
+          <Button type="button" severity="secondary" outlined class="w-full justify-content-center py-3 mt-4" @click="googlePickerOpen = true">
+            <template #icon><i class="pi pi-google" aria-hidden="true" /></template>
+            <span>{{ t('auth.register.google') }}</span>
+          </Button>
+          <div class="auth-divider mt-3"><span>{{ t('auth.login.orEmail') }}</span></div>
+
           <div class="flex flex-column gap-2 mt-4">
             <button v-for="card in roleCards" :key="card.role" type="button" class="flotix-role-card" @click="chooseRole(card.role)">
               <span class="flex align-items-center justify-content-center border-round flex-shrink-0" style="width: 2.5rem; height: 2.5rem; background: var(--p-primary-100); color: var(--p-primary-700)">
@@ -118,16 +151,20 @@ function submit() {
 
           <form class="flex flex-column gap-3 mt-4" @submit.prevent="submit">
             <div class="flex flex-column gap-1">
-              <label class="text-sm font-medium text-heading">{{ t('auth.register.name') }} <span class="text-red-500">*</span></label>
-              <InputText v-model="form.name" required fluid />
+              <label for="register-name" class="text-sm font-medium text-heading">{{ t('auth.register.name') }} <span class="text-red-500">*</span></label>
+              <InputText id="register-name" v-model="form.name" autocomplete="name" required fluid />
             </div>
             <div class="flex flex-column gap-1">
-              <label class="text-sm font-medium text-heading">{{ t('auth.register.email') }} <span class="text-red-500">*</span></label>
-              <InputText v-model="form.email" type="email" required fluid />
+              <label for="register-email" class="text-sm font-medium text-heading">{{ t('auth.register.email') }} <span class="text-red-500">*</span></label>
+              <InputText id="register-email" v-model="form.email" type="email" autocomplete="email" required fluid />
             </div>
             <div class="flex flex-column gap-1">
-              <label class="text-sm font-medium text-heading">{{ t('auth.register.password') }} <span class="text-red-500">*</span></label>
-              <Password v-model="form.password" :feedback="false" toggle-mask fluid required />
+              <label for="register-password" class="text-sm font-medium text-heading">{{ t('auth.register.password') }} <span class="text-red-500">*</span></label>
+              <Password input-id="register-password" v-model="form.password" :feedback="false" toggle-mask fluid autocomplete="new-password" required />
+            </div>
+            <div class="flex flex-column gap-1">
+              <label for="register-confirm-password" class="text-sm font-medium text-heading">{{ t('auth.register.confirmPassword') }} <span class="text-red-500">*</span></label>
+              <Password input-id="register-confirm-password" v-model="form.confirmPassword" :feedback="false" toggle-mask fluid autocomplete="new-password" required />
             </div>
 
             <template v-if="isDriver">
@@ -149,7 +186,8 @@ function submit() {
               <InputText v-model="form.workshopName" fluid />
             </div>
 
-            <p v-if="error" class="text-sm p-2 border-round m-0" style="background: #fef2f2; color: #b91c1c">{{ error }}</p>
+            <p v-if="error" role="alert" class="text-sm p-2 border-round m-0" style="background: #fef2f2; color: #b91c1c">{{ t(error) }}</p>
+            <p class="text-xs text-muted m-0">{{ t('auth.prototype') }}</p>
             <Button type="submit" :label="t('auth.register.submit')" class="w-full justify-content-center py-3" />
           </form>
 
@@ -160,6 +198,7 @@ function submit() {
         </template>
       </div>
     </div>
+    <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
   </div>
 </template>
 
@@ -178,4 +217,6 @@ function submit() {
   background: #fff; cursor: pointer; text-align: left; transition: border-color .15s ease, background-color .15s ease;
 }
 .flotix-role-card:hover { border-color: var(--p-primary-400); background: var(--p-primary-50); }
+.auth-divider { display: flex; align-items: center; gap: .75rem; color: var(--p-surface-500); font-size: .75rem; }
+.auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--p-surface-200); }
 </style>
