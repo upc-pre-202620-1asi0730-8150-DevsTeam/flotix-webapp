@@ -2,32 +2,48 @@
 
 export const pagesEn = {
   auth: {
+    kicker: 'Fleet platform',
+    brandTitle: 'Control your fleet from a single platform',
+    brandSub: 'Flotix connects vehicles, drivers and maintenance workshops through IoT and GPS, so owners monitor fuel, mileage and routes in real time.',
     brand: 'Your fleet, in good hands',
     brandSubtitle: 'Flotix brings your vehicles, drivers and maintenance together in one clear view.',
     features: ['Fleet management', 'Fuel control', 'Coordinated maintenance', 'Real-time GPS tracking'],
+    stats: ['vehicles tracked in the pilot', 'affiliated workshops', 'GPS device uptime'],
     prototype: 'Frontend preview · Authentication is not connected to the backend yet.',
+    tabsLabel: 'Authentication',
+    showPassword: 'Show password', hidePassword: 'Hide password',
+    demo: { title: 'Demo accounts', description: 'These accounts are for the local preview. Choose Use to fill in the form.', use: 'Use' },
     login: {
+      tab: 'Sign in',
       title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
+      emailPlaceholder: 'name@company.com', passwordPlaceholder: 'Your password', forgot: 'Forgot your password?',
       submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
       google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in',
       demoHint: 'Demo accounts for this local preview:'
     },
     register: {
-      title: 'Create your account', subtitle: 'Join Flotix and start managing your fleet.', name: 'Full name',
+      tab: 'Sign up',
+      title: 'Create your account', subtitle: 'Join Flotix and start tracking your fleet.', name: 'Full name',
       chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
+      firstName: 'First name', lastName: 'Last name', roleLabel: 'I am a…',
+      firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name@company.com',
+      passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
       owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Company (optional)',
       workshop: 'Workshop (optional)', licenseNumber: 'License number', licenseExpiry: 'License expiration',
       submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
-      google: 'Sign up with Google', terms: 'By creating an account, you agree to the Terms and Privacy Policy.'
+      google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.'
     },
     google: {
-      title: 'Choose a Google demo account', subtitle: 'This preview does not connect to Google OAuth.',
+      title: 'Choose an account', subtitle: 'to continue to Flotix',
+      lastStep: 'One last step', lastStepSubtitle: 'Tell us who you are on the platform to finish creating your account.',
+      finish: 'Finish sign up', cancel: 'Cancel',
       existing: 'Continue with demo profile', new: 'Continue as a new profile', close: 'Close'
     },
     errors: {
       invalidCredentials: 'Email or password is incorrect. Try one of the demo accounts below.',
-      emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.'
+      emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
+      termsRequired: 'You need to accept to continue.'
     }
   },
   common: {
@@ -255,32 +271,48 @@ export const pagesEn = {
 
 export const pagesEs = {
   auth: {
+    kicker: 'Plataforma de flotas',
+    brandTitle: 'Controla tu flota desde una sola plataforma',
+    brandSub: 'Flotix conecta vehículos, conductores y talleres con IoT y GPS para que monitorees combustible, kilometraje y rutas en tiempo real.',
     brand: 'Tu flota, siempre en buenas manos',
     brandSubtitle: 'Flotix reúne tus vehículos, conductores y mantenimientos en una vista clara.',
     features: ['Gestión de flota', 'Control de combustible', 'Mantenimiento coordinado', 'Monitoreo GPS en tiempo real'],
+    stats: ['vehículos en el piloto', 'talleres afiliados', 'disponibilidad GPS'],
     prototype: 'Vista previa del frontend · La autenticación aún no está conectada al backend.',
+    tabsLabel: 'Autenticación',
+    showPassword: 'Mostrar contraseña', hidePassword: 'Ocultar contraseña',
+    demo: { title: 'Cuentas de demostración', description: 'Estas cuentas son para la vista previa local. Pulsa Usar para completar el formulario.', use: 'Usar' },
     login: {
+      tab: 'Iniciar sesión',
       title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
+      emailPlaceholder: 'nombre@empresa.com', passwordPlaceholder: 'Tu contraseña', forgot: '¿Olvidaste tu contraseña?',
       submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
       google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada',
       demoHint: 'Cuentas demo para esta vista previa local:'
     },
     register: {
-      title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a gestionar tu flota.', name: 'Nombre completo',
+      tab: 'Registrarse',
+      title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a monitorear tu flota.', name: 'Nombre completo',
       chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
+      firstName: 'Nombre', lastName: 'Apellido', roleLabel: 'Soy…',
+      firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre@empresa.com',
+      passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
       owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Empresa (opcional)',
       workshop: 'Taller (opcional)', licenseNumber: 'Número de licencia', licenseExpiry: 'Vencimiento de licencia',
       submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
-      google: 'Registrarse con Google', terms: 'Al crear una cuenta, aceptas los Términos y la Política de privacidad.'
+      google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.'
     },
     google: {
-      title: 'Elige una cuenta de Google de prueba', subtitle: 'Esta vista previa no se conecta con Google OAuth.',
+      title: 'Elige una cuenta', subtitle: 'para continuar en Flotix',
+      lastStep: 'Un último paso', lastStepSubtitle: 'Cuéntanos qué rol tienes en la plataforma para terminar de crear tu cuenta.',
+      finish: 'Terminar registro', cancel: 'Cancelar',
       existing: 'Continuar con perfil demo', new: 'Continuar como perfil nuevo', close: 'Cerrar'
     },
     errors: {
       invalidCredentials: 'El correo o la contraseña no son correctos. Prueba una de las cuentas demo.',
-      emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.'
+      emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
+      termsRequired: 'Debes aceptar para continuar.'
     }
   },
   common: {
