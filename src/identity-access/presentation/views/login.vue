@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { toggleLocale, i18n } from '@/internationalization/i18n.js'
+import { toggleLocale } from '@/internationalization/i18n.js'
 import { useSessionStore } from '../stores/session.store.js'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -10,6 +10,7 @@ import Button from 'primevue/button'
 import AppIcon from '@/shared/presentation/components/app-icon.component.vue'
 import flotixLogoMark from '@/assets/brand/flotix-logo-mark.png'
 import flotixIcon from '@/assets/brand/flotix-icon.png'
+import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 
 const router = useRouter()
 const { t, tm, locale } = useI18n()
@@ -17,6 +18,7 @@ const session = useSessionStore()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const googlePickerOpen = ref(false)
 
 function submit() {
   error.value = ''
@@ -26,6 +28,17 @@ function submit() {
   } catch (e) {
     error.value = e.message
   }
+}
+
+function selectGoogleAccount(account) {
+  googlePickerOpen.value = false
+  if (account.existing) {
+    email.value = account.email
+    password.value = 'Owner123'
+    submit()
+    return
+  }
+  router.push({ path: '/register', query: { email: account.email, name: account.name } })
 }
 </script>
 
@@ -50,7 +63,10 @@ function submit() {
         </ul>
       </div>
 
-      <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix, UPC Developers Team</p>
+      <div>
+        <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.55)">{{ t('auth.prototype') }}</p>
+        <p class="text-xs relative z-1 mt-2 mb-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix, UPC Developers Team</p>
+      </div>
     </div>
 
     <!-- Form panel -->
@@ -71,20 +87,26 @@ function submit() {
         <p class="text-sm text-muted mt-1">{{ t('auth.login.subtitle') }}</p>
 
         <form class="flex flex-column gap-3 mt-4" @submit.prevent="submit">
+          <Button type="button" severity="secondary" outlined class="w-full justify-content-center py-3" @click="googlePickerOpen = true">
+            <template #icon><i class="pi pi-google" aria-hidden="true" /></template>
+            <span>{{ t('auth.login.google') }}</span>
+          </Button>
+          <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
           <div class="flex flex-column gap-1">
-            <label class="text-sm font-medium text-heading">{{ t('auth.login.email') }} <span class="text-red-500">*</span></label>
-            <InputText v-model="email" type="email" required fluid />
+            <label for="login-email" class="text-sm font-medium text-heading">{{ t('auth.login.email') }} <span class="text-red-500">*</span></label>
+            <InputText id="login-email" v-model="email" type="email" autocomplete="username" required fluid />
           </div>
           <div class="flex flex-column gap-1">
-            <label class="text-sm font-medium text-heading">{{ t('auth.login.password') }} <span class="text-red-500">*</span></label>
-            <Password v-model="password" :feedback="false" toggle-mask fluid required />
-            <div class="text-right mt-1">
-              <a class="flotix-link text-xs" href="#">{{ t('auth.login.forgot') }}</a>
-            </div>
+            <label for="login-password" class="text-sm font-medium text-heading">{{ t('auth.login.password') }} <span class="text-red-500">*</span></label>
+            <Password input-id="login-password" v-model="password" :feedback="false" toggle-mask fluid autocomplete="current-password" required />
           </div>
-          <p v-if="error" class="text-sm p-2 border-round m-0" style="background: #fef2f2; color: #b91c1c">{{ error }}</p>
+          <p v-if="error" role="alert" class="text-sm p-2 border-round m-0" style="background: #fef2f2; color: #b91c1c">{{ t(error) }}</p>
           <Button type="submit" :label="t('auth.login.submit')" class="w-full justify-content-center py-3" />
         </form>
+
+        <p class="text-xs text-muted mt-4 mb-0 line-height-3">{{ t('auth.login.demoHint') }}<br />
+          owner@flotix.pe / Owner123 · driver@flotix.pe / Driver123 · mechanic@flotix.pe / Mechanic123
+        </p>
 
         <p class="text-sm text-muted text-center mt-4">
           {{ t('auth.login.noAccount') }}
@@ -92,6 +114,7 @@ function submit() {
         </p>
       </div>
     </div>
+    <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
   </div>
 </template>
 
@@ -103,4 +126,6 @@ function submit() {
 }
 .flotix-lang-toggle-inline span { padding: .15rem .5rem; border-radius: 999px; font-size: .7rem; font-weight: 700; color: var(--p-surface-900); }
 .flotix-lang-toggle-inline span.active { background: var(--p-surface-900); color: #fff; }
+.auth-divider { display: flex; align-items: center; gap: .75rem; color: var(--p-surface-500); font-size: .75rem; }
+.auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--p-surface-200); }
 </style>
