@@ -58,12 +58,15 @@ export class UserAuthentication {
     return sessionUser
   }
 
-  /** The active profile; defaults to the demo Owner on the first visit. */
+  /** Returns the active profile, or null after sign-out / before authentication. */
   currentUser() {
     const stored = Session.get()
     const fresh = stored ? this.repository.getById(stored.id) : null
-    if (fresh) return this._toSessionUser(fresh)
-    return this.switchRole(UserRole.OWNER)
+    return fresh ? this._toSessionUser(fresh) : null
+  }
+
+  signOut() {
+    Session.clear()
   }
 
   /** Activates the demo profile of the given role. */
