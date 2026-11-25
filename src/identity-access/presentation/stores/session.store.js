@@ -17,6 +17,9 @@ export const useSessionStore = defineStore('session', {
     switchRole(role) {
       this.user = identityService.switchRole(role)
     },
+    enterPreview(role) {
+      this.user = identityService.enterPreview(role)
+    },
     updateProfile(patch) {
       identityService.updateProfile(this.user.id, patch)
       this.user = identityService.currentUser()
