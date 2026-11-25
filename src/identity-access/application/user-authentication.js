@@ -54,3 +54,11 @@ class UnavailableAuthenticationProvider {
 }
 
 export const identityService = new UserAuthentication()
+
+export function configureAuthenticationProvider(provider) {
+  const methods = ['signIn', 'register', 'signInWithGoogle']
+  if (!provider || methods.some((method) => typeof provider[method] !== 'function')) {
+    throw new TypeError('Authentication provider must implement signIn, register and signInWithGoogle.')
+  }
+  identityService.provider = provider
+}
