@@ -32,6 +32,10 @@ export const useSessionStore = defineStore('session', {
     },
     register(profile) {
       this.user = identityService.register(profile)
+    },
+    signOut() {
+      identityService.signOut()
+      this.user = null
     }
   }
 })
