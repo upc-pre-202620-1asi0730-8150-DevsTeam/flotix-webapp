@@ -1,136 +1,147 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { toggleLocale } from '@/internationalization/i18n.js'
 import { useSessionStore } from '../stores/session.store.js'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import Button from 'primevue/button'
-import AppIcon from '@/shared/presentation/components/app-icon.component.vue'
-import flotixLogoMark from '@/assets/brand/flotix-logo-mark.png'
-import flotixIcon from '@/assets/brand/flotix-icon.png'
+import AuthShell from '../components/auth-shell.component.vue'
 import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 
 const router = useRouter()
-const route = useRoute()
-const { t, tm, locale } = useI18n()
+const { t } = useI18n()
 const session = useSessionStore()
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
+const remember = ref(false)
 const error = ref('')
 const googlePickerOpen = ref(false)
+
+const demoAccounts = [
+  { name: 'Carlos Rojas', email: 'owner@flotix.com', password: 'Owner123' },
+  { name: 'Luis Quispe', email: 'driver@flotix.com', password: 'Driver123' },
+  { name: 'Ana Torres', email: 'mechanic@flotix.com', password: 'Mechanic123' }
+]
 
 function submit() {
   error.value = ''
   try {
     session.login(email.value, password.value)
     router.push('/dashboard')
-  } catch (e) {
-    error.value = e.message
+  } catch (exception) {
+    error.value = exception.message
   }
+}
+
+function useDemo(account) {
+  email.value = account.email
+  password.value = account.password
 }
 
 function selectGoogleAccount(account) {
   googlePickerOpen.value = false
   if (account.existing) {
-    email.value = account.email
-    password.value = 'Owner123'
+    const demo = demoAccounts[0]
+    useDemo(demo)
     submit()
     return
   }
   router.push({ path: '/register', query: { email: account.email, name: account.name, mode: 'google' } })
 }
-
-onMounted(() => {
-  if (typeof route.query.email === 'string') email.value = route.query.email
-})
 </script>
 
 <template>
-  <div class="grid m-0 min-h-screen">
-    <!-- Hero panel -->
-    <div class="hidden lg:flex col-6 flex-column justify-content-between bg-navy-gradient p-6 relative overflow-hidden">
-      <div class="flex align-items-center gap-2">
-        <img :src="flotixLogoMark" alt="Flotix" style="height: 32px; width: auto; max-width: 12.5rem; object-fit: contain; object-position: left" />
-      </div>
+  <AuthShell active-tab="login">
+    <section class="auth-view">
+      <h2 class="auth-title">{{ t('auth.login.title') }}</h2>
+      <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
 
-      <div class="relative z-1">
-        <h1 class="text-5xl font-bold text-white m-0 line-height-3" style="letter-spacing: -0.02em">{{ t('auth.brand') }}</h1>
-        <p class="text-sm mt-3" style="color: rgba(255,255,255,.6); max-width: 26rem; line-height: 1.6">{{ t('auth.brandSubtitle') }}</p>
-        <ul class="list-none p-0 mt-5 flex flex-column gap-3">
-          <li v-for="f in tm('auth.features')" :key="f" class="flex align-items-center gap-3 text-sm font-medium" style="color: rgba(255,255,255,.8)">
-            <span class="flex align-items-center justify-content-center border-round" style="width: 1.75rem; height: 1.75rem; background: rgba(255,255,255,.1); color: #fff">
-              <AppIcon name="truck" :size="15" />
-            </span>
-            {{ f }}
-          </li>
-        </ul>
-      </div>
+      <button type="button" class="auth-button auth-button-outline google-button" @click="googlePickerOpen = true">
+        <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>{{ t('auth.login.google') }}</span>
+      </button>
+      <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
 
-      <div>
-        <p class="text-xs relative z-1 m-0" style="color: rgba(255,255,255,.55)">{{ t('auth.prototype') }}</p>
-        <p class="text-xs relative z-1 mt-2 mb-0" style="color: rgba(255,255,255,.3)">© 2026 Flotix, UPC Developers Team</p>
-      </div>
-    </div>
-
-    <!-- Form panel -->
-    <div class="col-12 lg:col-6 flex flex-column justify-content-center px-4 py-6 sm:px-7">
-      <div class="mx-auto w-full" style="max-width: 24rem">
-        <div class="flex align-items-center justify-content-between lg:justify-content-end mb-5">
-          <div class="flex lg:hidden align-items-center gap-2">
-            <img :src="flotixIcon" alt="Flotix" style="height: 2rem; width: 2rem; object-fit: contain" />
-            <p class="font-bold text-heading m-0">FLOTIX</p>
+      <form class="auth-form" @submit.prevent="submit">
+        <div class="auth-field">
+          <label for="login-email">{{ t('auth.login.email') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap">
+            <i class="pi pi-envelope field-icon" aria-hidden="true" />
+            <input id="login-email" v-model="email" type="email" :placeholder="t('auth.login.emailPlaceholder')" autocomplete="username" autocapitalize="none" spellcheck="false" inputmode="email" required />
           </div>
-          <button type="button" class="flotix-lang-toggle-inline" @click="toggleLocale()">
-            <span :class="{ active: locale === 'en' }">EN</span>
-            <span :class="{ active: locale === 'es' }">ES</span>
-          </button>
         </div>
-
-        <h2 class="text-2xl font-bold text-heading m-0" style="letter-spacing: -0.02em">{{ t('auth.login.title') }}</h2>
-        <p class="text-sm text-muted mt-1">{{ t('auth.login.subtitle') }}</p>
-
-        <form class="flex flex-column gap-3 mt-4" @submit.prevent="submit">
-          <Button type="button" severity="secondary" outlined class="w-full justify-content-center py-3" @click="googlePickerOpen = true">
-            <template #icon><i class="pi pi-google" aria-hidden="true" /></template>
-            <span>{{ t('auth.login.google') }}</span>
-          </Button>
-          <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
-          <div class="flex flex-column gap-1">
-            <label for="login-email" class="text-sm font-medium text-heading">{{ t('auth.login.email') }} <span class="text-red-500">*</span></label>
-            <InputText id="login-email" v-model="email" type="email" autocomplete="username" required fluid />
+        <div class="auth-field">
+          <label for="login-password">{{ t('auth.login.password') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap">
+            <i class="pi pi-lock field-icon" aria-hidden="true" />
+            <input id="login-password" v-model="password" :type="showPassword ? 'text' : 'password'" :placeholder="t('auth.login.passwordPlaceholder')" autocomplete="current-password" required />
+            <button type="button" class="password-toggle" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')" @click="showPassword = !showPassword"><i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" aria-hidden="true" /></button>
           </div>
-          <div class="flex flex-column gap-1">
-            <label for="login-password" class="text-sm font-medium text-heading">{{ t('auth.login.password') }} <span class="text-red-500">*</span></label>
-            <Password input-id="login-password" v-model="password" :feedback="false" toggle-mask fluid autocomplete="current-password" required />
-          </div>
-          <p v-if="error" role="alert" class="text-sm p-2 border-round m-0" style="background: #fef2f2; color: #b91c1c">{{ t(error) }}</p>
-          <Button type="submit" :label="t('auth.login.submit')" class="w-full justify-content-center py-3" />
-        </form>
+        </div>
+        <div class="auth-row">
+          <label class="auth-check"><input v-model="remember" type="checkbox" /><span>{{ t('auth.login.remember') }}</span></label>
+          <a class="auth-link" href="#" @click.prevent>{{ t('auth.login.forgot') }}</a>
+        </div>
+        <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ t(error) }}</span></p>
+        <button class="auth-button auth-button-primary" type="submit">{{ t('auth.login.submit') }}</button>
+      </form>
 
-        <p class="text-xs text-muted mt-4 mb-0 line-height-3">{{ t('auth.login.demoHint') }}<br />
-          owner@flotix.pe / Owner123 · driver@flotix.pe / Driver123 · mechanic@flotix.pe / Mechanic123
-        </p>
-
-        <p class="text-sm text-muted text-center mt-4">
-          {{ t('auth.login.noAccount') }}
-          <router-link to="/register" class="flotix-link">{{ t('auth.login.register') }}</router-link>
-        </p>
-      </div>
-    </div>
+      <p class="auth-foot">{{ t('auth.login.noAccount') }} <RouterLink class="auth-link" to="/register">{{ t('auth.login.register') }}</RouterLink></p>
+      <details class="auth-demo">
+        <summary><i class="pi pi-user" aria-hidden="true" /><span>{{ t('auth.demo.title') }}</span></summary>
+        <p>{{ t('auth.demo.description') }}</p>
+        <div v-for="account in demoAccounts" :key="account.email" class="demo-account">
+          <span>{{ account.name }}</span>
+          <code>{{ account.email }} · {{ account.password }}</code>
+          <button type="button" @click="useDemo(account)">{{ t('auth.demo.use') }}</button>
+        </div>
+      </details>
+    </section>
     <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
-  </div>
+  </AuthShell>
 </template>
 
 <style scoped>
-.flotix-lang-toggle-inline {
-  display: flex; align-items: center; gap: .15rem;
-  border: 1px solid var(--p-surface-200); border-radius: 999px; padding: 2px;
-  background: none; cursor: pointer;
-}
-.flotix-lang-toggle-inline span { padding: .15rem .5rem; border-radius: 999px; font-size: .7rem; font-weight: 700; color: var(--p-surface-900); }
-.flotix-lang-toggle-inline span.active { background: var(--p-surface-900); color: #fff; }
-.auth-divider { display: flex; align-items: center; gap: .75rem; color: var(--p-surface-500); font-size: .75rem; }
-.auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--p-surface-200); }
+.auth-view { min-width: 0; }
+.auth-title { margin: 0; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.auth-subtitle { margin: .4rem 0 0; color: #64748b; }
+.auth-button { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1.5px solid transparent; border-radius: 6px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s cubic-bezier(.23,1,.32,1); }
+.auth-button:active { transform: scale(.97); }
+.auth-button-primary { margin-top: .15rem; background: #0879e8; color: #fff; }
+.auth-button-primary:hover { background: #0662bd; }
+.auth-button-outline { border-color: #cbd5e1; background: #fff; color: #0f172a; }
+.auth-button-outline:hover { border-color: #0879e8; color: #0879e8; }
+.google-button { margin-top: 1.25rem; }
+.google-mark { width: 1.15rem; height: 1.15rem; }
+.auth-divider { display: flex; align-items: center; gap: .8rem; margin: 1rem 0 .25rem; color: #64748b; font-size: .8rem; }
+.auth-divider::before, .auth-divider::after { height: 1px; flex: 1; background: #e2e8f0; content: ''; }
+.auth-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.auth-field { display: grid; gap: .35rem; }
+.auth-field label { font-size: .875rem; font-weight: 600; }
+.required { color: #a52a1c; }
+.auth-input-wrap { position: relative; display: flex; align-items: center; }
+.auth-input-wrap input { width: 100%; min-height: 46px; padding: .65rem .9rem .65rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; color: #0f172a; font: inherit; font-size: .95rem; transition: border-color .15s ease, box-shadow .15s ease; }
+.auth-input-wrap input::placeholder { color: #94a3b8; }
+.auth-input-wrap input:hover { border-color: #94a3b8; }
+.auth-input-wrap input:focus { border-color: #0879e8; box-shadow: 0 0 0 3px rgba(8,121,232,.18); }
+.field-icon { position: absolute; left: .8rem; color: #64748b; font-size: 1.05rem; pointer-events: none; }
+.password-toggle { position: absolute; right: .35rem; display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border: 0; border-radius: 6px; background: none; color: #64748b; font-size: 1.1rem; cursor: pointer; }
+.password-toggle:hover { background: #eef6ff; color: #0f172a; }
+.auth-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.auth-check { display: inline-flex; align-items: center; gap: .5rem; color: #64748b; font-size: .875rem; cursor: pointer; }
+.auth-check input { display: grid; width: 1.1rem; height: 1.1rem; margin: 0; appearance: none; place-items: center; border: 1.5px solid #cbd5e1; border-radius: 4px; background: #fff; cursor: pointer; }
+.auth-check input:checked { border-color: #0879e8; background: #0879e8; }
+.auth-check input:checked::after { width: .3rem; height: .6rem; transform: rotate(45deg) translate(-1px,-1px); border: solid #fff; border-width: 0 2px 2px 0; content: ''; }
+.auth-link { padding: 0; border: 0; background: none; color: #0879e8; font: inherit; font-size: .875rem; font-weight: 600; text-decoration: none; cursor: pointer; }
+.auth-link:hover { text-decoration: underline; }
+.auth-alert { display: flex; align-items: flex-start; gap: .6rem; margin: 0; padding: .7rem .85rem; border-radius: 6px; background: #fde4e1; color: #a52a1c; font-size: .875rem; font-weight: 500; }
+.auth-alert i { margin-top: .2rem; }
+.auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
+.auth-demo { margin-top: 1.25rem; padding: .2rem .85rem; border: 1px dashed #cbd5e1; border-radius: 10px; color: #64748b; font-size: .82rem; }
+.auth-demo summary { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; color: #0f172a; font-weight: 600; cursor: pointer; }
+.auth-demo > p { margin: 0 0 .6rem; }
+.demo-account { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .2rem .6rem; padding: .45rem 0; border-top: 1px solid #e2e8f0; }
+.demo-account code { grid-column: 1; overflow-wrap: anywhere; padding: 0 .4rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: .78rem; font-weight: 600; letter-spacing: .02em; }
+.demo-account button { grid-column: 2; grid-row: 1 / 3; min-height: 32px; padding: .3rem .65rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #0f172a; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.demo-account button:hover { border-color: #0879e8; color: #0879e8; }
+@media (max-width: 520px) { .auth-row { align-items: flex-start; flex-direction: column; gap: .65rem; } }
 </style>
