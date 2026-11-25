@@ -6,12 +6,15 @@ import { useSessionStore } from '../stores/session.store.js'
 import { UserRole } from '../../domain/model/value-objects/user-role.js'
 import AuthShell from '../components/auth-shell.component.vue'
 import GoogleAccountPicker from '../components/google-account-picker.component.vue'
+import LegalDocumentModal from '../components/legal-document-modal.component.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const session = useSessionStore()
 const googlePickerOpen = ref(false)
+const legalModalOpen = ref(false)
+const legalDocument = ref('terms')
 const googleSignup = ref(false)
 const error = ref('')
 const form = ref({
@@ -23,6 +26,11 @@ const form = ref({
   confirmPassword: '',
   acceptedTerms: false
 })
+
+function showLegalDocument(kind) {
+  legalDocument.value = kind
+  legalModalOpen.value = true
+}
 
 function submit() {
   error.value = ''
@@ -122,7 +130,7 @@ onMounted(() => {
             <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-confirm-password" v-model="form.confirmPassword" type="password" :placeholder="t('auth.register.confirmPlaceholder')" autocomplete="new-password" required /></div>
           </div>
         </template>
-        <label class="terms-check"><input v-model="form.acceptedTerms" type="checkbox" /><span>{{ t('auth.register.agreePrefix') }} <a href="#" @click.prevent>{{ t('auth.register.termsLink') }}</a> {{ t('auth.register.agreeJoin') }} <a href="#" @click.prevent>{{ t('auth.register.privacyLink') }}</a></span></label>
+        <label class="terms-check"><input v-model="form.acceptedTerms" type="checkbox" /><span>{{ t('auth.register.agreePrefix') }} <button class="legal-link" type="button" @click="showLegalDocument('terms')">{{ t('auth.register.termsLink') }}</button> {{ t('auth.register.agreeJoin') }} <button class="legal-link" type="button" @click="showLegalDocument('privacy')">{{ t('auth.register.privacyLink') }}</button></span></label>
         <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ t(error) }}</span></p>
         <button class="auth-button auth-button-primary" type="submit">{{ t(googleSignup ? 'auth.google.finish' : 'auth.register.submit') }}</button>
         <button v-if="googleSignup" type="button" class="cancel-link" @click="googleSignup = false">{{ t('auth.google.cancel') }}</button>
@@ -130,6 +138,7 @@ onMounted(() => {
       <p v-if="!googleSignup" class="auth-foot">{{ t('auth.register.haveAccount') }} <RouterLink class="auth-link" to="/login">{{ t('auth.register.login') }}</RouterLink></p>
     </section>
     <GoogleAccountPicker v-model="googlePickerOpen" @select="selectGoogleAccount" />
+    <LegalDocumentModal v-model="legalModalOpen" :kind="legalDocument" />
   </AuthShell>
 </template>
 
@@ -166,6 +175,8 @@ onMounted(() => {
 .role-segment input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .role-segment input:focus-visible + span { outline: 2px solid #f2a93d; outline-offset: 2px; }
 .terms-check { display: flex; align-items: flex-start; gap: .5rem; color: #64748b; font-size: .8rem; cursor: pointer; }
+.legal-link { padding: 0; border: 0; background: none; color: #0879e8; font: inherit; font-size: inherit; text-decoration: underline; cursor: pointer; }
+.legal-link:hover { color: #0662bd; }
 .terms-check input { display: grid; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; margin: .1rem 0 0; appearance: none; place-items: center; border: 1.5px solid #cbd5e1; border-radius: 4px; background: #fff; cursor: pointer; }
 .terms-check input:checked { border-color: #0879e8; background: #0879e8; }
 .terms-check input:checked::after { width: .3rem; height: .6rem; transform: rotate(45deg) translate(-1px,-1px); border: solid #fff; border-width: 0 2px 2px 0; content: ''; }
