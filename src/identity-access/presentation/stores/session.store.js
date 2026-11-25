@@ -6,8 +6,8 @@ import { UserRole } from '../../domain/model/value-objects/user-role.js'
 /**
  * Pinia store — Identity, Profiles & Security. Thin reactive wrapper around
  * UserAuthentication (kept framework-agnostic in the application layer).
- * Authentication is a browser-only preview until IAM is connected. This
- * store also centralizes the read-only user directory (mechanics/workshops
+ * Authentication uses the application provider, while this store also
+ * centralizes the read-only user directory (mechanics/workshops
  * lookups) so presentation code never reaches into the repository directly.
  */
 export const useSessionStore = defineStore('session', {
@@ -27,11 +27,14 @@ export const useSessionStore = defineStore('session', {
       identityService.updateProfile(this.user.id, patch)
       this.user = identityService.currentUser()
     },
-    login(email, password) {
-      this.user = identityService.signIn(email, password)
+    async login(email, password) {
+      this.user = await identityService.signIn(email, password)
     },
-    register(profile) {
-      this.user = identityService.register(profile)
+    async loginWithGoogle() {
+      this.user = await identityService.signInWithGoogle()
+    },
+    async register(profile) {
+      this.user = await identityService.register(profile)
     },
     signOut() {
       identityService.signOut()
