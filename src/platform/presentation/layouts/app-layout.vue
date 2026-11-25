@@ -49,6 +49,12 @@ function retryConnection() {
   bootstrap(true)
 }
 
+function signOut() {
+  session.signOut()
+  mobileOpen.value = false
+  router.replace('/login')
+}
+
 const user = computed(() => session.user)
 const mobileOpen = ref(false)
 const notifPanel = ref(null)
@@ -170,6 +176,10 @@ function changeRole(role) {
             </p>
           </div>
         </div>
+        <button type="button" class="flotix-signout" @click="signOut">
+          <AppIcon name="logout" :size="16" />
+          <span>{{ t('header.signOut') }}</span>
+        </button>
       </div>
     </aside>
 
@@ -309,6 +319,14 @@ function changeRole(role) {
   color: #fff;
   font-variant-numeric: tabular-nums;
 }
+.flotix-signout {
+  display: flex; width: 100%; align-items: center; gap: .65rem; padding: .65rem .75rem;
+  border: 0; border-radius: var(--flotix-radius-control); background: none;
+  color: rgba(255,255,255,.76); font: inherit; font-size: .9rem; text-align: left; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+.flotix-signout:hover { background: rgba(255,255,255,.08); color: #fff; }
+.flotix-signout:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 
 .flotix-notif-dot {
   position: absolute; top: -1px; right: -2px;
