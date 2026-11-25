@@ -12,6 +12,7 @@ export const pagesEn = {
     prototype: 'Frontend preview · Authentication is not connected to the backend yet.',
     tabsLabel: 'Authentication',
     showPassword: 'Show password', hidePassword: 'Hide password',
+    preview: { description: 'Local panel preview. No account is created or authenticated.', roleLabel: 'Choose a preview role', enter: 'Open preview' },
     legal: {
       close: 'Close',
       terms: {
@@ -67,6 +68,7 @@ export const pagesEn = {
       invalidCredentials: 'Email or password is incorrect.',
       notConfigured: 'Sign-in is unavailable because the authentication service is not connected yet.',
       googleNotConfigured: 'Google sign-in is not configured yet.',
+      previewUnavailable: 'The local preview profile is not available.',
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.'
     }
@@ -84,6 +86,7 @@ export const pagesEn = {
     done: 'Done',
     retry: 'Retry',
     apiAddress: 'API',
+    previewMode: 'Local preview is active. API data and write actions are unavailable.',
     unreachable: 'Could not reach the server. Check that the API is running and your internet connection.',
     notFound: 'The requested resource does not exist.',
     conflict: 'The operation conflicts with the current state of the data.',
@@ -306,6 +309,7 @@ export const pagesEs = {
     prototype: 'Vista previa del frontend · La autenticación aún no está conectada al backend.',
     tabsLabel: 'Autenticación',
     showPassword: 'Mostrar contraseña', hidePassword: 'Ocultar contraseña',
+    preview: { description: 'Vista previa local del panel. No se crea ni autentica una cuenta.', roleLabel: 'Elige un rol para la vista previa', enter: 'Abrir vista previa' },
     demo: { title: 'Cuentas de demostración', description: 'Estas cuentas son para la vista previa local. Pulsa Usar para completar el formulario.', use: 'Usar' },
     legal: {
       close: 'Cerrar',
@@ -362,6 +366,7 @@ export const pagesEs = {
       invalidCredentials: 'El correo o la contraseña no son correctos.',
       notConfigured: 'No es posible iniciar sesión porque el servicio de autenticación aún no está conectado.',
       googleNotConfigured: 'El inicio de sesión con Google aún no está configurado.',
+      previewUnavailable: 'El perfil de vista previa local no está disponible.',
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.'
     }
@@ -379,6 +384,7 @@ export const pagesEs = {
     done: 'Listo',
     retry: 'Reintentar',
     apiAddress: 'API',
+    previewMode: 'Vista previa local activa. Los datos y acciones del API no están disponibles.',
     unreachable: 'No se pudo conectar con el servidor. Verifica que la API esté en ejecución y tu conexión a internet.',
     notFound: 'El recurso solicitado no existe.',
     conflict: 'La operación entra en conflicto con el estado actual de los datos.',
