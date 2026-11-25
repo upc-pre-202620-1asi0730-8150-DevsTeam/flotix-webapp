@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { toggleLocale } from '@/internationalization/i18n.js'
 import { useSessionStore } from '../stores/session.store.js'
@@ -13,6 +13,7 @@ import flotixIcon from '@/assets/brand/flotix-icon.png'
 import GoogleAccountPicker from '../components/google-account-picker.component.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { t, tm, locale } = useI18n()
 const session = useSessionStore()
 const email = ref('')
@@ -40,6 +41,10 @@ function selectGoogleAccount(account) {
   }
   router.push({ path: '/register', query: { email: account.email, name: account.name } })
 }
+
+onMounted(() => {
+  if (typeof route.query.email === 'string') email.value = route.query.email
+})
 </script>
 
 <template>
