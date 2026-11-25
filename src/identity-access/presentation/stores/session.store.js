@@ -6,10 +6,9 @@ import { UserRole } from '../../domain/model/value-objects/user-role.js'
 /**
  * Pinia store — Identity, Profiles & Security. Thin reactive wrapper around
  * UserAuthentication (kept framework-agnostic in the application layer).
- * There is no sign-in or sign-up: the active profile (Owner, Driver or
- * Mechanic) is chosen from the header. Also centralizes the read-only user
- * directory (mechanics/workshops lookups) so presentation code never reaches
- * into LocalStorageUserRepository directly.
+ * Authentication is a browser-only preview until IAM is connected. This
+ * store also centralizes the read-only user directory (mechanics/workshops
+ * lookups) so presentation code never reaches into the repository directly.
  */
 export const useSessionStore = defineStore('session', {
   state: () => ({
