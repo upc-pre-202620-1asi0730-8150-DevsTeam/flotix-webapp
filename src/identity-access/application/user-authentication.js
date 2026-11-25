@@ -3,11 +3,10 @@ import { Session } from '@/shared/infrastructure/session.js'
 import { UserRole } from '../domain/model/value-objects/user-role.js'
 
 /**
- * UserProfiles — application layer, Identity, Profiles & Security.
- * The backend has no identity module and the app has no sign-in / sign-up:
- * it opens directly with a demo profile. The three actors from the Context
- * Diagram (Owner, Driver, Mechanic) are selectable from the header, and the
- * selected profile is remembered in the browser.
+ * Identity, Profiles & Security application layer.
+ * Sign-in and registration currently use demo profiles in browser storage;
+ * the IAM API is not connected. The three actors (Owner, Driver, Mechanic)
+ * can also be selected from the header in this local preview.
  */
 export class UserAuthentication {
   constructor() {
