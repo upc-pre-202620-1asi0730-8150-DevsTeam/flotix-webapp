@@ -22,6 +22,7 @@ import { bootstrap } from '@/shared/infrastructure/bootstrap.js'
 import { useApiStatusStore } from '@/shared/presentation/stores/api-status.store.js'
 import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 import { API_BASE_URL } from '@/shared/infrastructure/http-client.js'
+import { AUTH_PREVIEW_ENABLED } from '@/identity-access/application/user-authentication.js'
 
 
 const router = useRouter()
@@ -38,6 +39,10 @@ const { run } = useApiFeedback()
 // notifications fresh (the API creates them from alerts, incidents, etc.).
 let notificationsTimer = null
 onMounted(() => {
+  if (AUTH_PREVIEW_ENABLED && !API_BASE_URL) {
+    apiStatus.ready = true
+    return
+  }
   bootstrap()
   notificationsTimer = setInterval(() => {
     if (apiStatus.ready && !apiStatus.hasError) alerts.load().catch(() => {})
@@ -260,6 +265,9 @@ function changeRole(role) {
       </header>
 
       <main class="flex-1 p-3 lg:p-4">
+        <div v-if="AUTH_PREVIEW_ENABLED && !API_BASE_URL" class="mb-3 border-round-xl px-3 py-2 text-sm" style="background: #eff6ff; color: #1e3a8a">
+          {{ t('api.previewMode') }}
+        </div>
         <div
           v-if="apiStatus.ready && apiStatus.hasError"
           class="flex align-items-center gap-3 p-3 mb-3 border-round-xl"
