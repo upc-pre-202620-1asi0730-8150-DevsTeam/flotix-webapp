@@ -1,6 +1,33 @@
 /** en/es copy for every page of the app (merged into content.js). */
 
 export const pagesEn = {
+  auth: {
+    brand: 'Your fleet, in good hands',
+    brandSubtitle: 'Flotix brings your vehicles, drivers and maintenance together in one clear view.',
+    features: ['Fleet management', 'Fuel control', 'Coordinated maintenance', 'Real-time GPS tracking'],
+    prototype: 'Frontend preview · Authentication is not connected to the backend yet.',
+    login: {
+      title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
+      submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
+      google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in'
+    },
+    register: {
+      title: 'Create your account', subtitle: 'Join Flotix and start managing your fleet.', name: 'Full name',
+      email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
+      owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Company (optional)',
+      workshop: 'Workshop (optional)', licenseNumber: 'License number', licenseExpiry: 'License expiration',
+      submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
+      google: 'Sign up with Google', terms: 'By creating an account, you agree to the Terms and Privacy Policy.'
+    },
+    google: {
+      title: 'Choose a Google demo account', subtitle: 'This preview does not connect to Google OAuth.',
+      existing: 'Continue with demo profile', new: 'Continue as a new profile', close: 'Close'
+    },
+    errors: {
+      invalidCredentials: 'Email or password is incorrect. Try one of the demo accounts below.',
+      emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.'
+    }
+  },
   common: {
     save: 'Save', cancel: 'Cancel', delete: 'Delete', confirm: 'Confirm', retry: 'Retry',
     actions: 'Actions', dash: '—', loadingShort: 'Loading…'
@@ -225,6 +252,33 @@ export const pagesEn = {
 
 
 export const pagesEs = {
+  auth: {
+    brand: 'Tu flota, siempre en buenas manos',
+    brandSubtitle: 'Flotix reúne tus vehículos, conductores y mantenimientos en una vista clara.',
+    features: ['Gestión de flota', 'Control de combustible', 'Mantenimiento coordinado', 'Monitoreo GPS en tiempo real'],
+    prototype: 'Vista previa del frontend · La autenticación aún no está conectada al backend.',
+    login: {
+      title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
+      submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
+      google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada'
+    },
+    register: {
+      title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a gestionar tu flota.', name: 'Nombre completo',
+      email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
+      owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Empresa (opcional)',
+      workshop: 'Taller (opcional)', licenseNumber: 'Número de licencia', licenseExpiry: 'Vencimiento de licencia',
+      submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
+      google: 'Registrarse con Google', terms: 'Al crear una cuenta, aceptas los Términos y la Política de privacidad.'
+    },
+    google: {
+      title: 'Elige una cuenta de Google de prueba', subtitle: 'Esta vista previa no se conecta con Google OAuth.',
+      existing: 'Continuar con perfil demo', new: 'Continuar como perfil nuevo', close: 'Cerrar'
+    },
+    errors: {
+      invalidCredentials: 'El correo o la contraseña no son correctos. Prueba una de las cuentas demo.',
+      emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.'
+    }
+  },
   common: {
     save: 'Guardar', cancel: 'Cancelar', delete: 'Eliminar', confirm: 'Confirmar', retry: 'Reintentar',
     actions: 'Acciones', dash: '—', loadingShort: 'Cargando…'
