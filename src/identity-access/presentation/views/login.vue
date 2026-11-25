@@ -3,11 +3,16 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '../stores/session.store.js'
+import { AUTH_PREVIEW_ENABLED } from '../../application/user-authentication.js'
+import { UserRole } from '../../domain/model/value-objects/user-role.js'
 import AuthShell from '../components/auth-shell.component.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 const session = useSessionStore()
+const previewEnabled = AUTH_PREVIEW_ENABLED
+const previewRole = ref(UserRole.OWNER)
+const previewRoles = Object.values(UserRole)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -31,6 +36,16 @@ async function signInWithGoogle() {
     error.value = exception.message
   }
 }
+
+function enterPreview() {
+  error.value = ''
+  try {
+    session.enterPreview(previewRole.value)
+    router.push('/dashboard')
+  } catch (exception) {
+    error.value = exception.message
+  }
+}
 </script>
 
 <template>
@@ -38,6 +53,16 @@ async function signInWithGoogle() {
     <section class="auth-view">
       <h2 class="auth-title">{{ t('auth.login.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
+
+      <div v-if="previewEnabled" class="auth-preview">
+        <p>{{ t('auth.preview.description') }}</p>
+        <div class="auth-preview-actions">
+          <select v-model="previewRole" :aria-label="t('auth.preview.roleLabel')">
+            <option v-for="role in previewRoles" :key="role" :value="role">{{ t(`roles.${role}`) }}</option>
+          </select>
+          <button type="button" @click="enterPreview">{{ t('auth.preview.enter') }}</button>
+        </div>
+      </div>
 
       <button type="button" class="auth-button auth-button-outline google-button" @click="signInWithGoogle">
         <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
@@ -110,5 +135,12 @@ async function signInWithGoogle() {
 .auth-alert { display: flex; align-items: flex-start; gap: .6rem; margin: 0; padding: .7rem .85rem; border-radius: 6px; background: #fde4e1; color: #a52a1c; font-size: .875rem; font-weight: 500; }
 .auth-alert i { margin-top: .2rem; }
 .auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
+.auth-preview { margin-top: 1rem; padding: .8rem; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1e3a8a; font-size: .85rem; }
+.auth-preview p { margin: 0 0 .6rem; }
+.auth-preview-actions { display: flex; gap: .5rem; }
+.auth-preview-actions select, .auth-preview-actions button { min-height: 38px; padding: .4rem .6rem; border: 1px solid #bfdbfe; border-radius: 6px; background: #fff; color: #0f172a; font: inherit; }
+.auth-preview-actions select { min-width: 0; flex: 1; }
+.auth-preview-actions button { border-color: #0879e8; background: #0879e8; color: #fff; font-weight: 600; cursor: pointer; }
+.auth-preview-actions button:hover { background: #0662bd; }
 @media (max-width: 520px) { .auth-row { align-items: flex-start; flex-direction: column; gap: .65rem; } }
 </style>
