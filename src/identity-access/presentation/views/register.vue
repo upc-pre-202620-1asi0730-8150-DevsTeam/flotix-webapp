@@ -16,7 +16,7 @@ import GoogleAccountPicker from '../components/google-account-picker.component.v
 
 const router = useRouter()
 const route = useRoute()
-const { t, locale } = useI18n()
+const { t, tm, locale } = useI18n()
 const session = useSessionStore()
 
 const step = ref(1)
@@ -178,11 +178,11 @@ onMounted(() => {
               </div>
             </template>
             <div v-else-if="form.role === UserRole.OWNER" class="flex flex-column gap-1">
-              <label class="text-sm font-medium text-heading">{{ t('auth.register.companyOptional') }}</label>
+              <label class="text-sm font-medium text-heading">{{ t('auth.register.company') }}</label>
               <InputText v-model="form.companyName" fluid />
             </div>
             <div v-else class="flex flex-column gap-1">
-              <label class="text-sm font-medium text-heading">{{ t('auth.register.workshopOptional') }}</label>
+              <label class="text-sm font-medium text-heading">{{ t('auth.register.workshop') }}</label>
               <InputText v-model="form.workshopName" fluid />
             </div>
 
