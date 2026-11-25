@@ -13,6 +13,31 @@ export const pagesEn = {
     tabsLabel: 'Authentication',
     showPassword: 'Show password', hidePassword: 'Hide password',
     demo: { title: 'Demo accounts', description: 'These accounts are for the local preview. Choose Use to fill in the form.', use: 'Use' },
+    legal: {
+      close: 'Close',
+      terms: {
+        title: 'Terms and conditions',
+        lede: 'These terms describe how visitors and registered users may use the Flotix landing page, web application and IoT device.',
+        sections: [
+          { title: '1. Scope', body: 'These terms apply to the Flotix landing page, the web application and the companion GPS, odometer and fuel sensor device offered to fleet owners.' },
+          { title: '2. Accounts and roles', body: 'Every account belongs to one of three roles: owner, driver or workshop. Each role sees only the screens and data relevant to its work, and an owner may assign roles to the members of their organization.' },
+          { title: '3. Acceptable use', body: 'Users agree to provide accurate vehicle and account information, to use the IoT device only on vehicles they own or operate, and not to interfere with telemetry data belonging to another account.' },
+          { title: '4. Data and privacy', body: 'Location, fuel and maintenance data collected through the platform is used to power the features owners, drivers and workshops rely on, and is not sold to third parties.' },
+          { title: '5. Professional responsibility', body: 'The Flotix team follows recognized software engineering ethics guidance in how the platform is built, tested and deployed, and documents changes to the service through its public version control repository.' }
+        ]
+      },
+      privacy: {
+        title: 'Privacy policy',
+        lede: 'This page explains what information Flotix collects, why it is collected and how it is protected.',
+        sections: [
+          { title: '1. Information we collect', body: 'Account details such as name, email and role, together with vehicle, location, fuel and maintenance data reported by the web application and the IoT device.' },
+          { title: '2. How we use it', body: 'The data powers fleet management, fuel control, preventive maintenance and real time monitoring, and helps us improve the platform.' },
+          { title: '3. Sharing', body: 'Information is shared only inside the organization that owns the account and with affiliated workshops when a maintenance task requires it. It is never sold to third parties.' },
+          { title: '4. Security and retention', body: 'We apply access controls by role and keep data only as long as the account is active or as needed to provide the service.' },
+          { title: '5. Your rights', body: 'You may ask to access, correct or delete your personal information at any time by contacting the Flotix team.' }
+        ]
+      }
+    },
     login: {
       tab: 'Sign in',
       title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
@@ -282,6 +307,31 @@ export const pagesEs = {
     tabsLabel: 'Autenticación',
     showPassword: 'Mostrar contraseña', hidePassword: 'Ocultar contraseña',
     demo: { title: 'Cuentas de demostración', description: 'Estas cuentas son para la vista previa local. Pulsa Usar para completar el formulario.', use: 'Usar' },
+    legal: {
+      close: 'Cerrar',
+      terms: {
+        title: 'Términos y condiciones',
+        lede: 'Estos términos describen cómo los visitantes y usuarios registrados pueden usar el landing page, la aplicación web y el dispositivo IoT de Flotix.',
+        sections: [
+          { title: '1. Alcance', body: 'Estos términos aplican al landing page de Flotix, la aplicación web y el dispositivo de GPS, odómetro y sensor de combustible ofrecido a los dueños de flota.' },
+          { title: '2. Cuentas y roles', body: 'Cada cuenta pertenece a uno de tres roles: dueño, conductor o taller. Cada rol ve únicamente las pantallas y los datos relevantes para su trabajo, y un dueño puede asignar roles a los miembros de su organización.' },
+          { title: '3. Uso aceptable', body: 'Los usuarios se comprometen a proporcionar información precisa de vehículos y cuenta, a usar el dispositivo IoT solo en vehículos que posean u operen, y a no interferir con los datos de telemetría de otra cuenta.' },
+          { title: '4. Datos y privacidad', body: 'Los datos de ubicación, combustible y mantenimiento recolectados por la plataforma se usan para las funciones que dueños, conductores y talleres necesitan, y no se venden a terceros.' },
+          { title: '5. Responsabilidad profesional', body: 'El equipo de Flotix sigue lineamientos reconocidos de ética en ingeniería de software para construir, probar y desplegar la plataforma, y documenta los cambios del servicio en su repositorio público de control de versiones.' }
+        ]
+      },
+      privacy: {
+        title: 'Política de privacidad',
+        lede: 'Esta página explica qué información recopila Flotix, por qué se recopila y cómo se protege.',
+        sections: [
+          { title: '1. Información que recopilamos', body: 'Datos de la cuenta como nombre, correo y rol, junto con los datos de vehículos, ubicación, combustible y mantenimiento que reportan la aplicación web y el dispositivo IoT.' },
+          { title: '2. Cómo la usamos', body: 'Los datos permiten la gestión de flotas, el control de combustible, el mantenimiento preventivo y el monitoreo en tiempo real, y nos ayudan a mejorar la plataforma.' },
+          { title: '3. Compartir', body: 'La información se comparte solo dentro de la organización dueña de la cuenta y con talleres afiliados cuando una tarea de mantenimiento lo requiere. Nunca se vende a terceros.' },
+          { title: '4. Seguridad y conservación', body: 'Aplicamos control de acceso por rol y conservamos los datos solo mientras la cuenta esté activa o sea necesario para prestar el servicio.' },
+          { title: '5. Tus derechos', body: 'Puedes solicitar acceso, corrección o eliminación de tu información personal en cualquier momento contactando al equipo de Flotix.' }
+        ]
+      }
+    },
     login: {
       tab: 'Iniciar sesión',
       title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
