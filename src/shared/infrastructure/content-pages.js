@@ -14,6 +14,8 @@ export const pagesEn = {
     },
     register: {
       title: 'Create your account', subtitle: 'Join Flotix and start managing your fleet.', name: 'Full name',
+      chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
+      driver: 'Driver', mechanic: 'Mechanic / Workshop',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
       owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Company (optional)',
       workshop: 'Workshop (optional)', licenseNumber: 'License number', licenseExpiry: 'License expiration',
@@ -266,6 +268,8 @@ export const pagesEs = {
     },
     register: {
       title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a gestionar tu flota.', name: 'Nombre completo',
+      chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
+      driver: 'Conductor', mechanic: 'Mecánico / Taller',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
       owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Empresa (opcional)',
       workshop: 'Taller (opcional)', licenseNumber: 'Número de licencia', licenseExpiry: 'Vencimiento de licencia',
