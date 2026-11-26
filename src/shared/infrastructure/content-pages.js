@@ -13,7 +13,7 @@ export const pagesEn = {
     tabsLabel: 'Authentication',
     showPassword: 'Show password', hidePassword: 'Hide password',
     preview: { description: 'Local panel preview. No account is created or authenticated.', roleLabel: 'Choose a preview role', enter: 'Open preview' },
-    localDevelopmentNotice: 'If the API cannot be reached, this development login stores accounts only in this browser; it does not create an IAM account.',
+    localDevelopmentNotice: '',
     legal: {
       close: 'Close',
       terms: {
