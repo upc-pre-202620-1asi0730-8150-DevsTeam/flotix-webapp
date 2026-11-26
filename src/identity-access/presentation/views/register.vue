@@ -1,19 +1,53 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '../stores/session.store.js'
 import { UserRole } from '../../domain/model/value-objects/user-role.js'
+import { PLAN_CATALOG, findPlan } from '../../domain/model/value-objects/subscription-plan.js'
+import { subscriptionService } from '../../application/subscription.service.js'
 import AuthShell from '../components/auth-shell.component.vue'
 import LegalDocumentModal from '../components/legal-document-modal.component.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 const session = useSessionStore()
 const localFallbackEnabled = import.meta.env.DEV
 const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
 const error = ref('')
+
+// Plan chosen on the landing page (/register?plan=growth). Without a plan the form behaves as before.
+const plan = computed(() => findPlan(route.query.plan))
+const plans = Object.values(PLAN_CATALOG)
+const step = ref('account') // 'account' | 'payment' (payment only when a plan was selected)
+const paying = ref(false)
+const card = ref({ holder: '', number: '', expiry: '', cvv: '' })
+
+function planLimitText(item) {
+  return item.vehicleLimit ? t('auth.plan.upTo', { count: item.vehicleLimit }) : t('auth.plan.unlimited')
+}
+function choosePlan(id) {
+  router.replace({ query: { ...route.query, plan: id } })
+}
+// Only fleet owners buy plans, so the role is fixed while a plan is selected.
+watch(plan, (value) => { if (value) form.value.role = UserRole.OWNER }, { immediate: false })
+
+function formatCardNumber() {
+  card.value.number = card.value.number.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+}
+function formatExpiry() {
+  const digits = card.value.expiry.replace(/\D/g, '').slice(0, 4)
+  card.value.expiry = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits
+}
+function cardIsValid() {
+  const digits = card.value.number.replace(/\D/g, '')
+  const [mm, yy] = card.value.expiry.split('/').map(Number)
+  const now = new Date()
+  const notExpired = yy != null && mm >= 1 && mm <= 12 && (2000 + yy > now.getFullYear() || (2000 + yy === now.getFullYear() && mm >= now.getMonth() + 1))
+  return card.value.holder.trim().length > 1 && digits.length >= 13 && notExpired && /^\d{3,4}$/.test(card.value.cvv)
+}
 const currentDate = new Date()
 const minLicenseExpiry = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
 
@@ -42,8 +76,7 @@ function showLegalDocument(kind) {
   legalModalOpen.value = true
 }
 
-async function submit() {
-  error.value = ''
+function validateAccount() {
   const roleFields = {
     [UserRole.OWNER]: [form.value.companyName, form.value.fleetSize],
     [UserRole.DRIVER]: [form.value.licenseNumber, form.value.licenseExpiry],
@@ -52,21 +85,41 @@ async function submit() {
 
   if (roleFields.some((value) => !String(value).trim())) {
     error.value = 'auth.errors.roleFieldsRequired'
-    return
+    return false
   }
   if (form.value.role === UserRole.DRIVER && form.value.licenseExpiry < minLicenseExpiry) {
     error.value = 'auth.errors.licenseExpired'
-    return
+    return false
   }
   if (form.value.password !== form.value.confirmPassword) {
     error.value = 'auth.errors.passwordMismatch'
-    return
+    return false
   }
   if (!form.value.acceptedTerms) {
     error.value = 'auth.errors.termsRequired'
+    return false
+  }
+  if (plan.value?.vehicleLimit && Number(form.value.fleetSize) > plan.value.vehicleLimit) {
+    error.value = t('auth.errors.fleetSizeExceedsPlan', { plan: plan.value.name, limit: plan.value.vehicleLimit })
+    return false
+  }
+  return true
+}
+
+async function submit() {
+  error.value = ''
+  if (!validateAccount()) return
+  if (plan.value && step.value === 'account') {
+    step.value = 'payment'
+    return
+  }
+  if (plan.value && !cardIsValid()) {
+    error.value = 'auth.errors.cardInvalid'
     return
   }
   try {
+    paying.value = true
+    if (plan.value) await new Promise((resolve) => setTimeout(resolve, 1500)) // simulated payment gateway
     await session.register({
       firstName: form.value.firstName.trim(),
       lastName: form.value.lastName.trim(),
@@ -79,11 +132,19 @@ async function submit() {
       licenseExpiry: form.value.licenseExpiry,
       workshopName: form.value.workshopName.trim(),
       workshopCity: form.value.workshopCity.trim(),
-      workshopSpecialty: form.value.workshopSpecialty.trim()
+      workshopSpecialty: form.value.workshopSpecialty.trim(),
+      // Plan bought at sign-up (simulated payment): sent to the API; only the last 4 digits of the card leave the form
+      plan: plan.value?.id ?? null,
+      cardLast4: plan.value ? card.value.number.replace(/\D/g, '').slice(-4) : null,
+      cardExpiry: plan.value ? card.value.expiry : null
     })
+    // The API stores the plan; the local preview provider has no backend, so keep it in the browser instead.
+    if (plan.value && !session.user?.subscription) subscriptionService.activate(session.user?.id, plan.value.id, card.value)
     router.push('/dashboard')
   } catch (exception) {
     error.value = exception.message
+  } finally {
+    paying.value = false
   }
 }
 
@@ -102,15 +163,28 @@ async function signUpWithGoogle() {
     <section class="auth-view">
       <h2 class="auth-title">{{ t('auth.register.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.register.subtitle') }}</p>
+
+      <div v-if="plan" class="plan-summary" data-testid="selected-plan">
+        <div class="plan-summary-head">
+          <span class="plan-kicker">{{ t('auth.plan.selected') }}</span>
+          <strong class="plan-name">{{ plan.name }}</strong>
+          <span class="plan-price">S/ {{ plan.priceMonthly }} <small>{{ t('auth.plan.perMonth') }}</small></span>
+          <span class="plan-limit">{{ planLimitText(plan) }}</span>
+        </div>
+        <div v-if="step === 'account'" class="plan-switch" role="radiogroup" :aria-label="t('auth.plan.change')">
+          <button v-for="item in plans" :key="item.id" type="button" role="radio" :aria-checked="item.id === plan.id" :class="{ active: item.id === plan.id }" @click="choosePlan(item.id)">{{ item.name }}</button>
+        </div>
+      </div>
       
-      <button type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
+      <button v-if="!plan" type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
         <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         <span>{{ t('auth.register.google') }}</span>
       </button>
-      <div class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
+      <div v-if="!plan" class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
 
       <form class="register-form" @submit.prevent="submit">
-        <div class="auth-field">
+<div v-show="step === 'account'" class="register-fields">
+        <div v-if="!plan" class="auth-field">
           <span class="auth-label">{{ t('auth.register.roleLabel') }}</span>
           <div class="role-segment" role="radiogroup" :aria-label="t('auth.register.roleLabel')">
             <label :class="{ selected: form.role === UserRole.OWNER }"><input v-model="form.role" type="radio" :value="UserRole.OWNER" /><span>{{ t('auth.register.owner') }}</span></label>
@@ -118,6 +192,8 @@ async function signUpWithGoogle() {
             <label :class="{ selected: form.role === UserRole.MECHANIC }"><input v-model="form.role" type="radio" :value="UserRole.MECHANIC" /><span>{{ t('auth.register.mechanic') }}</span></label>
           </div>
         </div>
+
+        <p v-else class="plan-owner-note"><i class="pi pi-info-circle" aria-hidden="true" /><span>{{ t('auth.plan.ownerOnly') }}</span></p>
 
         <div v-if="form.role === UserRole.OWNER" class="auth-field">
           <label for="register-company">{{ t('auth.register.company') }} <span class="required">*</span></label>
@@ -174,8 +250,40 @@ async function signUpWithGoogle() {
           <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-confirm-password" v-model="form.confirmPassword" type="password" :placeholder="t('auth.register.confirmPlaceholder')" autocomplete="new-password" required /></div>
         </div>
         <label class="terms-check"><input v-model="form.acceptedTerms" type="checkbox" /><span>{{ t('auth.register.agreePrefix') }} <button class="legal-link" type="button" @click="showLegalDocument('terms')">{{ t('auth.register.termsLink') }}</button> {{ t('auth.register.agreeJoin') }} <button class="legal-link" type="button" @click="showLegalDocument('privacy')">{{ t('auth.register.privacyLink') }}</button></span></label>
+        </div>
+
+        <section v-if="plan && step === 'payment'" class="checkout" aria-live="polite">
+          <h3 class="checkout-title">{{ t('auth.checkout.title') }}</h3>
+          <p class="checkout-sub">{{ t('auth.checkout.subtitle', { plan: plan.name }) }}</p>
+          <p class="auth-local-note">{{ t('auth.checkout.simulated') }}</p>
+          <div class="auth-field">
+            <label for="card-holder">{{ t('auth.checkout.cardHolder') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-user field-icon" aria-hidden="true" /><input id="card-holder" v-model="card.holder" autocomplete="cc-name" maxlength="60" required /></div>
+          </div>
+          <div class="auth-field">
+            <label for="card-number">{{ t('auth.checkout.cardNumber') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-credit-card field-icon" aria-hidden="true" /><input id="card-number" v-model="card.number" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="19" required @input="formatCardNumber" /></div>
+          </div>
+          <div class="name-grid">
+            <div class="auth-field">
+              <label for="card-expiry">{{ t('auth.checkout.expiry') }} <span class="required">*</span></label>
+              <div class="auth-input-wrap"><i class="pi pi-calendar field-icon" aria-hidden="true" /><input id="card-expiry" v-model="card.expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="08/28" maxlength="5" required @input="formatExpiry" /></div>
+            </div>
+            <div class="auth-field">
+              <label for="card-cvv">{{ t('auth.checkout.cvv') }} <span class="required">*</span></label>
+              <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="card-cvv" v-model="card.cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" required /></div>
+            </div>
+          </div>
+          <div class="checkout-total"><span>{{ t('auth.checkout.total') }}</span><strong>S/ {{ plan.priceMonthly }}</strong></div>
+          <button type="button" class="legal-link checkout-back" :disabled="paying" @click="step = 'account'; error = ''">{{ t('auth.checkout.back') }}</button>
+        </section>
         <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ errorText(error) }}</span></p>
-        <button class="auth-button auth-button-primary" type="submit">{{ t('auth.register.submit') }}</button>
+        <button class="auth-button auth-button-primary" type="submit" :disabled="paying">
+          <template v-if="!plan">{{ t('auth.register.submit') }}</template>
+          <template v-else-if="step === 'account'">{{ t('auth.register.continueToPayment') }}</template>
+          <template v-else-if="paying">{{ t('auth.checkout.processing') }}</template>
+          <template v-else>{{ t('auth.checkout.pay', { amount: plan.priceMonthly }) }}</template>
+        </button>
       </form>
       <p class="auth-foot">{{ t('auth.register.haveAccount') }} <RouterLink class="auth-link" to="/login">{{ t('auth.register.login') }}</RouterLink></p>
     </section>
@@ -198,6 +306,24 @@ async function signUpWithGoogle() {
 .google-mark { width: 1.15rem; height: 1.15rem; }
 .auth-divider { display: flex; align-items: center; gap: .8rem; margin: 1rem 0 .25rem; color: #64748b; font-size: .8rem; }
 .auth-divider::before, .auth-divider::after { height: 1px; flex: 1; background: #e2e8f0; content: ''; }
+.register-fields { display: grid; gap: 1rem; }
+.plan-summary { margin-top: 1rem; padding: .85rem 1rem; border: 1px solid #bfdbfe; border-radius: 10px; background: #eff6ff; }
+.plan-summary-head { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: .75rem; }
+.plan-kicker { grid-column: 1 / -1; color: #0662bd; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.plan-name { color: #0f172a; font-size: 1.25rem; }
+.plan-price { color: #0f172a; font-size: 1.25rem; font-weight: 700; }
+.plan-price small { color: #64748b; font-size: .8rem; font-weight: 500; }
+.plan-limit { grid-column: 1 / -1; color: #64748b; font-size: .85rem; }
+.plan-switch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: .75rem; padding: 3px; border: 1px solid #dbeafe; border-radius: 8px; background: #fff; }
+.plan-switch button { min-height: 34px; border: 0; border-radius: 6px; background: transparent; color: #64748b; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.plan-switch button.active { background: #0879e8; color: #fff; }
+.plan-owner-note { display: flex; gap: .5rem; margin: 0; color: #64748b; font-size: .8rem; }
+.checkout { display: grid; gap: 1rem; }
+.checkout-title { margin: 0; color: #0f172a; font-size: 1.15rem; }
+.checkout-sub { margin: -.6rem 0 0; color: #64748b; font-size: .9rem; }
+.checkout-total { display: flex; justify-content: space-between; padding-top: .75rem; border-top: 1px solid #e2e8f0; color: #0f172a; }
+.checkout-back { justify-self: start; font-size: .85rem; }
+.auth-button:disabled { opacity: .7; cursor: wait; }
 .register-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
 .role-fields { display: grid; gap: 1rem; }
 .field-example { color: #64748b; font-size: .75rem; }
