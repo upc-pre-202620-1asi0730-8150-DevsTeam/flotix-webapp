@@ -68,6 +68,7 @@ export const pagesEn = {
       invalidCredentials: 'Email or password is incorrect.',
       notConfigured: 'Sign-in is unavailable because the authentication service is not connected yet.',
       googleNotConfigured: 'Google sign-in is not configured yet.',
+      profileNotFound: 'No Flotix profile is linked to this email. Finish registration or contact support.',
       previewUnavailable: 'The local preview profile is not available.',
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.'
@@ -366,6 +367,7 @@ export const pagesEs = {
       invalidCredentials: 'El correo o la contraseña no son correctos.',
       notConfigured: 'No es posible iniciar sesión porque el servicio de autenticación aún no está conectado.',
       googleNotConfigured: 'El inicio de sesión con Google aún no está configurado.',
+      profileNotFound: 'No hay un perfil Flotix vinculado a este correo. Completa el registro o contacta al equipo.',
       previewUnavailable: 'El perfil de vista previa local no está disponible.',
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.'
