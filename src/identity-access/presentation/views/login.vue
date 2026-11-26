@@ -58,7 +58,7 @@ function enterPreview() {
     <section class="auth-view">
       <h2 class="auth-title">{{ t('auth.login.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
-      <p v-if="localFallbackEnabled" class="auth-local-note" role="note">{{ t('auth.localDevelopmentNotice') }}</p>
+
 
       <div v-if="previewEnabled" class="auth-preview">
         <p>{{ t('auth.preview.description') }}</p>
