@@ -58,7 +58,7 @@ export const pagesEn = {
       workshop: 'Workshop or business name', workshopPlaceholder: 'e.g. Taller San Martín',
       workshopCity: 'City or district', workshopCityPlaceholder: 'e.g. San Miguel, Lima',
       workshopSpecialty: 'Main specialty', workshopSpecialtyPlaceholder: 'e.g. Engine diagnostics',
-      licenseNumber: 'Driver license number', licenseNumberPlaceholder: 'e.g. Q12345678', licenseExpiry: 'License expiration',
+      licenseNumber: 'License number', licenseNumberPlaceholder: 'e.g. Q12345678', licenseExpiry: 'License expiration',
       licenseExpiryExample: 'Example: Dec 31, 2028. Select the expiry date printed on your license.',
       submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
       google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.'
@@ -364,7 +364,7 @@ export const pagesEs = {
       workshop: 'Nombre del taller o negocio', workshopPlaceholder: 'Ej.: Taller San Martín',
       workshopCity: 'Ciudad o distrito', workshopCityPlaceholder: 'Ej.: San Miguel, Lima',
       workshopSpecialty: 'Especialidad principal', workshopSpecialtyPlaceholder: 'Ej.: Diagnóstico de motores',
-      licenseNumber: 'Número de licencia de conducir', licenseNumberPlaceholder: 'Ej.: Q12345678', licenseExpiry: 'Vencimiento de licencia',
+      licenseNumber: 'N.º de licencia', licenseNumberPlaceholder: 'Ej.: Q12345678', licenseExpiry: 'Vencimiento de licencia',
       licenseExpiryExample: 'Ejemplo: 31/12/2028. Selecciona el vencimiento que aparece en tu licencia.',
       submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
       google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.'
