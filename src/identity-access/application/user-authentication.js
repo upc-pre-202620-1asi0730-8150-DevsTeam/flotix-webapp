@@ -7,18 +7,31 @@ export const AUTH_PREVIEW_ENABLED = import.meta.env.DEV && import.meta.env.VITE_
 export class UserAuthentication {
   constructor(provider = new ApiAuthenticationProvider()) {
     this.provider = provider
+    this.localProvider = new LocalPreviewAuthenticationProvider()
   }
 
   async signIn(email, password, remember = true) {
-    const user = await this.provider.signIn({ email, password, remember })
+    const user = await this._authenticate('signIn', { email, password, remember })
     Session.set(user, remember)
     return user
   }
 
   async register(profile) {
-    const user = await this.provider.register(profile)
+    const user = await this._authenticate('register', profile)
     Session.set(user)
     return user
+  }
+
+  async _authenticate(action, payload) {
+    try {
+      return await this.provider[action](payload)
+    } catch (error) {
+      const apiUnavailable = error.status === 0
+      if (!import.meta.env.DEV || !(this.provider instanceof ApiAuthenticationProvider) || !apiUnavailable) {
+        throw error
+      }
+      return this.localProvider[action](payload)
+    }
   }
 
   currentUser() {
