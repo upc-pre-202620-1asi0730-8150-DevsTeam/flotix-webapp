@@ -123,7 +123,7 @@ async function signUpWithGoogle() {
           <label for="register-fleet-size">{{ t('auth.register.fleetSize') }} <span class="required">*</span></label>
           <div class="auth-input-wrap"><i class="pi pi-truck field-icon" aria-hidden="true" /><input id="register-fleet-size" v-model="form.fleetSize" type="number" min="1" step="1" :placeholder="t('auth.register.fleetSizePlaceholder')" required /></div>
         </div>
-        <div v-else-if="form.role === UserRole.DRIVER" class="name-grid">
+        <div v-else-if="form.role === UserRole.DRIVER" class="driver-fields">
           <div class="auth-field">
             <label for="register-license-number">{{ t('auth.register.licenseNumber') }} <span class="required">*</span></label>
             <div class="auth-input-wrap"><i class="pi pi-id-card field-icon" aria-hidden="true" /><input id="register-license-number" v-model="form.licenseNumber" :placeholder="t('auth.register.licenseNumberPlaceholder')" maxlength="30" required /></div>
@@ -202,6 +202,8 @@ async function signUpWithGoogle() {
 .auth-field label, .auth-label { font-size: .875rem; font-weight: 600; }
 .required { color: #a52a1c; }
 .name-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.driver-fields { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: .75rem; }
+.driver-fields .auth-field label { display: flex; min-height: 2.5rem; align-items: flex-end; }
 .auth-input-wrap { position: relative; display: flex; min-width: 0; align-items: center; }
 .auth-input-wrap input { width: 100%; min-height: 46px; padding: .65rem .9rem .65rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #fff; color: #0f172a; font: inherit; font-size: .95rem; transition: border-color .15s ease, box-shadow .15s ease; }
 .auth-input-wrap input::placeholder { color: #94a3b8; }
@@ -225,5 +227,5 @@ async function signUpWithGoogle() {
 .auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
 .auth-link { color: #0879e8; font-size: inherit; font-weight: 600; text-decoration: none; }
 .auth-link:hover { text-decoration: underline; }
-@media (max-width: 520px) { .name-grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .name-grid, .driver-fields { grid-template-columns: 1fr; } .driver-fields .auth-field label { min-height: 0; } }
 </style>
