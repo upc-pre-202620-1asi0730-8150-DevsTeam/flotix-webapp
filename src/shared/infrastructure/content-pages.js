@@ -62,7 +62,19 @@ export const pagesEn = {
       licenseNumber: 'License number', licenseNumberPlaceholder: 'e.g. Q12345678', licenseExpiry: 'License expiration',
       licenseExpiryExample: 'Example: Dec 31, 2028. Select the expiry date printed on your license.',
       submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
-      google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.'
+      google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.',
+      continueToPayment: 'Continue to payment'
+    },
+    plan: {
+      selected: 'Selected plan', perMonth: '/ month', unlimited: 'Unlimited vehicles', upTo: 'Up to {count} vehicles',
+      change: 'Change plan', ownerOnly: 'Fleet plans are for fleet owners, so your profile is set to Fleet owner.'
+    },
+    checkout: {
+      title: 'Payment details', subtitle: 'Complete your subscription to the {plan} plan.',
+      simulated: 'Simulated payment: this is a demo, no real charge is made. Use any test card number.',
+      cardHolder: 'Name on card', cardNumber: 'Card number', expiry: 'Expiry (MM/YY)', cvv: 'CVV',
+      summary: 'Order summary', total: 'Total today', pay: 'Pay S/ {amount} and create account',
+      processing: 'Processing payment…', back: 'Back to account details'
     },
     google: {
       title: 'Choose an account', subtitle: 'to continue to Flotix',
@@ -79,7 +91,9 @@ export const pagesEn = {
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.',
       roleFieldsRequired: 'Complete all required information for your selected role.',
-      licenseExpired: 'Your driver license must be valid and not expired.'
+      licenseExpired: 'Your driver license must be valid and not expired.',
+      fleetSizeExceedsPlan: 'Your fleet has more vehicles than the {plan} plan allows ({limit}). Choose a larger plan.',
+      cardInvalid: 'Check your card details: number, expiry date and CVV.'
     }
   },
   common: {
@@ -296,7 +310,7 @@ export const pagesEn = {
       history: 'Billing history', emptyHistory: "You don't have any purchases yet.",
       cols: { date: 'Date', concept: 'Item', amount: 'Amount', status: 'Status' },
       concept: '{qty}× IoT device ({sku})',
-      paymentMethod: 'Payment method', endingIn: 'Ending in 4417', expires: 'Expires 08/28', goStore: 'Go to the IoT store'
+      paymentMethod: 'Payment method', endingIn: 'Ending in {last4}', expires: 'Expires {date}', goStore: 'Go to the IoT store'
     }
   },
   notifications: {
@@ -369,7 +383,19 @@ export const pagesEs = {
       licenseNumber: 'N.º de licencia', licenseNumberPlaceholder: 'Ej.: Q12345678', licenseExpiry: 'Vencimiento de licencia',
       licenseExpiryExample: 'Ejemplo: 31/12/2028. Selecciona el vencimiento que aparece en tu licencia.',
       submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
-      google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.'
+      google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.',
+      continueToPayment: 'Continuar al pago'
+    },
+    plan: {
+      selected: 'Plan seleccionado', perMonth: '/ mes', unlimited: 'Vehículos ilimitados', upTo: 'Hasta {count} vehículos',
+      change: 'Cambiar plan', ownerOnly: 'Los planes son para dueños de flota, por eso tu perfil queda como Dueño de flota.'
+    },
+    checkout: {
+      title: 'Datos de pago', subtitle: 'Completa tu suscripción al plan {plan}.',
+      simulated: 'Pago simulado: es una demostración, no se realiza ningún cobro real. Usa cualquier número de tarjeta de prueba.',
+      cardHolder: 'Nombre en la tarjeta', cardNumber: 'Número de tarjeta', expiry: 'Vencimiento (MM/AA)', cvv: 'CVV',
+      summary: 'Resumen del pedido', total: 'Total hoy', pay: 'Pagar S/ {amount} y crear cuenta',
+      processing: 'Procesando pago…', back: 'Volver a los datos de la cuenta'
     },
     google: {
       title: 'Elige una cuenta', subtitle: 'para continuar en Flotix',
@@ -386,7 +412,9 @@ export const pagesEs = {
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.',
       roleFieldsRequired: 'Completa los datos obligatorios del rol seleccionado.',
-      licenseExpired: 'Tu licencia de conducir debe estar vigente.'
+      licenseExpired: 'Tu licencia de conducir debe estar vigente.',
+      fleetSizeExceedsPlan: 'Tu flota supera los vehículos que permite el plan {plan} ({limit}). Elige un plan mayor.',
+      cardInvalid: 'Revisa los datos de tu tarjeta: número, fecha de vencimiento y CVV.'
     }
   },
   common: {
@@ -603,7 +631,7 @@ export const pagesEs = {
       history: 'Historial de facturación', emptyHistory: 'Aún no tienes compras registradas.',
       cols: { date: 'Fecha', concept: 'Concepto', amount: 'Monto', status: 'Estado' },
       concept: '{qty}× dispositivo IoT ({sku})',
-      paymentMethod: 'Método de pago', endingIn: 'Terminada en 4417', expires: 'Expira 08/28', goStore: 'Ir a la tienda IoT'
+      paymentMethod: 'Método de pago', endingIn: 'Terminada en {last4}', expires: 'Expira {date}', goStore: 'Ir a la tienda IoT'
     }
   },
   notifications: {

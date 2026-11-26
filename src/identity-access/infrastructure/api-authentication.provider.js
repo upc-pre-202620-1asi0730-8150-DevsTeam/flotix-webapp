@@ -51,7 +51,10 @@ export class ApiAuthenticationProvider {
         firstName: profile.firstName.trim(),
         lastName: profile.lastName.trim(),
         email,
-        role: profile.role
+        role: profile.role,
+        ...(profile.plan
+          ? { plan: profile.plan, paymentCardLast4: profile.cardLast4, paymentCardExpiry: profile.cardExpiry }
+          : {})
       })
       return this._sessionUser(authUser, data)
     } catch (error) {
@@ -87,7 +90,17 @@ export class ApiAuthenticationProvider {
       name: profile.fullName,
       email: profile.email,
       role: profile.role,
-      token: authUser.token
+      token: authUser.token,
+      subscription: profile.plan
+        ? {
+            planId: String(profile.plan).toLowerCase(),
+            priceMonthly: profile.planPriceMonthly,
+            startedAt: profile.planStartedAt,
+            renewsAt: profile.planRenewsAt,
+            cardLast4: profile.paymentCardLast4,
+            cardExpiry: profile.paymentCardExpiry
+          }
+        : null
     }
     return user
   }
