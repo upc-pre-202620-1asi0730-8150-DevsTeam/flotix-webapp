@@ -13,6 +13,7 @@ export const pagesEn = {
     tabsLabel: 'Authentication',
     showPassword: 'Show password', hidePassword: 'Hide password',
     preview: { description: 'Local panel preview. No account is created or authenticated.', roleLabel: 'Choose a preview role', enter: 'Open preview' },
+    localDevelopmentNotice: 'If the API cannot be reached, this development login stores accounts only in this browser; it does not create an IAM account.',
     legal: {
       close: 'Close',
       terms: {
@@ -318,6 +319,7 @@ export const pagesEs = {
     tabsLabel: 'Autenticación',
     showPassword: 'Mostrar contraseña', hidePassword: 'Ocultar contraseña',
     preview: { description: 'Vista previa local del panel. No se crea ni autentica una cuenta.', roleLabel: 'Elige un rol para la vista previa', enter: 'Abrir vista previa' },
+    localDevelopmentNotice: 'Si no se puede conectar con el API, este acceso de desarrollo guarda las cuentas solo en este navegador; no crea una cuenta IAM.',
     demo: { title: 'Cuentas de demostración', description: 'Estas cuentas son para la vista previa local. Pulsa Usar para completar el formulario.', use: 'Usar' },
     legal: {
       close: 'Cerrar',
