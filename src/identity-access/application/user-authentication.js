@@ -1,17 +1,17 @@
 import { Session } from '@/shared/infrastructure/session.js'
 import { LocalPreviewAuthenticationProvider } from '../infrastructure/local-preview-authentication.provider.js'
+import { ApiAuthenticationProvider } from '../infrastructure/api-authentication.provider.js'
 
 export const AUTH_PREVIEW_ENABLED = import.meta.env.DEV && import.meta.env.VITE_AUTH_PREVIEW === 'true'
 
-// Replace this provider once the IAM endpoints are available.
 export class UserAuthentication {
-  constructor(provider = new UnavailableAuthenticationProvider()) {
+  constructor(provider = new ApiAuthenticationProvider()) {
     this.provider = provider
   }
 
-  async signIn(email, password) {
-    const user = await this.provider.signIn({ email, password })
-    Session.set(user)
+  async signIn(email, password, remember = true) {
+    const user = await this.provider.signIn({ email, password, remember })
+    Session.set(user, remember)
     return user
   }
 
@@ -49,26 +49,8 @@ export class UserAuthentication {
   }
 }
 
-class UnavailableAuthenticationProvider {
-  async signIn() {
-    throw new Error('auth.errors.notConfigured')
-  }
-
-  async register() {
-    throw new Error('auth.errors.notConfigured')
-  }
-
-  async signInWithGoogle() {
-    throw new Error('auth.errors.googleNotConfigured')
-  }
-
-  enterPreview() {
-    throw new Error('auth.errors.previewUnavailable')
-  }
-}
-
 export const identityService = new UserAuthentication(
-  AUTH_PREVIEW_ENABLED ? new LocalPreviewAuthenticationProvider() : undefined
+  AUTH_PREVIEW_ENABLED ? new LocalPreviewAuthenticationProvider() : new ApiAuthenticationProvider()
 )
 
 export function configureAuthenticationProvider(provider) {
