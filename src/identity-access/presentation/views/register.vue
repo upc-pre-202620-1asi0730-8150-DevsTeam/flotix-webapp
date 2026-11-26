@@ -13,6 +13,10 @@ const session = useSessionStore()
 const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
 const error = ref('')
+
+function errorText(message) {
+  return message.startsWith('auth.') ? t(message) : message
+}
 const form = ref({
   role: UserRole.OWNER,
   firstName: '',
@@ -20,6 +24,10 @@ const form = ref({
   email: '',
   password: '',
   confirmPassword: '',
+  companyName: '',
+  licenseNumber: '',
+  licenseExpiry: '',
+  workshopName: '',
   acceptedTerms: false
 })
 
@@ -44,7 +52,11 @@ async function submit() {
       lastName: form.value.lastName.trim(),
       email: form.value.email.trim(),
       password: form.value.password,
-      role: form.value.role
+      role: form.value.role,
+      companyName: form.value.companyName.trim(),
+      licenseNumber: form.value.licenseNumber.trim(),
+      licenseExpiry: form.value.licenseExpiry,
+      workshopName: form.value.workshopName.trim()
     })
     router.push('/dashboard')
   } catch (exception) {
@@ -83,6 +95,25 @@ async function signUpWithGoogle() {
           </div>
         </div>
 
+        <div v-if="form.role === UserRole.OWNER" class="auth-field">
+          <label for="register-company">{{ t('auth.register.company') }}</label>
+          <div class="auth-input-wrap"><i class="pi pi-building field-icon" aria-hidden="true" /><input id="register-company" v-model="form.companyName" maxlength="150" autocomplete="organization" /></div>
+        </div>
+        <div v-else-if="form.role === UserRole.DRIVER" class="name-grid">
+          <div class="auth-field">
+            <label for="register-license-number">{{ t('auth.register.licenseNumber') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-id-card field-icon" aria-hidden="true" /><input id="register-license-number" v-model="form.licenseNumber" maxlength="30" required /></div>
+          </div>
+          <div class="auth-field">
+            <label for="register-license-expiry">{{ t('auth.register.licenseExpiry') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-calendar field-icon" aria-hidden="true" /><input id="register-license-expiry" v-model="form.licenseExpiry" type="date" required /></div>
+          </div>
+        </div>
+        <div v-else class="auth-field">
+          <label for="register-workshop">{{ t('auth.register.workshop') }}</label>
+          <div class="auth-input-wrap"><i class="pi pi-wrench field-icon" aria-hidden="true" /><input id="register-workshop" v-model="form.workshopName" maxlength="100" /></div>
+        </div>
+
         <div class="name-grid">
           <div class="auth-field">
             <label for="register-first-name">{{ t('auth.register.firstName') }} <span class="required">*</span></label>
@@ -106,7 +137,7 @@ async function signUpWithGoogle() {
           <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-confirm-password" v-model="form.confirmPassword" type="password" :placeholder="t('auth.register.confirmPlaceholder')" autocomplete="new-password" required /></div>
         </div>
         <label class="terms-check"><input v-model="form.acceptedTerms" type="checkbox" /><span>{{ t('auth.register.agreePrefix') }} <button class="legal-link" type="button" @click="showLegalDocument('terms')">{{ t('auth.register.termsLink') }}</button> {{ t('auth.register.agreeJoin') }} <button class="legal-link" type="button" @click="showLegalDocument('privacy')">{{ t('auth.register.privacyLink') }}</button></span></label>
-        <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ t(error) }}</span></p>
+        <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ errorText(error) }}</span></p>
         <button class="auth-button auth-button-primary" type="submit">{{ t('auth.register.submit') }}</button>
       </form>
       <p class="auth-foot">{{ t('auth.register.haveAccount') }} <RouterLink class="auth-link" to="/login">{{ t('auth.register.login') }}</RouterLink></p>
