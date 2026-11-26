@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { i18n } from '@/internationalization/i18n.js'
+import { Session } from './session.js'
 
 /**
  * HTTP client for the Flotix REST API (ASP.NET Core backend).
@@ -16,6 +17,8 @@ export const http = axios.create({
 // The backend localizes its error messages (en, en-US, es, es-PE) from this header.
 http.interceptors.request.use((config) => {
   config.headers['Accept-Language'] = i18n.global.locale.value === 'es' ? 'es-PE' : 'en-US'
+  const token = Session.get()?.token
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
