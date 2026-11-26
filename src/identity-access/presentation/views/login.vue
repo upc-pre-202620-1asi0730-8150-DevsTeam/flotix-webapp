@@ -11,6 +11,7 @@ const router = useRouter()
 const { t } = useI18n()
 const session = useSessionStore()
 const previewEnabled = AUTH_PREVIEW_ENABLED
+const localFallbackEnabled = import.meta.env.DEV
 const previewRole = ref(UserRole.OWNER)
 const previewRoles = Object.values(UserRole)
 const email = ref('')
@@ -57,6 +58,7 @@ function enterPreview() {
     <section class="auth-view">
       <h2 class="auth-title">{{ t('auth.login.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
+      <p v-if="localFallbackEnabled" class="auth-local-note" role="note">{{ t('auth.localDevelopmentNotice') }}</p>
 
       <div v-if="previewEnabled" class="auth-preview">
         <p>{{ t('auth.preview.description') }}</p>
@@ -107,6 +109,7 @@ function enterPreview() {
 .auth-view { min-width: 0; }
 .auth-title { margin: 0; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
 .auth-subtitle { margin: .4rem 0 0; color: #64748b; }
+.auth-local-note { margin: .75rem 0 0; padding: .65rem .75rem; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; color: #1e3a8a; font-size: .8rem; line-height: 1.45; }
 .auth-button { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1.5px solid transparent; border-radius: 6px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s cubic-bezier(.23,1,.32,1); }
 .auth-button:active { transform: scale(.97); }
 .auth-button-primary { margin-top: .15rem; background: #0879e8; color: #fff; }
