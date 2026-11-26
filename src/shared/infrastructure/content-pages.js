@@ -53,8 +53,13 @@ export const pagesEn = {
       firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name{\'@\'}company.com',
       passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
-      owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Company (optional)',
-      workshop: 'Workshop (optional)', licenseNumber: 'License number', licenseExpiry: 'License expiration',
+      owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Fleet or business name',
+      companyPlaceholder: 'e.g. Lima Cargo', fleetSize: 'Vehicles in your fleet', fleetSizePlaceholder: 'e.g. 5',
+      workshop: 'Workshop or business name', workshopPlaceholder: 'e.g. Taller San Martín',
+      workshopCity: 'City or district', workshopCityPlaceholder: 'e.g. San Miguel, Lima',
+      workshopSpecialty: 'Main specialty', workshopSpecialtyPlaceholder: 'e.g. Engine diagnostics',
+      licenseNumber: 'Driver license number', licenseNumberPlaceholder: 'e.g. Q12345678', licenseExpiry: 'License expiration',
+      licenseExpiryExample: 'Example: Dec 31, 2028. Select the expiry date printed on your license.',
       submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
       google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.'
     },
@@ -71,7 +76,9 @@ export const pagesEn = {
       profileNotFound: 'No Flotix profile is linked to this email. Finish registration or contact support.',
       previewUnavailable: 'The local preview profile is not available.',
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
-      termsRequired: 'You need to accept to continue.'
+      termsRequired: 'You need to accept to continue.',
+      roleFieldsRequired: 'Complete all required information for your selected role.',
+      licenseExpired: 'Your driver license must be valid and not expired.'
     }
   },
   common: {
@@ -352,8 +359,13 @@ export const pagesEs = {
       firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre{\'@\'}empresa.com',
       passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
-      owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Empresa (opcional)',
-      workshop: 'Taller (opcional)', licenseNumber: 'Número de licencia', licenseExpiry: 'Vencimiento de licencia',
+      owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Nombre de flota o empresa',
+      companyPlaceholder: 'Ej.: Transportes Lima', fleetSize: 'Vehículos en tu flota', fleetSizePlaceholder: 'Ej.: 5',
+      workshop: 'Nombre del taller o negocio', workshopPlaceholder: 'Ej.: Taller San Martín',
+      workshopCity: 'Ciudad o distrito', workshopCityPlaceholder: 'Ej.: San Miguel, Lima',
+      workshopSpecialty: 'Especialidad principal', workshopSpecialtyPlaceholder: 'Ej.: Diagnóstico de motores',
+      licenseNumber: 'Número de licencia de conducir', licenseNumberPlaceholder: 'Ej.: Q12345678', licenseExpiry: 'Vencimiento de licencia',
+      licenseExpiryExample: 'Ejemplo: 31/12/2028. Selecciona el vencimiento que aparece en tu licencia.',
       submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
       google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.'
     },
@@ -370,7 +382,9 @@ export const pagesEs = {
       profileNotFound: 'No hay un perfil Flotix vinculado a este correo. Completa el registro o contacta al equipo.',
       previewUnavailable: 'El perfil de vista previa local no está disponible.',
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
-      termsRequired: 'Debes aceptar para continuar.'
+      termsRequired: 'Debes aceptar para continuar.',
+      roleFieldsRequired: 'Completa los datos obligatorios del rol seleccionado.',
+      licenseExpired: 'Tu licencia de conducir debe estar vigente.'
     }
   },
   common: {
