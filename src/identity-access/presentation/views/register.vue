@@ -10,6 +10,7 @@ import LegalDocumentModal from '../components/legal-document-modal.component.vue
 const router = useRouter()
 const { t } = useI18n()
 const session = useSessionStore()
+const localFallbackEnabled = import.meta.env.DEV
 const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
 const error = ref('')
@@ -101,6 +102,7 @@ async function signUpWithGoogle() {
     <section class="auth-view">
       <h2 class="auth-title">{{ t('auth.register.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.register.subtitle') }}</p>
+      <p v-if="localFallbackEnabled" class="auth-local-note" role="note">{{ t('auth.localDevelopmentNotice') }}</p>
       <button type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
         <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         <span>{{ t('auth.register.google') }}</span>
@@ -165,7 +167,7 @@ async function signUpWithGoogle() {
         </div>
         <div class="auth-field">
           <label for="register-password">{{ t('auth.register.password') }} <span class="required">*</span></label>
-          <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-password" v-model="form.password" type="password" :placeholder="t('auth.register.passwordPlaceholder')" autocomplete="new-password" required /></div>
+          <div class="auth-input-wrap"><i class="pi pi-lock field-icon" aria-hidden="true" /><input id="register-password" v-model="form.password" type="password" :placeholder="t('auth.register.passwordPlaceholder')" autocomplete="new-password" minlength="8" required /></div>
         </div>
         <div class="auth-field">
           <label for="register-confirm-password">{{ t('auth.register.confirmPassword') }} <span class="required">*</span></label>
@@ -185,6 +187,7 @@ async function signUpWithGoogle() {
 .auth-view { min-width: 0; }
 .auth-title { margin: 0; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
 .auth-subtitle { margin: .4rem 0 0; color: #64748b; }
+.auth-local-note { margin: .75rem 0 0; padding: .65rem .75rem; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; color: #1e3a8a; font-size: .8rem; line-height: 1.45; }
 .auth-button { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1.5px solid transparent; border-radius: 6px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s cubic-bezier(.23,1,.32,1); }
 .auth-button:active { transform: scale(.97); }
 .auth-button-primary { background: #0879e8; color: #fff; }
