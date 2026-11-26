@@ -13,6 +13,8 @@ const session = useSessionStore()
 const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
 const error = ref('')
+const currentDate = new Date()
+const minLicenseExpiry = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
 
 function errorText(message) {
   return message.startsWith('auth.') ? t(message) : message
@@ -25,9 +27,12 @@ const form = ref({
   password: '',
   confirmPassword: '',
   companyName: '',
+  fleetSize: '',
   licenseNumber: '',
   licenseExpiry: '',
   workshopName: '',
+  workshopCity: '',
+  workshopSpecialty: '',
   acceptedTerms: false
 })
 
@@ -38,6 +43,20 @@ function showLegalDocument(kind) {
 
 async function submit() {
   error.value = ''
+  const roleFields = {
+    [UserRole.OWNER]: [form.value.companyName, form.value.fleetSize],
+    [UserRole.DRIVER]: [form.value.licenseNumber, form.value.licenseExpiry],
+    [UserRole.MECHANIC]: [form.value.workshopName, form.value.workshopCity, form.value.workshopSpecialty]
+  }[form.value.role]
+
+  if (roleFields.some((value) => !String(value).trim())) {
+    error.value = 'auth.errors.roleFieldsRequired'
+    return
+  }
+  if (form.value.role === UserRole.DRIVER && form.value.licenseExpiry < minLicenseExpiry) {
+    error.value = 'auth.errors.licenseExpired'
+    return
+  }
   if (form.value.password !== form.value.confirmPassword) {
     error.value = 'auth.errors.passwordMismatch'
     return
@@ -54,9 +73,12 @@ async function submit() {
       password: form.value.password,
       role: form.value.role,
       companyName: form.value.companyName.trim(),
+      fleetSize: Number(form.value.fleetSize),
       licenseNumber: form.value.licenseNumber.trim(),
       licenseExpiry: form.value.licenseExpiry,
-      workshopName: form.value.workshopName.trim()
+      workshopName: form.value.workshopName.trim(),
+      workshopCity: form.value.workshopCity.trim(),
+      workshopSpecialty: form.value.workshopSpecialty.trim()
     })
     router.push('/dashboard')
   } catch (exception) {
@@ -96,22 +118,35 @@ async function signUpWithGoogle() {
         </div>
 
         <div v-if="form.role === UserRole.OWNER" class="auth-field">
-          <label for="register-company">{{ t('auth.register.company') }}</label>
-          <div class="auth-input-wrap"><i class="pi pi-building field-icon" aria-hidden="true" /><input id="register-company" v-model="form.companyName" maxlength="150" autocomplete="organization" /></div>
+          <label for="register-company">{{ t('auth.register.company') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap"><i class="pi pi-building field-icon" aria-hidden="true" /><input id="register-company" v-model="form.companyName" :placeholder="t('auth.register.companyPlaceholder')" maxlength="150" autocomplete="organization" required /></div>
+          <label for="register-fleet-size">{{ t('auth.register.fleetSize') }} <span class="required">*</span></label>
+          <div class="auth-input-wrap"><i class="pi pi-truck field-icon" aria-hidden="true" /><input id="register-fleet-size" v-model="form.fleetSize" type="number" min="1" step="1" :placeholder="t('auth.register.fleetSizePlaceholder')" required /></div>
         </div>
         <div v-else-if="form.role === UserRole.DRIVER" class="name-grid">
           <div class="auth-field">
             <label for="register-license-number">{{ t('auth.register.licenseNumber') }} <span class="required">*</span></label>
-            <div class="auth-input-wrap"><i class="pi pi-id-card field-icon" aria-hidden="true" /><input id="register-license-number" v-model="form.licenseNumber" maxlength="30" required /></div>
+            <div class="auth-input-wrap"><i class="pi pi-id-card field-icon" aria-hidden="true" /><input id="register-license-number" v-model="form.licenseNumber" :placeholder="t('auth.register.licenseNumberPlaceholder')" maxlength="30" required /></div>
           </div>
           <div class="auth-field">
             <label for="register-license-expiry">{{ t('auth.register.licenseExpiry') }} <span class="required">*</span></label>
-            <div class="auth-input-wrap"><i class="pi pi-calendar field-icon" aria-hidden="true" /><input id="register-license-expiry" v-model="form.licenseExpiry" type="date" required /></div>
+            <div class="auth-input-wrap"><i class="pi pi-calendar field-icon" aria-hidden="true" /><input id="register-license-expiry" v-model="form.licenseExpiry" type="date" :min="minLicenseExpiry" required /></div>
+            <small class="field-example">{{ t('auth.register.licenseExpiryExample') }}</small>
           </div>
         </div>
-        <div v-else class="auth-field">
-          <label for="register-workshop">{{ t('auth.register.workshop') }}</label>
-          <div class="auth-input-wrap"><i class="pi pi-wrench field-icon" aria-hidden="true" /><input id="register-workshop" v-model="form.workshopName" maxlength="100" /></div>
+        <div v-else class="role-fields">
+          <div class="auth-field">
+            <label for="register-workshop">{{ t('auth.register.workshop') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-wrench field-icon" aria-hidden="true" /><input id="register-workshop" v-model="form.workshopName" :placeholder="t('auth.register.workshopPlaceholder')" maxlength="100" required /></div>
+          </div>
+          <div class="auth-field">
+            <label for="register-workshop-city">{{ t('auth.register.workshopCity') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-map-marker field-icon" aria-hidden="true" /><input id="register-workshop-city" v-model="form.workshopCity" :placeholder="t('auth.register.workshopCityPlaceholder')" maxlength="100" required /></div>
+          </div>
+          <div class="auth-field">
+            <label for="register-workshop-specialty">{{ t('auth.register.workshopSpecialty') }} <span class="required">*</span></label>
+            <div class="auth-input-wrap"><i class="pi pi-wrench field-icon" aria-hidden="true" /><input id="register-workshop-specialty" v-model="form.workshopSpecialty" :placeholder="t('auth.register.workshopSpecialtyPlaceholder')" maxlength="100" required /></div>
+          </div>
         </div>
 
         <div class="name-grid">
@@ -161,6 +196,8 @@ async function signUpWithGoogle() {
 .auth-divider { display: flex; align-items: center; gap: .8rem; margin: 1rem 0 .25rem; color: #64748b; font-size: .8rem; }
 .auth-divider::before, .auth-divider::after { height: 1px; flex: 1; background: #e2e8f0; content: ''; }
 .register-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.role-fields { display: grid; gap: 1rem; }
+.field-example { color: #64748b; font-size: .75rem; }
 .auth-field { display: grid; min-width: 0; gap: .35rem; }
 .auth-field label, .auth-label { font-size: .875rem; font-weight: 600; }
 .required { color: #a52a1c; }
