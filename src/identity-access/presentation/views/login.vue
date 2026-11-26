@@ -18,10 +18,14 @@ const password = ref('')
 const showPassword = ref(false)
 const remember = ref(false)
 const error = ref('')
+
+function errorText(message) {
+  return message.startsWith('auth.') ? t(message) : message
+}
 async function submit() {
   error.value = ''
   try {
-    await session.login(email.value, password.value)
+    await session.login(email.value, password.value, remember.value)
     router.push('/dashboard')
   } catch (exception) {
     error.value = exception.message
@@ -90,7 +94,7 @@ function enterPreview() {
           <label class="auth-check"><input v-model="remember" type="checkbox" /><span>{{ t('auth.login.remember') }}</span></label>
           <a class="auth-link" href="#" @click.prevent>{{ t('auth.login.forgot') }}</a>
         </div>
-        <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ t(error) }}</span></p>
+        <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ errorText(error) }}</span></p>
         <button class="auth-button auth-button-primary" type="submit">{{ t('auth.login.submit') }}</button>
       </form>
 
