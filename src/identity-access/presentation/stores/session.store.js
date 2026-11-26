@@ -24,8 +24,8 @@ export const useSessionStore = defineStore('session', {
       identityService.updateProfile(this.user.id, patch)
       this.user = identityService.currentUser()
     },
-    async login(email, password) {
-      this.user = await identityService.signIn(email, password)
+    async login(email, password, remember) {
+      this.user = await identityService.signIn(email, password, remember)
     },
     async loginWithGoogle() {
       this.user = await identityService.signInWithGoogle()
