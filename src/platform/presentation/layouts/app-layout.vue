@@ -22,6 +22,7 @@ import { bootstrap } from '@/shared/infrastructure/bootstrap.js'
 import { useApiStatusStore } from '@/shared/presentation/stores/api-status.store.js'
 import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 import { API_BASE_URL } from '@/shared/infrastructure/http-client.js'
+import { AUTH_PREVIEW_ENABLED } from '@/identity-access/application/user-authentication.js'
 
 
 const router = useRouter()
@@ -38,6 +39,10 @@ const { run } = useApiFeedback()
 // notifications fresh (the API creates them from alerts, incidents, etc.).
 let notificationsTimer = null
 onMounted(() => {
+  if (AUTH_PREVIEW_ENABLED && !API_BASE_URL) {
+    apiStatus.ready = true
+    return
+  }
   bootstrap()
   notificationsTimer = setInterval(() => {
     if (apiStatus.ready && !apiStatus.hasError) alerts.load().catch(() => {})
@@ -47,6 +52,12 @@ onUnmounted(() => clearInterval(notificationsTimer))
 
 function retryConnection() {
   bootstrap(true)
+}
+
+function signOut() {
+  session.signOut()
+  mobileOpen.value = false
+  router.replace('/login')
 }
 
 const user = computed(() => session.user)
@@ -151,7 +162,7 @@ function changeRole(role) {
         </div>
       </div>
 
-      <div class="p-2" style="border-top: 1px solid rgba(255,255,255,.1)">
+      <div class="flotix-sidebar-footer p-2">
         <button
           type="button"
           class="flotix-lang-toggle flotix-lang-toggle-drawer"
@@ -161,8 +172,8 @@ function changeRole(role) {
           <span :class="{ active: locale === 'en' }">EN</span>
           <span :class="{ active: locale === 'es' }">ES</span>
         </button>
-        <div class="flex align-items-center gap-2 border-round p-2">
-          <Avatar :label="initials(user?.name)" shape="circle" style="background: rgba(255,255,255,.14); color: #fff; font-size: .75rem; font-weight: 600" />
+        <div class="flotix-profile-card">
+          <Avatar :label="initials(user?.name)" shape="circle" class="flotix-profile-avatar" />
           <div class="min-w-0" style="line-height: 1.2">
             <p class="text-sm font-semibold m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="color: #fff; max-width: 10rem">{{ user?.name }}</p>
             <p class="text-xs m-0 white-space-nowrap overflow-hidden text-overflow-ellipsis" style="color: rgba(255,255,255,.6); max-width: 10rem">
@@ -170,6 +181,11 @@ function changeRole(role) {
             </p>
           </div>
         </div>
+        <button type="button" class="flotix-signout" @click="signOut">
+          <span class="flotix-signout-icon"><AppIcon name="logout" :size="15" /></span>
+          <span class="flex-1">{{ t('header.signOut') }}</span>
+          <i class="pi pi-arrow-right signout-arrow" aria-hidden="true" />
+        </button>
       </div>
     </aside>
 
@@ -249,6 +265,9 @@ function changeRole(role) {
       </header>
 
       <main class="flex-1 p-3 lg:p-4">
+        <div v-if="AUTH_PREVIEW_ENABLED && !API_BASE_URL" class="mb-3 border-round-xl px-3 py-2 text-sm" style="background: #eff6ff; color: #1e3a8a">
+          {{ t('api.previewMode') }}
+        </div>
         <div
           v-if="apiStatus.ready && apiStatus.hasError"
           class="flex align-items-center gap-3 p-3 mb-3 border-round-xl"
@@ -309,6 +328,25 @@ function changeRole(role) {
   color: #fff;
   font-variant-numeric: tabular-nums;
 }
+.flotix-sidebar-footer { border-top: 1px solid rgba(255,255,255,.12); }
+.flotix-profile-card {
+  display: flex; align-items: center; gap: .7rem; min-width: 0; padding: .65rem .6rem;
+  border: 1px solid rgba(255,255,255,.09); border-radius: 9px; background: rgba(255,255,255,.055);
+}
+.flotix-profile-avatar { flex: 0 0 auto; background: rgba(255,255,255,.15) !important; color: #fff !important; font-size: .75rem; font-weight: 700; }
+.flotix-signout {
+  display: flex; width: 100%; min-height: 42px; align-items: center; gap: .65rem; margin-top: .5rem; padding: .35rem .55rem;
+  border: 1px solid rgba(255,255,255,.1); border-radius: 8px; background: rgba(255,255,255,.035);
+  color: rgba(255,255,255,.78); font: inherit; font-size: .875rem; font-weight: 600; text-align: left; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
+}
+.flotix-signout:hover { border-color: rgba(252,165,165,.25); background: rgba(239,68,68,.12); color: #fff; }
+.flotix-signout:active { transform: translateY(1px); }
+.flotix-signout-icon { display: grid; width: 1.8rem; height: 1.8rem; flex: 0 0 auto; place-items: center; border-radius: 6px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
+.flotix-signout:hover .flotix-signout-icon { background: rgba(239,68,68,.2); color: #fecaca; }
+.signout-arrow { color: rgba(255,255,255,.45); font-size: .7rem; transition: transform .15s ease, color .15s ease; }
+.flotix-signout:hover .signout-arrow { transform: translateX(2px); color: #fecaca; }
+.flotix-signout:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 
 .flotix-notif-dot {
   position: absolute; top: -1px; right: -2px;

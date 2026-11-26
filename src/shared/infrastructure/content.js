@@ -23,6 +23,7 @@ const base = {
     header: {
       tagline: 'Your fleet, under control',
       platform: 'Flotix Platform',
+      signOut: 'Sign out',
       sidebarSummaryOwner: 'Active fleet',
       sidebarSummaryDriver: 'My vehicle',
       sidebarSummaryMechanic: 'Pending requests',
@@ -107,6 +108,7 @@ const base = {
     header: {
       tagline: 'Tu flota bajo control',
       platform: 'Flotix Platform',
+      signOut: 'Cerrar sesión',
       sidebarSummaryOwner: 'Flota activa',
       sidebarSummaryDriver: 'Mi vehículo',
       sidebarSummaryMechanic: 'Solicitudes pendientes',

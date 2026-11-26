@@ -1,12 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { Session } from '@/shared/infrastructure/session.js'
 
 const MainLayout = () => import('@/platform/presentation/layouts/app-layout.vue')
 
 const routes = [
-  { path: '/', redirect: '/dashboard' },
+  { path: '/', redirect: '/login' },
+  { path: '/login', name: 'login', component: () => import('@/identity-access/presentation/views/login.vue') },
+  { path: '/register', name: 'register', component: () => import('@/identity-access/presentation/views/register.vue') },
   {
     path: '/',
     component: MainLayout,
+    meta: { requiresSession: true },
     children: [
       { path: 'dashboard', name: 'dashboard', component: () => import('@/platform/presentation/views/role-dashboard.vue') },
       { path: 'fleet-management', name: 'fleet', component: () => import('@/fleet-management/presentation/views/fleet-list.vue') },
@@ -35,6 +39,13 @@ const routes = [
 const app_router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+app_router.beforeEach((to) => {
+  if (to.matched.some((record) => record.meta.requiresSession) && !Session.get()) {
+    return { name: 'login' }
+  }
+  return true
 })
 
 export default app_router

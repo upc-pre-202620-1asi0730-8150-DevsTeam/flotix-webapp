@@ -3,14 +3,7 @@ import { identityService } from '../../application/user-authentication.js'
 import { LocalStorageUserRepository } from '../../infrastructure/persistence/local-storage-user.repository.js'
 import { UserRole } from '../../domain/model/value-objects/user-role.js'
 
-/**
- * Pinia store — Identity, Profiles & Security. Thin reactive wrapper around
- * UserAuthentication (kept framework-agnostic in the application layer).
- * There is no sign-in or sign-up: the active profile (Owner, Driver or
- * Mechanic) is chosen from the header. Also centralizes the read-only user
- * directory (mechanics/workshops lookups) so presentation code never reaches
- * into LocalStorageUserRepository directly.
- */
+// Keeps the current session and the user directory used by fleet screens.
 export const useSessionStore = defineStore('session', {
   state: () => ({
     user: identityService.currentUser(),
@@ -24,9 +17,25 @@ export const useSessionStore = defineStore('session', {
     switchRole(role) {
       this.user = identityService.switchRole(role)
     },
+    enterPreview(role) {
+      this.user = identityService.enterPreview(role)
+    },
     updateProfile(patch) {
       identityService.updateProfile(this.user.id, patch)
       this.user = identityService.currentUser()
+    },
+    async login(email, password, remember) {
+      this.user = await identityService.signIn(email, password, remember)
+    },
+    async loginWithGoogle() {
+      this.user = await identityService.signInWithGoogle()
+    },
+    async register(profile) {
+      this.user = await identityService.register(profile)
+    },
+    signOut() {
+      identityService.signOut()
+      this.user = null
     }
   }
 })
