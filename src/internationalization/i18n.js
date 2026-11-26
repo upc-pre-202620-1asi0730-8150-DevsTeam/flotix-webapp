@@ -2,13 +2,7 @@ import { createI18n } from 'vue-i18n'
 import { content } from '@/shared/infrastructure/content.js'
 
 const STORAGE_KEY = 'flotix:locale'
-function initialLocale() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === 'en' || saved === 'es') return saved
-  } catch { /* ignore */ }
-  return 'en' // default English per the course's i18n requirement
-}
+function initialLocale() { return 'en' }
 
 export const i18n = createI18n({
   legacy: false,

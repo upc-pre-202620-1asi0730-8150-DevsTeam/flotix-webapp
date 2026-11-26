@@ -2,11 +2,11 @@
 node_modules/
 dist/
 .vite/
+.vite-preview/
 
 # Environment files (may contain environment-specific values)
 .env
 .env.*
-!.env.example
 
 # IDE / OS
 .idea/

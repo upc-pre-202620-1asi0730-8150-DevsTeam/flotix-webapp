@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { i18n } from '@/internationalization/i18n.js'
+import { Session } from './session.js'
 
 /**
  * HTTP client for the Flotix REST API (ASP.NET Core backend).
- * The base URL comes from the VITE_API_BASE_URL environment variable (see
- * .env.example) so no environment-specific value is hardcoded or committed.
+ * Set VITE_API_BASE_URL in the local environment when the API is available.
  */
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5223').replace(/\/+$/, '')
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
 
 export const http = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
@@ -17,6 +17,8 @@ export const http = axios.create({
 // The backend localizes its error messages (en, en-US, es, es-PE) from this header.
 http.interceptors.request.use((config) => {
   config.headers['Accept-Language'] = i18n.global.locale.value === 'es' ? 'es-PE' : 'en-US'
+  const token = Session.get()?.token
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 

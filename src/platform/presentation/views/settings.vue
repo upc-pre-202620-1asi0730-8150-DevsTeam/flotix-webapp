@@ -5,6 +5,8 @@ import { useSessionStore } from '@/identity-access/presentation/stores/session.s
 import { UserRole } from '@/identity-access/domain/model/value-objects/user-role.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useCommerceStore } from '@/iot-commerce/presentation/stores/commerce.store.js'
+import { subscriptionService } from '@/identity-access/application/subscription.service.js'
+import { findPlan } from '@/identity-access/domain/model/value-objects/subscription-plan.js'
 import { usePreferencesStore } from '../stores/preferences.store.js'
 
 import PageHeader from '@/shared/presentation/components/page-header.component.vue'
@@ -30,6 +32,12 @@ const preferences = usePreferencesStore()
 
 const user = session.user
 const isOwner = user?.role === UserRole.OWNER
+
+// Plan bought at sign-up (simulated). Demo owners without a purchase keep the original Growth / 4417 placeholders.
+const subscription = user?.subscription ?? subscriptionService.forUser(user?.id)
+const currentPlanName = findPlan(subscription?.planId)?.name ?? 'Growth'
+const cardLast4 = subscription?.cardLast4 || '4417'
+const cardExpiry = subscription?.cardExpiry || '08/28'
 
 const tabs = computed(() => (isOwner ? ['account', 'fleet', 'notifications', 'billing'] : ['account', 'notifications']).map((id) => ({ id, label: t(`settings.tabs.${id}`) })))
 const activeTab = ref('account')
@@ -218,7 +226,7 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
     <div class="flotix-stats mb-3">
       <StatCard :label="t('settings.billing.spent')" :value="`S/ ${totalSpent.toFixed(2)}`" icon="cash" />
       <StatCard :label="t('settings.billing.orders')" :value="commerce.orders.length" icon="cart" />
-      <StatCard :label="t('settings.billing.plan')" value="Growth" icon="shield" tone="primary" />
+      <StatCard :label="t('settings.billing.plan')" :value="currentPlanName" icon="shield" tone="primary" />
     </div>
 
     <div class="grid">
@@ -247,8 +255,8 @@ const totalSpent = computed(() => commerce.orders.reduce((a, o) => a + o.totalAm
           <div class="flex align-items-center gap-3 border-round-xl p-3" style="background: var(--p-surface-50)">
             <span class="flex align-items-center justify-content-center border-round" style="width: 3rem; height: 2.25rem; background: var(--flotix-navy-900); color: #fff; font-size: 10px; font-weight: 700">VISA</span>
             <div>
-              <p class="text-sm font-semibold text-heading m-0">{{ t('settings.billing.endingIn') }}</p>
-              <p class="text-xs text-faint m-0">{{ t('settings.billing.expires') }}</p>
+              <p class="text-sm font-semibold text-heading m-0">{{ t('settings.billing.endingIn', { last4: cardLast4 }) }}</p>
+              <p class="text-xs text-faint m-0">{{ t('settings.billing.expires', { date: cardExpiry }) }}</p>
             </div>
           </div>
           <AppButton variant="ghost" class="w-full justify-content-center mt-3" @click="router.push('/commerce')">{{ t('settings.billing.goStore') }}</AppButton>

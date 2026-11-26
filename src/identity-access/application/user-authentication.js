@@ -1,42 +1,75 @@
-import { LocalStorageUserRepository } from '../infrastructure/persistence/local-storage-user.repository.js'
 import { Session } from '@/shared/infrastructure/session.js'
-import { UserRole } from '../domain/model/value-objects/user-role.js'
+import { LocalPreviewAuthenticationProvider } from '../infrastructure/local-preview-authentication.provider.js'
+import { ApiAuthenticationProvider } from '../infrastructure/api-authentication.provider.js'
 
-/**
- * UserProfiles — application layer, Identity, Profiles & Security.
- * The backend has no identity module and the app has no sign-in / sign-up:
- * it opens directly with a demo profile. The three actors from the Context
- * Diagram (Owner, Driver, Mechanic) are selectable from the header, and the
- * selected profile is remembered in the browser.
- */
+export const AUTH_PREVIEW_ENABLED = import.meta.env.DEV && import.meta.env.VITE_AUTH_PREVIEW === 'true'
+
 export class UserAuthentication {
-  constructor() {
-    this.repository = new LocalStorageUserRepository()
+  constructor(provider = new ApiAuthenticationProvider()) {
+    this.provider = provider
+    this.localProvider = new LocalPreviewAuthenticationProvider()
   }
 
-  /** The active profile; defaults to the demo Owner on the first visit. */
+  async signIn(email, password, remember = true) {
+    const user = await this._authenticate('signIn', { email, password, remember })
+    Session.set(user, remember)
+    return user
+  }
+
+  async register(profile) {
+    const user = await this._authenticate('register', profile)
+    Session.set(user)
+    return user
+  }
+
+  async _authenticate(action, payload) {
+    try {
+      return await this.provider[action](payload)
+    } catch (error) {
+      const apiUnavailable = error.status === 0
+      if (!import.meta.env.DEV || !(this.provider instanceof ApiAuthenticationProvider) || !apiUnavailable) {
+        throw error
+      }
+      return this.localProvider[action](payload)
+    }
+  }
+
   currentUser() {
-    const stored = Session.get()
-    const fresh = stored ? this.repository.getById(stored.id) : null
-    if (fresh) return this._toSessionUser(fresh)
-    return this.switchRole(UserRole.OWNER)
+    return Session.get()
   }
 
-  /** Activates the demo profile of the given role. */
+  signOut() {
+    Session.clear()
+  }
+
+  async signInWithGoogle() {
+    return this.provider.signInWithGoogle()
+  }
+
   switchRole(role) {
-    const user = this.repository.findBy((u) => u.role === role)[0] ?? this.repository.getAll()[0]
-    const sessionUser = this._toSessionUser(user)
-    Session.set(sessionUser)
-    return sessionUser
+    return this.enterPreview(role)
   }
 
-  updateProfile(id, patch) {
-    return this.repository.update(id, patch)
+  enterPreview(role) {
+    if (typeof this.provider.enterPreview !== 'function') throw new Error('auth.errors.previewUnavailable')
+    const user = this.provider.enterPreview(role)
+    Session.set(user)
+    return user
   }
 
-  _toSessionUser(user) {
-    return { ...user }
+  updateProfile() {
+    throw new Error('auth.errors.notConfigured')
   }
 }
 
-export const identityService = new UserAuthentication()
+export const identityService = new UserAuthentication(
+  AUTH_PREVIEW_ENABLED ? new LocalPreviewAuthenticationProvider() : new ApiAuthenticationProvider()
+)
+
+export function configureAuthenticationProvider(provider) {
+  const methods = ['signIn', 'register', 'signInWithGoogle']
+  if (!provider || methods.some((method) => typeof provider[method] !== 'function')) {
+    throw new TypeError('Authentication provider must implement signIn, register and signInWithGoogle.')
+  }
+  identityService.provider = provider
+}

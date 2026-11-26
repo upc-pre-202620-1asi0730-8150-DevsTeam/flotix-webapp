@@ -2,8 +2,8 @@ import { LocalStorageRepository } from '@/shared/infrastructure/local-storage-re
 import { DEMO_OWNER_ID, DEMO_DRIVER_ID, DEMO_MECHANIC_ID } from '../../domain/model/value-objects/demo-users.js'
 
 /**
- * LocalStorageUserRepository — infrastructure layer, Identity, Profiles & Security.
- * Seeded with one demo profile per role (there is no sign-in or sign-up).
+ * LocalStorageUserRepository — browser persistence for demo profiles while IAM
+ * is not connected. Seeded with one demo profile per role.
  */
 const seed = [
   {

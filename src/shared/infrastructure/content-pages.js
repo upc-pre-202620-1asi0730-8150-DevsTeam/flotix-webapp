@@ -1,6 +1,101 @@
 /** en/es copy for every page of the app (merged into content.js). */
 
 export const pagesEn = {
+  auth: {
+    kicker: 'Fleet platform',
+    brandTitle: 'Control your fleet from a single platform',
+    brandSub: 'Flotix connects vehicles, drivers and maintenance workshops through IoT and GPS, so owners monitor fuel, mileage and routes in real time.',
+    brand: 'Your fleet, in good hands',
+    brandSubtitle: 'Flotix brings your vehicles, drivers and maintenance together in one clear view.',
+    features: ['Fleet management', 'Fuel control', 'Coordinated maintenance', 'Real-time GPS tracking'],
+    stats: ['vehicles tracked in the pilot', 'affiliated workshops', 'GPS device uptime'],
+    prototype: 'Frontend preview · Authentication is not connected to the backend yet.',
+    tabsLabel: 'Authentication',
+    showPassword: 'Show password', hidePassword: 'Hide password',
+    preview: { description: 'Local panel preview. No account is created or authenticated.', roleLabel: 'Choose a preview role', enter: 'Open preview' },
+    localDevelopmentNotice: '',
+    legal: {
+      close: 'Close',
+      terms: {
+        title: 'Terms and conditions',
+        lede: 'These terms describe how visitors and registered users may use the Flotix landing page, web application and IoT device.',
+        sections: [
+          { title: '1. Scope', body: 'These terms apply to the Flotix landing page, the web application and the companion GPS, odometer and fuel sensor device offered to fleet owners.' },
+          { title: '2. Accounts and roles', body: 'Every account belongs to one of three roles: owner, driver or workshop. Each role sees only the screens and data relevant to its work, and an owner may assign roles to the members of their organization.' },
+          { title: '3. Acceptable use', body: 'Users agree to provide accurate vehicle and account information, to use the IoT device only on vehicles they own or operate, and not to interfere with telemetry data belonging to another account.' },
+          { title: '4. Data and privacy', body: 'Location, fuel and maintenance data collected through the platform is used to power the features owners, drivers and workshops rely on, and is not sold to third parties.' },
+          { title: '5. Professional responsibility', body: 'The Flotix team follows recognized software engineering ethics guidance in how the platform is built, tested and deployed, and documents changes to the service through its public version control repository.' }
+        ]
+      },
+      privacy: {
+        title: 'Privacy policy',
+        lede: 'This page explains what information Flotix collects, why it is collected and how it is protected.',
+        sections: [
+          { title: '1. Information we collect', body: 'Account details such as name, email and role, together with vehicle, location, fuel and maintenance data reported by the web application and the IoT device.' },
+          { title: '2. How we use it', body: 'The data powers fleet management, fuel control, preventive maintenance and real time monitoring, and helps us improve the platform.' },
+          { title: '3. Sharing', body: 'Information is shared only inside the organization that owns the account and with affiliated workshops when a maintenance task requires it. It is never sold to third parties.' },
+          { title: '4. Security and retention', body: 'We apply access controls by role and keep data only as long as the account is active or as needed to provide the service.' },
+          { title: '5. Your rights', body: 'You may ask to access, correct or delete your personal information at any time by contacting the Flotix team.' }
+        ]
+      }
+    },
+    login: {
+      tab: 'Sign in',
+      title: 'Welcome back', subtitle: 'Sign in to manage your fleet.', email: 'Email', password: 'Password',
+      emailPlaceholder: 'name{\'@\'}company.com', passwordPlaceholder: 'Your password', forgot: 'Forgot your password?',
+      submit: 'Sign in', noAccount: "Don’t have an account?", register: 'Create account',
+      google: 'Continue with Google', orEmail: 'or continue with email', remember: 'Keep me signed in',
+    },
+    register: {
+      tab: 'Sign up',
+      title: 'Create your account', subtitle: 'Join Flotix and start tracking your fleet.', name: 'Full name',
+      chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
+      firstName: 'First name', lastName: 'Last name', roleLabel: 'I am a…',
+      firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name{\'@\'}company.com',
+      passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
+      email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
+      owner: 'Fleet owner', driver: 'Driver', mechanic: 'Mechanic / Workshop', company: 'Fleet or business name',
+      companyPlaceholder: 'e.g. Lima Cargo', fleetSize: 'Vehicles in your fleet', fleetSizePlaceholder: 'e.g. 5',
+      workshop: 'Workshop or business name', workshopPlaceholder: 'e.g. Taller San Martín',
+      workshopCity: 'City or district', workshopCityPlaceholder: 'e.g. San Miguel, Lima',
+      workshopSpecialty: 'Main specialty', workshopSpecialtyPlaceholder: 'e.g. Engine diagnostics',
+      licenseNumber: 'License number', licenseNumberPlaceholder: 'e.g. Q12345678', licenseExpiry: 'License expiration',
+      licenseExpiryExample: 'Example: Dec 31, 2028. Select the expiry date printed on your license.',
+      submit: 'Create account', haveAccount: 'Already have an account?', login: 'Sign in',
+      google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.',
+      continueToPayment: 'Continue to payment'
+    },
+    plan: {
+      selected: 'Selected plan', perMonth: '/ month', unlimited: 'Unlimited vehicles', upTo: 'Up to {count} vehicles',
+      change: 'Change plan', ownerOnly: 'Fleet plans are for fleet owners, so your profile is set to Fleet owner.'
+    },
+    checkout: {
+      title: 'Payment details', subtitle: 'Complete your subscription to the {plan} plan.',
+      simulated: 'Simulated payment: this is a demo, no real charge is made. Use any test card number.',
+      cardHolder: 'Name on card', cardNumber: 'Card number', expiry: 'Expiry (MM/YY)', cvv: 'CVV',
+      summary: 'Order summary', total: 'Total today', pay: 'Pay S/ {amount} and create account',
+      processing: 'Processing payment…', back: 'Back to account details'
+    },
+    google: {
+      title: 'Choose an account', subtitle: 'to continue to Flotix',
+      lastStep: 'One last step', lastStepSubtitle: 'Tell us who you are on the platform to finish creating your account.',
+      finish: 'Finish sign up', cancel: 'Cancel',
+      existing: 'Continue with demo profile', new: 'Continue as a new profile', close: 'Close'
+    },
+    errors: {
+      invalidCredentials: 'Email or password is incorrect.',
+      notConfigured: 'Sign-in is unavailable because the authentication service is not connected yet.',
+      googleNotConfigured: 'Google sign-in is not configured yet.',
+      profileNotFound: 'No Flotix profile is linked to this email. Finish registration or contact support.',
+      previewUnavailable: 'The local preview profile is not available.',
+      emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
+      termsRequired: 'You need to accept to continue.',
+      roleFieldsRequired: 'Complete all required information for your selected role.',
+      licenseExpired: 'Your driver license must be valid and not expired.',
+      fleetSizeExceedsPlan: 'Your fleet has more vehicles than the {plan} plan allows ({limit}). Choose a larger plan.',
+      cardInvalid: 'Check your card details: number, expiry date and CVV.'
+    }
+  },
   common: {
     save: 'Save', cancel: 'Cancel', delete: 'Delete', confirm: 'Confirm', retry: 'Retry',
     actions: 'Actions', dash: '—', loadingShort: 'Loading…'
@@ -14,6 +109,7 @@ export const pagesEn = {
     done: 'Done',
     retry: 'Retry',
     apiAddress: 'API',
+    previewMode: 'Local preview is active. API data and write actions are unavailable.',
     unreachable: 'Could not reach the server. Check that the API is running and your internet connection.',
     notFound: 'The requested resource does not exist.',
     conflict: 'The operation conflicts with the current state of the data.',
@@ -214,7 +310,7 @@ export const pagesEn = {
       history: 'Billing history', emptyHistory: "You don't have any purchases yet.",
       cols: { date: 'Date', concept: 'Item', amount: 'Amount', status: 'Status' },
       concept: '{qty}× IoT device ({sku})',
-      paymentMethod: 'Payment method', endingIn: 'Ending in 4417', expires: 'Expires 08/28', goStore: 'Go to the IoT store'
+      paymentMethod: 'Payment method', endingIn: 'Ending in {last4}', expires: 'Expires {date}', goStore: 'Go to the IoT store'
     }
   },
   notifications: {
@@ -225,6 +321,102 @@ export const pagesEn = {
 
 
 export const pagesEs = {
+  auth: {
+    kicker: 'Plataforma de flotas',
+    brandTitle: 'Controla tu flota desde una sola plataforma',
+    brandSub: 'Flotix conecta vehículos, conductores y talleres con IoT y GPS para que monitorees combustible, kilometraje y rutas en tiempo real.',
+    brand: 'Tu flota, siempre en buenas manos',
+    brandSubtitle: 'Flotix reúne tus vehículos, conductores y mantenimientos en una vista clara.',
+    features: ['Gestión de flota', 'Control de combustible', 'Mantenimiento coordinado', 'Monitoreo GPS en tiempo real'],
+    stats: ['vehículos en el piloto', 'talleres afiliados', 'disponibilidad GPS'],
+    prototype: 'Vista previa del frontend · La autenticación aún no está conectada al backend.',
+    tabsLabel: 'Autenticación',
+    showPassword: 'Mostrar contraseña', hidePassword: 'Ocultar contraseña',
+    preview: { description: 'Vista previa local del panel. No se crea ni autentica una cuenta.', roleLabel: 'Elige un rol para la vista previa', enter: 'Abrir vista previa' },
+    localDevelopmentNotice: 'Si no se puede conectar con el API, este acceso de desarrollo guarda las cuentas solo en este navegador; no crea una cuenta IAM.',
+    demo: { title: 'Cuentas de demostración', description: 'Estas cuentas son para la vista previa local. Pulsa Usar para completar el formulario.', use: 'Usar' },
+    legal: {
+      close: 'Cerrar',
+      terms: {
+        title: 'Términos y condiciones',
+        lede: 'Estos términos describen cómo los visitantes y usuarios registrados pueden usar el landing page, la aplicación web y el dispositivo IoT de Flotix.',
+        sections: [
+          { title: '1. Alcance', body: 'Estos términos aplican al landing page de Flotix, la aplicación web y el dispositivo de GPS, odómetro y sensor de combustible ofrecido a los dueños de flota.' },
+          { title: '2. Cuentas y roles', body: 'Cada cuenta pertenece a uno de tres roles: dueño, conductor o taller. Cada rol ve únicamente las pantallas y los datos relevantes para su trabajo, y un dueño puede asignar roles a los miembros de su organización.' },
+          { title: '3. Uso aceptable', body: 'Los usuarios se comprometen a proporcionar información precisa de vehículos y cuenta, a usar el dispositivo IoT solo en vehículos que posean u operen, y a no interferir con los datos de telemetría de otra cuenta.' },
+          { title: '4. Datos y privacidad', body: 'Los datos de ubicación, combustible y mantenimiento recolectados por la plataforma se usan para las funciones que dueños, conductores y talleres necesitan, y no se venden a terceros.' },
+          { title: '5. Responsabilidad profesional', body: 'El equipo de Flotix sigue lineamientos reconocidos de ética en ingeniería de software para construir, probar y desplegar la plataforma, y documenta los cambios del servicio en su repositorio público de control de versiones.' }
+        ]
+      },
+      privacy: {
+        title: 'Política de privacidad',
+        lede: 'Esta página explica qué información recopila Flotix, por qué se recopila y cómo se protege.',
+        sections: [
+          { title: '1. Información que recopilamos', body: 'Datos de la cuenta como nombre, correo y rol, junto con los datos de vehículos, ubicación, combustible y mantenimiento que reportan la aplicación web y el dispositivo IoT.' },
+          { title: '2. Cómo la usamos', body: 'Los datos permiten la gestión de flotas, el control de combustible, el mantenimiento preventivo y el monitoreo en tiempo real, y nos ayudan a mejorar la plataforma.' },
+          { title: '3. Compartir', body: 'La información se comparte solo dentro de la organización dueña de la cuenta y con talleres afiliados cuando una tarea de mantenimiento lo requiere. Nunca se vende a terceros.' },
+          { title: '4. Seguridad y conservación', body: 'Aplicamos control de acceso por rol y conservamos los datos solo mientras la cuenta esté activa o sea necesario para prestar el servicio.' },
+          { title: '5. Tus derechos', body: 'Puedes solicitar acceso, corrección o eliminación de tu información personal en cualquier momento contactando al equipo de Flotix.' }
+        ]
+      }
+    },
+    login: {
+      tab: 'Iniciar sesión',
+      title: 'Te damos la bienvenida', subtitle: 'Inicia sesión para gestionar tu flota.', email: 'Correo electrónico', password: 'Contraseña',
+      emailPlaceholder: 'nombre{\'@\'}empresa.com', passwordPlaceholder: 'Tu contraseña', forgot: '¿Olvidaste tu contraseña?',
+      submit: 'Iniciar sesión', noAccount: '¿Aún no tienes una cuenta?', register: 'Crear cuenta',
+      google: 'Continuar con Google', orEmail: 'o continúa con tu correo', remember: 'Mantener sesión iniciada',
+    },
+    register: {
+      tab: 'Registrarse',
+      title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a monitorear tu flota.', name: 'Nombre completo',
+      chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
+      firstName: 'Nombre', lastName: 'Apellido', roleLabel: 'Soy…',
+      firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre{\'@\'}empresa.com',
+      passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
+      email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
+      owner: 'Dueño de flota', driver: 'Conductor', mechanic: 'Mecánico / Taller', company: 'Nombre de flota o empresa',
+      companyPlaceholder: 'Ej.: Transportes Lima', fleetSize: 'Vehículos en tu flota', fleetSizePlaceholder: 'Ej.: 5',
+      workshop: 'Nombre del taller o negocio', workshopPlaceholder: 'Ej.: Taller San Martín',
+      workshopCity: 'Ciudad o distrito', workshopCityPlaceholder: 'Ej.: San Miguel, Lima',
+      workshopSpecialty: 'Especialidad principal', workshopSpecialtyPlaceholder: 'Ej.: Diagnóstico de motores',
+      licenseNumber: 'N.º de licencia', licenseNumberPlaceholder: 'Ej.: Q12345678', licenseExpiry: 'Vencimiento de licencia',
+      licenseExpiryExample: 'Ejemplo: 31/12/2028. Selecciona el vencimiento que aparece en tu licencia.',
+      submit: 'Crear cuenta', haveAccount: '¿Ya tienes una cuenta?', login: 'Iniciar sesión',
+      google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.',
+      continueToPayment: 'Continuar al pago'
+    },
+    plan: {
+      selected: 'Plan seleccionado', perMonth: '/ mes', unlimited: 'Vehículos ilimitados', upTo: 'Hasta {count} vehículos',
+      change: 'Cambiar plan', ownerOnly: 'Los planes son para dueños de flota, por eso tu perfil queda como Dueño de flota.'
+    },
+    checkout: {
+      title: 'Datos de pago', subtitle: 'Completa tu suscripción al plan {plan}.',
+      simulated: 'Pago simulado: es una demostración, no se realiza ningún cobro real. Usa cualquier número de tarjeta de prueba.',
+      cardHolder: 'Nombre en la tarjeta', cardNumber: 'Número de tarjeta', expiry: 'Vencimiento (MM/AA)', cvv: 'CVV',
+      summary: 'Resumen del pedido', total: 'Total hoy', pay: 'Pagar S/ {amount} y crear cuenta',
+      processing: 'Procesando pago…', back: 'Volver a los datos de la cuenta'
+    },
+    google: {
+      title: 'Elige una cuenta', subtitle: 'para continuar en Flotix',
+      lastStep: 'Un último paso', lastStepSubtitle: 'Cuéntanos qué rol tienes en la plataforma para terminar de crear tu cuenta.',
+      finish: 'Terminar registro', cancel: 'Cancelar',
+      existing: 'Continuar con perfil demo', new: 'Continuar como perfil nuevo', close: 'Cerrar'
+    },
+    errors: {
+      invalidCredentials: 'El correo o la contraseña no son correctos.',
+      notConfigured: 'No es posible iniciar sesión porque el servicio de autenticación aún no está conectado.',
+      googleNotConfigured: 'El inicio de sesión con Google aún no está configurado.',
+      profileNotFound: 'No hay un perfil Flotix vinculado a este correo. Completa el registro o contacta al equipo.',
+      previewUnavailable: 'El perfil de vista previa local no está disponible.',
+      emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
+      termsRequired: 'Debes aceptar para continuar.',
+      roleFieldsRequired: 'Completa los datos obligatorios del rol seleccionado.',
+      licenseExpired: 'Tu licencia de conducir debe estar vigente.',
+      fleetSizeExceedsPlan: 'Tu flota supera los vehículos que permite el plan {plan} ({limit}). Elige un plan mayor.',
+      cardInvalid: 'Revisa los datos de tu tarjeta: número, fecha de vencimiento y CVV.'
+    }
+  },
   common: {
     save: 'Guardar', cancel: 'Cancelar', delete: 'Eliminar', confirm: 'Confirmar', retry: 'Reintentar',
     actions: 'Acciones', dash: '—', loadingShort: 'Cargando…'
@@ -238,6 +430,7 @@ export const pagesEs = {
     done: 'Listo',
     retry: 'Reintentar',
     apiAddress: 'API',
+    previewMode: 'Vista previa local activa. Los datos y acciones del API no están disponibles.',
     unreachable: 'No se pudo conectar con el servidor. Verifica que la API esté en ejecución y tu conexión a internet.',
     notFound: 'El recurso solicitado no existe.',
     conflict: 'La operación entra en conflicto con el estado actual de los datos.',
@@ -438,7 +631,7 @@ export const pagesEs = {
       history: 'Historial de facturación', emptyHistory: 'Aún no tienes compras registradas.',
       cols: { date: 'Fecha', concept: 'Concepto', amount: 'Monto', status: 'Estado' },
       concept: '{qty}× dispositivo IoT ({sku})',
-      paymentMethod: 'Método de pago', endingIn: 'Terminada en 4417', expires: 'Expira 08/28', goStore: 'Ir a la tienda IoT'
+      paymentMethod: 'Método de pago', endingIn: 'Terminada en {last4}', expires: 'Expira {date}', goStore: 'Ir a la tienda IoT'
     }
   },
   notifications: {
