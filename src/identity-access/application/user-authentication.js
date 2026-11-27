@@ -46,8 +46,18 @@ export class UserAuthentication {
     return this.provider.signInWithGoogle()
   }
 
-  switchRole(role) {
-    return this.enterPreview(role)
+  async requestPasswordReset(email) {
+    if (typeof this.provider.requestPasswordReset !== 'function') {
+      throw new Error('auth.errors.passwordResetUnavailable')
+    }
+    return this.provider.requestPasswordReset({ email })
+  }
+
+  async confirmPasswordReset(token, newPassword) {
+    if (typeof this.provider.confirmPasswordReset !== 'function') {
+      throw new Error('auth.errors.passwordResetUnavailable')
+    }
+    return this.provider.confirmPasswordReset({ token, newPassword })
   }
 
   enterPreview(role) {

@@ -51,6 +51,7 @@ export const pagesEn = {
       title: 'Create your account', subtitle: 'Join Flotix and start tracking your fleet.', name: 'Full name',
       chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
       firstName: 'First name', lastName: 'Last name', roleLabel: 'I am a…',
+      ownerPlanPrompt: 'Choose a fleet plan to continue as an owner.',
       firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name{\'@\'}company.com',
       passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
@@ -65,9 +66,17 @@ export const pagesEn = {
       google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.',
       continueToPayment: 'Continue to payment'
     },
+    recovery: {
+      title: 'Reset your password', subtitle: 'Enter your account email to request a password reset.', email: 'Email',
+      send: 'Request reset link', requestSent: 'The password reset request was accepted by your authentication provider.',
+      resetTitle: 'Choose a new password', resetSubtitle: 'Enter and confirm your new password.',
+      newPassword: 'New password', confirmPassword: 'Confirm new password', updatePassword: 'Update password',
+      passwordUpdated: 'Your authentication provider confirmed that the password was updated.',
+      returnLogin: 'Return to sign in', missingToken: 'This reset link is missing a valid recovery token.'
+    },
     plan: {
       selected: 'Selected plan', perMonth: '/ month', unlimited: 'Unlimited vehicles', upTo: 'Up to {count} vehicles',
-      change: 'Change plan', ownerOnly: 'Fleet plans are for fleet owners, so your profile is set to Fleet owner.'
+      change: 'Change plan', ownerOnly: 'Fleet plans are for owners. Mechanics and drivers can register free by changing the role below.'
     },
     checkout: {
       title: 'Payment details', subtitle: 'Complete your subscription to the {plan} plan.',
@@ -91,6 +100,8 @@ export const pagesEn = {
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.',
       roleFieldsRequired: 'Complete all required information for your selected role.',
+      ownerPlanRequired: 'Fleet owners need to select a plan. Mechanics and drivers can register for free.',
+      passwordResetUnavailable: 'Password recovery is not available because the configured authentication provider does not support it.',
       licenseExpired: 'Your driver license must be valid and not expired.',
       fleetSizeExceedsPlan: 'Your fleet has more vehicles than the {plan} plan allows ({limit}). Choose a larger plan.',
       cardInvalid: 'Check your card details: number, expiry date and CVV.'
@@ -102,7 +113,6 @@ export const pagesEn = {
   },
   confirm: { header: 'Confirm', accept: 'Delete', reject: 'Cancel' },
   roles: { Owner: 'Fleet owner', Driver: 'Driver', Mechanic: 'Mechanic / Workshop' },
-  roleSwitcher: { label: 'View as' },
   api: {
     loadErrorTitle: 'Some data could not be loaded.',
     actionFailed: 'Could not complete the action',
@@ -422,6 +432,7 @@ export const pagesEs = {
       title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a monitorear tu flota.', name: 'Nombre completo',
       chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
       firstName: 'Nombre', lastName: 'Apellido', roleLabel: 'Soy…',
+      ownerPlanPrompt: 'Elige un plan de flota para continuar como dueño.',
       firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre{\'@\'}empresa.com',
       passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
@@ -436,9 +447,17 @@ export const pagesEs = {
       google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.',
       continueToPayment: 'Continuar al pago'
     },
+    recovery: {
+      title: 'Restablece tu contraseña', subtitle: 'Ingresa el correo de tu cuenta para solicitar el restablecimiento.', email: 'Correo electrónico',
+      send: 'Solicitar enlace', requestSent: 'El proveedor de autenticación aceptó la solicitud de restablecimiento.',
+      resetTitle: 'Elige una nueva contraseña', resetSubtitle: 'Ingresa y confirma tu nueva contraseña.',
+      newPassword: 'Nueva contraseña', confirmPassword: 'Confirmar nueva contraseña', updatePassword: 'Actualizar contraseña',
+      passwordUpdated: 'El proveedor de autenticación confirmó que la contraseña se actualizó.',
+      returnLogin: 'Volver a iniciar sesión', missingToken: 'Al enlace de restablecimiento le falta un token de recuperación válido.'
+    },
     plan: {
       selected: 'Plan seleccionado', perMonth: '/ mes', unlimited: 'Vehículos ilimitados', upTo: 'Hasta {count} vehículos',
-      change: 'Cambiar plan', ownerOnly: 'Los planes son para dueños de flota, por eso tu perfil queda como Dueño de flota.'
+      change: 'Cambiar plan', ownerOnly: 'Los planes son solo para dueños de flota. Mecánicos y conductores pueden registrarse gratis cambiando el rol abajo.'
     },
     checkout: {
       title: 'Datos de pago', subtitle: 'Completa tu suscripción al plan {plan}.',
@@ -462,6 +481,8 @@ export const pagesEs = {
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.',
       roleFieldsRequired: 'Completa los datos obligatorios del rol seleccionado.',
+      ownerPlanRequired: 'Los dueños de flota deben elegir un plan. Mecánicos y conductores pueden registrarse gratis.',
+      passwordResetUnavailable: 'La recuperación de contraseña no está disponible porque el proveedor de autenticación configurado no la admite.',
       licenseExpired: 'Tu licencia de conducir debe estar vigente.',
       fleetSizeExceedsPlan: 'Tu flota supera los vehículos que permite el plan {plan} ({limit}). Elige un plan mayor.',
       cardInvalid: 'Revisa los datos de tu tarjeta: número, fecha de vencimiento y CVV.'
@@ -473,7 +494,6 @@ export const pagesEs = {
   },
   confirm: { header: 'Confirmar', accept: 'Eliminar', reject: 'Cancelar' },
   roles: { Owner: 'Dueño de flota', Driver: 'Conductor', Mechanic: 'Mecánico / Taller' },
-  roleSwitcher: { label: 'Ver como' },
   api: {
     loadErrorTitle: 'No se pudieron cargar algunos datos.',
     actionFailed: 'No se pudo completar la acción',
