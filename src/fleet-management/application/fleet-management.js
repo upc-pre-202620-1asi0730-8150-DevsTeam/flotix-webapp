@@ -14,8 +14,8 @@ export class FleetManagement {
     this.repository = new VehicleRepository()
   }
 
-  listVehicles() {
-    return this.repository.getAll()
+  listVehicles(ownerId = null) {
+    return this.repository.getAll(ownerId ? { ownerId } : {})
   }
 
   getVehicle(id) {

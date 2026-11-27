@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { trackingService } from '../../application/tracking.service.js'
 import { useAlertsStore } from '@/alerts/presentation/stores/alerts.store.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 
 const MAX_TRAIL_POINTS = 90
 const TELEMETRY_INTERVAL_MS = 3000
@@ -22,10 +23,19 @@ export const useTrackingStore = defineStore('tracking', {
   }),
   actions: {
     async load() {
-      const [devices, latest] = await Promise.all([trackingService.listDevices(), trackingService.latestTelemetryByDevice()])
+      const [allDevices, latest] = await Promise.all([trackingService.listDevices(), trackingService.latestTelemetryByDevice()])
+      const scoped = Boolean(useSessionStore().scopedOwnerId)
+      const vehicleIds = scoped ? useFleetStore().vehicleIds : null
+      const devices = scoped ? allDevices.filter((d) => vehicleIds.has(d.vehicleId)) : allDevices
+      const allowedDeviceIds = new Set(devices.map((d) => d.id))
+
       this.devices = devices
-      const mergedLatest = { ...latest, ...this.latestByDevice }
+      const mergedLatest = {}
+      for (const [deviceId, packet] of Object.entries(this.latestByDevice)) {
+        if (allowedDeviceIds.has(deviceId)) mergedLatest[deviceId] = packet
+      }
       for (const [deviceId, packet] of Object.entries(latest)) {
+        if (!allowedDeviceIds.has(deviceId)) continue
         const current = mergedLatest[deviceId]
         if (!current || new Date(packet.timestamp) >= new Date(current.timestamp)) {
           mergedLatest[deviceId] = packet
@@ -33,16 +43,16 @@ export const useTrackingStore = defineStore('tracking', {
       }
       this.latestByDevice = mergedLatest
 
-      const nextTrails = { ...this.trailsByDevice }
-      for (const [deviceId, packet] of Object.entries(this.latestByDevice)) {
-        if (!nextTrails[deviceId]?.length) {
-          nextTrails[deviceId] = [{ latitude: packet.latitude, longitude: packet.longitude }]
+      const nextTrails = {}
+      for (const deviceId of allowedDeviceIds) {
+        if (this.trailsByDevice[deviceId]?.length) {
+          nextTrails[deviceId] = this.trailsByDevice[deviceId]
+        } else if (this.latestByDevice[deviceId]) {
+          nextTrails[deviceId] = [{ latitude: this.latestByDevice[deviceId].latitude, longitude: this.latestByDevice[deviceId].longitude }]
         }
       }
       this.trailsByDevice = nextTrails
-      if (this.packetsCount < Object.keys(this.latestByDevice).length) {
-        this.packetsCount = Object.keys(this.latestByDevice).length
-      }
+      this.packetsCount = Object.keys(this.latestByDevice).length
     },
     selectDevice(deviceId) {
       this.selectedDeviceId = deviceId
@@ -85,6 +95,7 @@ export const useTrackingStore = defineStore('tracking', {
     /** Keeps only the newest packet of each device and appends to its path trail. */
     setLatest(packet, { fromRealtime = false, countPacket = true } = {}) {
       if (!packet) return
+      if (fromRealtime && !this.devices.some((d) => d.id === packet.deviceId)) return
       const current = this.latestByDevice[packet.deviceId]
 
       if (fromRealtime && !trackingService.acceptRealtimePacket(packet, current)) return

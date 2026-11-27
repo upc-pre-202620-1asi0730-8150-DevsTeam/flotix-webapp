@@ -20,8 +20,9 @@ export function bootstrap(force = false) {
   const status = useApiStatusStore()
   status.loading = true
   pending = (async () => {
-    const loaders = [
-      useFleetStore().load(),
+    // Load Fleet first so vehicle-scoped contexts can filter strictly to the signed-in owner's vehicles.
+    const fleetResult = await Promise.allSettled([useFleetStore().load()])
+    const restResults = await Promise.allSettled([
       useFuelStore().load(),
       useMaintenanceStore().load(),
       useIncidentsStore().load(),
@@ -29,11 +30,19 @@ export function bootstrap(force = false) {
       useAlertsStore().load(),
       useCommerceStore().load(),
       useAnalyticsStore().load()
-    ]
-    const results = await Promise.allSettled(loaders)
+    ])
+    const results = [...fleetResult, ...restResults]
     status.errors = [...new Set(results.filter((r) => r.status === 'rejected').map((r) => r.reason?.message ?? String(r.reason)))]
     status.ready = true
     status.loading = false
   })()
   return pending
+}
+
+export function resetBootstrap() {
+  pending = null
+  const status = useApiStatusStore()
+  status.ready = false
+  status.loading = false
+  status.errors = []
 }

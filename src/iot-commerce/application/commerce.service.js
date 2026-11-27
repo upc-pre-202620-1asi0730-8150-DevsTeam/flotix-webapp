@@ -32,8 +32,8 @@ export class CommerceService {
     return IoTCatalog
   }
 
-  listOrders() {
-    return this.repository.getAll()
+  listOrders(ownerId = null) {
+    return this.repository.getAll(ownerId ? { ownerId } : {})
   }
 
   async purchaseIoTDevice({ ownerId, fallbackOwnerId = null, sku, deviceQuantity }) {

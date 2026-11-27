@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { commerceService } from '../../application/commerce.service.js'
 import { OrderStatus } from '../../domain/model/value-objects/order-status.js'
 import { useTrackingStore } from '@/tracking/presentation/stores/tracking.store.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 
 const pendingTimers = new Map()
 
@@ -16,7 +17,8 @@ export const useCommerceStore = defineStore('commerce', {
   },
   actions: {
     async load() {
-      this.orders = await commerceService.listOrders()
+      const ownerId = useSessionStore().scopedOwnerId
+      this.orders = await commerceService.listOrders(ownerId)
     },
     async purchaseIoTDevice(payload) {
       let order = null
