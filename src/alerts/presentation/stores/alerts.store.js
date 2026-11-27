@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { alertsService } from '../../application/alerts.service.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
+import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 
 /** Pinia store — Alerts & Notifications. Wraps AlertsService (REST API). */
 export const useAlertsStore = defineStore('alerts', {
@@ -12,8 +14,18 @@ export const useAlertsStore = defineStore('alerts', {
   },
   actions: {
     async load() {
-      const [alerts, notifications] = await Promise.all([alertsService.listAlerts(), alertsService.listNotifications()])
-      this.alerts = alerts
+      const session = useSessionStore()
+      const ownerId = session.scopedOwnerId
+      const [alerts, notifications] = await Promise.all([
+        alertsService.listAlerts(),
+        alertsService.listNotifications(session.actorId)
+      ])
+      if (ownerId) {
+        const vehicleIds = useFleetStore().vehicleIds
+        this.alerts = alerts.filter((a) => vehicleIds.has(a.vehicleId))
+      } else {
+        this.alerts = alerts
+      }
       this.notifications = notifications
     },
     async markNotificationAsRead(id) {

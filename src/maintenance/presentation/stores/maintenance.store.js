@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { maintenanceService } from '../../application/maintenance-coordination.js'
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 
 /** Pinia store — Maintenance Management. Wraps MaintenanceCoordination (REST API). */
 export const useMaintenanceStore = defineStore('maintenance', {
@@ -12,7 +13,13 @@ export const useMaintenanceStore = defineStore('maintenance', {
   },
   actions: {
     async load() {
-      this.requests = await maintenanceService.listRequests()
+      const requests = await maintenanceService.listRequests()
+      if (useSessionStore().scopedOwnerId) {
+        const vehicleIds = useFleetStore().vehicleIds
+        this.requests = requests.filter((r) => vehicleIds.has(r.vehicleId))
+      } else {
+        this.requests = requests
+      }
     },
     async submitMaintenanceRequest(payload) {
       const request = await maintenanceService.submitMaintenanceRequest(payload)

@@ -53,8 +53,8 @@ export class AnalyticsService {
     return this.repository.generate({ ownerId, reportType, from, to })
   }
 
-  listReports() {
-    return this.repository.getAll()
+  listReports(ownerId = null) {
+    return this.repository.getAll(ownerId ? { ownerId } : {})
   }
 }
 

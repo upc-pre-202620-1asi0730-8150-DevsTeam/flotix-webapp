@@ -51,6 +51,7 @@ export const pagesEn = {
       title: 'Create your account', subtitle: 'Join Flotix and start tracking your fleet.', name: 'Full name',
       chooseRoleTitle: 'Choose your profile', chooseRoleSubtitle: 'Select the role that best describes you.', back: 'Back to roles',
       firstName: 'First name', lastName: 'Last name', roleLabel: 'I am a…',
+      ownerPlanPrompt: 'Choose a fleet plan to continue as an owner.',
       firstPlaceholder: 'Maria', lastPlaceholder: 'Lopez', emailPlaceholder: 'name{\'@\'}company.com',
       passwordPlaceholder: 'At least 8 characters', confirmPlaceholder: 'Repeat your password',
       email: 'Email', password: 'Password', confirmPassword: 'Confirm password', role: 'I am a…',
@@ -65,9 +66,17 @@ export const pagesEn = {
       google: 'Sign up with Google', agreePrefix: 'I agree to the', termsLink: 'Terms', agreeJoin: 'and', privacyLink: 'Privacy Policy.',
       continueToPayment: 'Continue to payment'
     },
+    recovery: {
+      title: 'Reset your password', subtitle: 'Enter your account email to request a password reset.', email: 'Email',
+      send: 'Request reset link', requestSent: 'The password reset request was accepted by your authentication provider.',
+      resetTitle: 'Choose a new password', resetSubtitle: 'Enter and confirm your new password.',
+      newPassword: 'New password', confirmPassword: 'Confirm new password', updatePassword: 'Update password',
+      passwordUpdated: 'Your authentication provider confirmed that the password was updated.',
+      returnLogin: 'Return to sign in', missingToken: 'This reset link is missing a valid recovery token.'
+    },
     plan: {
       selected: 'Selected plan', perMonth: '/ month', unlimited: 'Unlimited vehicles', upTo: 'Up to {count} vehicles',
-      change: 'Change plan', ownerOnly: 'Fleet plans are for fleet owners, so your profile is set to Fleet owner.'
+      change: 'Change plan', ownerOnly: 'Fleet plans are for owners. Mechanics and drivers can register free by changing the role below.'
     },
     checkout: {
       title: 'Payment details', subtitle: 'Complete your subscription to the {plan} plan.',
@@ -91,6 +100,8 @@ export const pagesEn = {
       emailTaken: 'An account with this email already exists.', passwordMismatch: 'Passwords do not match.',
       termsRequired: 'You need to accept to continue.',
       roleFieldsRequired: 'Complete all required information for your selected role.',
+      ownerPlanRequired: 'Fleet owners need to select a plan. Mechanics and drivers can register for free.',
+      passwordResetUnavailable: 'Password recovery is not available because the configured authentication provider does not support it.',
       licenseExpired: 'Your driver license must be valid and not expired.',
       fleetSizeExceedsPlan: 'Your fleet has more vehicles than the {plan} plan allows ({limit}). Choose a larger plan.',
       cardInvalid: 'Check your card details: number, expiry date and CVV.'
@@ -102,7 +113,6 @@ export const pagesEn = {
   },
   confirm: { header: 'Confirm', accept: 'Delete', reject: 'Cancel' },
   roles: { Owner: 'Fleet owner', Driver: 'Driver', Mechanic: 'Mechanic / Workshop' },
-  roleSwitcher: { label: 'View as' },
   api: {
     loadErrorTitle: 'Some data could not be loaded.',
     actionFailed: 'Could not complete the action',
@@ -229,11 +239,24 @@ export const pagesEn = {
   },
   tracking: {
     title: 'Real-time monitoring',
-    subtitle: 'Simulated GPS telemetry sent every few seconds by each connected IoT device.',
-    stats: { connected: 'Connected devices', avgSpeed: 'Average speed', packets: 'Packets received' },
+    subtitle: 'Live GPS location, speed telemetry and connection status across your active fleet.',
+    stats: { connected: 'Connected devices', avgSpeed: 'Average speed', packets: 'Telemetry readings' },
     empty: 'No IoT devices connected to the fleet.',
-    radar: 'Fleet radar, Lima (simulated)',
-    serial: 'S/N {serial}', speed: 'Speed', latLng: 'Lat/Lng'
+    radar: 'Lima Metropolitan Area · Live GPS',
+    mapLabel: 'Lima Metropolitan Area · Live GPS',
+    fitFleet: 'Fit fleet',
+    live: 'Live',
+    syncing: 'Syncing',
+    linkDevice: 'Link device',
+    goStore: 'Go to IoT store',
+    unitsTitle: 'Monitored units',
+    searchPlaceholder: 'Filter by plate or serial…',
+    serial: 'S/N {serial}', speed: 'Speed', latLng: 'Lat/Lng',
+    updatedAt: 'Updated {time}',
+    awaitingSignal: 'Awaiting GPS signal…',
+    connect: 'Connect',
+    disconnect: 'Disconnect',
+    connectionError: 'Could not update device status'
   },
   alerts: {
     title: 'Alerts and notifications',
@@ -254,11 +277,48 @@ export const pagesEn = {
     subtitle: 'Purchase GPS devices, odometers and fuel sensors to equip your fleet.',
     badgeNew: 'New', buyNow: 'Buy now',
     products: { gps: 'Flotix GPS tracker', odometer: 'Flotix digital odometer', 'fuel-sensor': 'Flotix fuel sensor' },
+    specs: {
+      gps: '4G LTE · Real-time GPS every 3s · Speed alerts',
+      odometer: 'CAN-Bus digital mileage sync · Preventive alerts',
+      'fuel-sensor': 'Ultrasonic tank sensor · Abnormal drop detection'
+    },
     orders: 'Order history', emptyOrders: "You haven't placed any orders yet.",
     cols: { date: 'Date', product: 'Product', quantity: 'Quantity', total: 'Total', status: 'Status' },
     advance: 'Advance status',
-    success: 'Purchase of {qty} unit(s) of "{name}" processed successfully.',
-    purchaseError: 'Could not process the purchase', updateError: 'Could not update the order'
+    payOrder: 'Complete payment',
+    cancelOrder: 'Cancel',
+    confirmDelivery: 'Confirm delivery',
+    viewTracking: 'View in GPS tracking',
+    deliveredToast: 'Order marked as delivered.',
+    cancelledToast: 'Order cancelled.',
+    success: 'Order of {qty} unit(s) of "{name}" confirmed.',
+    purchaseError: 'Could not process the purchase', updateError: 'Could not update the order',
+    checkout: {
+      title: 'Complete hardware order',
+      confirmedTitle: 'Order confirmation',
+      assignVehicle: 'Assign to vehicle upon delivery (optional)',
+      assignLater: 'Assign after delivery',
+      serialPreview: 'Assigned hardware serial: {serial}',
+      pay: 'Pay S/ {amount}',
+      orderPlaced: 'Payment confirmed',
+      close: 'Close',
+      steps: { paid: 'Payment confirmed' }
+    },
+    install: {
+      action: 'Install on vehicle',
+      title: 'Link IoT device to vehicle',
+      subtitle: 'Select an unequipped vehicle and confirm the hardware serial number to activate live monitoring.',
+      vehicle: 'Vehicle',
+      serial: 'Device serial number',
+      serialHint: 'Letters, numbers and hyphens only (e.g. FLX-GPS-8A2C).',
+      submit: 'Activate device',
+      activeTitle: 'Device installed and transmitting',
+      allEquipped: 'All registered vehicles already have an active IoT device.',
+      vehicleRequired: 'Select a vehicle to link the device.',
+      serialInvalid: 'Enter a valid serial number using letters, numbers and hyphens.',
+      error: 'Could not link the IoT device',
+      success: 'Device {serial} linked to {plate} and active on GPS tracking.'
+    }
   },
   reports: {
     title: 'Reports and analytics',
@@ -372,6 +432,7 @@ export const pagesEs = {
       title: 'Crea tu cuenta', subtitle: 'Únete a Flotix y empieza a monitorear tu flota.', name: 'Nombre completo',
       chooseRoleTitle: 'Elige tu perfil', chooseRoleSubtitle: 'Selecciona el rol que mejor te describe.', back: 'Volver a los roles',
       firstName: 'Nombre', lastName: 'Apellido', roleLabel: 'Soy…',
+      ownerPlanPrompt: 'Elige un plan de flota para continuar como dueño.',
       firstPlaceholder: 'María', lastPlaceholder: 'López', emailPlaceholder: 'nombre{\'@\'}empresa.com',
       passwordPlaceholder: 'Mínimo 8 caracteres', confirmPlaceholder: 'Repite tu contraseña',
       email: 'Correo electrónico', password: 'Contraseña', confirmPassword: 'Confirmar contraseña', role: 'Soy…',
@@ -386,9 +447,17 @@ export const pagesEs = {
       google: 'Registrarse con Google', agreePrefix: 'Acepto los', termsLink: 'Términos', agreeJoin: 'y la', privacyLink: 'Política de privacidad.',
       continueToPayment: 'Continuar al pago'
     },
+    recovery: {
+      title: 'Restablece tu contraseña', subtitle: 'Ingresa el correo de tu cuenta para solicitar el restablecimiento.', email: 'Correo electrónico',
+      send: 'Solicitar enlace', requestSent: 'El proveedor de autenticación aceptó la solicitud de restablecimiento.',
+      resetTitle: 'Elige una nueva contraseña', resetSubtitle: 'Ingresa y confirma tu nueva contraseña.',
+      newPassword: 'Nueva contraseña', confirmPassword: 'Confirmar nueva contraseña', updatePassword: 'Actualizar contraseña',
+      passwordUpdated: 'El proveedor de autenticación confirmó que la contraseña se actualizó.',
+      returnLogin: 'Volver a iniciar sesión', missingToken: 'Al enlace de restablecimiento le falta un token de recuperación válido.'
+    },
     plan: {
       selected: 'Plan seleccionado', perMonth: '/ mes', unlimited: 'Vehículos ilimitados', upTo: 'Hasta {count} vehículos',
-      change: 'Cambiar plan', ownerOnly: 'Los planes son para dueños de flota, por eso tu perfil queda como Dueño de flota.'
+      change: 'Cambiar plan', ownerOnly: 'Los planes son solo para dueños de flota. Mecánicos y conductores pueden registrarse gratis cambiando el rol abajo.'
     },
     checkout: {
       title: 'Datos de pago', subtitle: 'Completa tu suscripción al plan {plan}.',
@@ -412,6 +481,8 @@ export const pagesEs = {
       emailTaken: 'Ya existe una cuenta con este correo.', passwordMismatch: 'Las contraseñas no coinciden.',
       termsRequired: 'Debes aceptar para continuar.',
       roleFieldsRequired: 'Completa los datos obligatorios del rol seleccionado.',
+      ownerPlanRequired: 'Los dueños de flota deben elegir un plan. Mecánicos y conductores pueden registrarse gratis.',
+      passwordResetUnavailable: 'La recuperación de contraseña no está disponible porque el proveedor de autenticación configurado no la admite.',
       licenseExpired: 'Tu licencia de conducir debe estar vigente.',
       fleetSizeExceedsPlan: 'Tu flota supera los vehículos que permite el plan {plan} ({limit}). Elige un plan mayor.',
       cardInvalid: 'Revisa los datos de tu tarjeta: número, fecha de vencimiento y CVV.'
@@ -423,7 +494,6 @@ export const pagesEs = {
   },
   confirm: { header: 'Confirmar', accept: 'Eliminar', reject: 'Cancelar' },
   roles: { Owner: 'Dueño de flota', Driver: 'Conductor', Mechanic: 'Mecánico / Taller' },
-  roleSwitcher: { label: 'Ver como' },
   api: {
     loadErrorTitle: 'No se pudieron cargar algunos datos.',
     actionFailed: 'No se pudo completar la acción',
@@ -550,11 +620,24 @@ export const pagesEs = {
   },
   tracking: {
     title: 'Monitoreo en tiempo real',
-    subtitle: 'Telemetría GPS simulada cada pocos segundos por cada dispositivo IoT conectado.',
-    stats: { connected: 'Dispositivos conectados', avgSpeed: 'Velocidad promedio', packets: 'Paquetes recibidos' },
+    subtitle: 'Ubicación GPS en vivo, velocidad y estado de conexión de los dispositivos IoT de tu flota.',
+    stats: { connected: 'Dispositivos conectados', avgSpeed: 'Velocidad promedio', packets: 'Lecturas recibidas' },
     empty: 'No hay dispositivos IoT conectados a la flota.',
-    radar: 'Radar de flota, Lima (simulado)',
-    serial: 'S/N {serial}', speed: 'Velocidad', latLng: 'Lat/Lng'
+    radar: 'Lima Metropolitana · GPS en vivo',
+    mapLabel: 'Lima Metropolitana · GPS en vivo',
+    fitFleet: 'Ver flota',
+    live: 'En vivo',
+    syncing: 'Sincronizando',
+    linkDevice: 'Vincular dispositivo',
+    goStore: 'Ir a la tienda IoT',
+    unitsTitle: 'Unidades monitoreadas',
+    searchPlaceholder: 'Filtrar por placa o serial…',
+    serial: 'S/N {serial}', speed: 'Velocidad', latLng: 'Lat/Lng',
+    updatedAt: 'Actualizado {time}',
+    awaitingSignal: 'Esperando señal GPS…',
+    connect: 'Conectar',
+    disconnect: 'Desconectar',
+    connectionError: 'No se pudo actualizar el estado del dispositivo'
   },
   alerts: {
     title: 'Alertas y notificaciones',
@@ -575,11 +658,48 @@ export const pagesEs = {
     subtitle: 'Adquisición de dispositivos GPS, odómetro y sensores de combustible para equipar tu flota.',
     badgeNew: 'Nuevo', buyNow: 'Comprar ahora',
     products: { gps: 'Rastreador GPS Flotix', odometer: 'Odómetro digital Flotix', 'fuel-sensor': 'Sensor de combustible Flotix' },
+    specs: {
+      gps: '4G LTE · GPS en tiempo real cada 3 s · Alertas de velocidad',
+      odometer: 'Lectura digital CAN-Bus · Alertas preventivas de kilometraje',
+      'fuel-sensor': 'Sensor ultrasónico de tanque · Detección de caídas anómalas'
+    },
     orders: 'Historial de pedidos', emptyOrders: 'Aún no has realizado pedidos.',
     cols: { date: 'Fecha', product: 'Producto', quantity: 'Cantidad', total: 'Total', status: 'Estado' },
     advance: 'Avanzar estado',
-    success: 'Compra de {qty} unidad(es) de "{name}" procesada correctamente.',
-    purchaseError: 'No se pudo procesar la compra', updateError: 'No se pudo actualizar el pedido'
+    payOrder: 'Completar pago',
+    cancelOrder: 'Cancelar',
+    confirmDelivery: 'Confirmar entrega',
+    viewTracking: 'Ver en Monitoreo GPS',
+    deliveredToast: 'Pedido marcado como entregado.',
+    cancelledToast: 'Pedido cancelado.',
+    success: 'Pedido de {qty} unidad(es) de "{name}" confirmado.',
+    purchaseError: 'No se pudo procesar la compra', updateError: 'No se pudo actualizar el pedido',
+    checkout: {
+      title: 'Completar compra de hardware',
+      confirmedTitle: 'Confirmación de pedido',
+      assignVehicle: 'Asignar a vehículo al entregar (opcional)',
+      assignLater: 'Asignar después de la entrega',
+      serialPreview: 'Serial asignado al equipo: {serial}',
+      pay: 'Pagar S/ {amount}',
+      orderPlaced: 'Pago confirmado',
+      close: 'Cerrar',
+      steps: { paid: 'Pago confirmado' }
+    },
+    install: {
+      action: 'Instalar en vehículo',
+      title: 'Vincular dispositivo IoT a vehículo',
+      subtitle: 'Elige un vehículo sin dispositivo y confirma el número de serie para activar el monitoreo GPS.',
+      vehicle: 'Vehículo',
+      serial: 'Número de serie del dispositivo',
+      serialHint: 'Solo letras, números y guiones (ej. FLX-GPS-8A2C).',
+      submit: 'Activar dispositivo',
+      activeTitle: 'Dispositivo instalado y transmitiendo',
+      allEquipped: 'Todos los vehículos registrados ya cuentan con un dispositivo IoT activo.',
+      vehicleRequired: 'Selecciona un vehículo para vincular el dispositivo.',
+      serialInvalid: 'Ingresa un serial válido usando letras, números y guiones.',
+      error: 'No se pudo vincular el dispositivo IoT',
+      success: 'Dispositivo {serial} vinculado a {plate} y activo en Monitoreo GPS.'
+    }
   },
   reports: {
     title: 'Reportes y analítica',

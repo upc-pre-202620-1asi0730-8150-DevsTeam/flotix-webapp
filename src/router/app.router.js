@@ -7,6 +7,8 @@ const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', name: 'login', component: () => import('@/identity-access/presentation/views/login.vue') },
   { path: '/register', name: 'register', component: () => import('@/identity-access/presentation/views/register.vue') },
+  { path: '/forgot-password', name: 'forgot-password', component: () => import('@/identity-access/presentation/views/password-recovery.vue') },
+  { path: '/reset-password', name: 'reset-password', component: () => import('@/identity-access/presentation/views/password-recovery.vue') },
   {
     path: '/',
     component: MainLayout,

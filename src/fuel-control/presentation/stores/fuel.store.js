@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { fuelControlService, FuelConsumption } from '../../application/fuel-consumption.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
+import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 
 /** Pinia store — Fuel Control. Wraps FuelConsumption (REST API). */
 export const useFuelStore = defineStore('fuel', {
@@ -12,7 +14,13 @@ export const useFuelStore = defineStore('fuel', {
   },
   actions: {
     async load() {
-      this.rawRecords = await fuelControlService.listRecords()
+      const records = await fuelControlService.listRecords()
+      if (useSessionStore().scopedOwnerId) {
+        const vehicleIds = useFleetStore().vehicleIds
+        this.rawRecords = records.filter((r) => vehicleIds.has(r.vehicleId))
+      } else {
+        this.rawRecords = records
+      }
     },
     async registerFuelConsumption(payload) {
       await fuelControlService.registerFuelConsumption(payload)
