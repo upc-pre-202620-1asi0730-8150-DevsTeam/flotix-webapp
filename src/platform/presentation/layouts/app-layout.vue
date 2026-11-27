@@ -15,7 +15,6 @@ import AppIcon from '@/shared/presentation/components/app-icon.component.vue'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Popover from 'primevue/popover'
-import Select from 'primevue/select'
 import Drawer from 'primevue/drawer'
 import flotixLogoMark from '@/assets/brand/flotix-logo-mark.png'
 import { bootstrap } from '@/shared/infrastructure/bootstrap.js'
@@ -120,13 +119,7 @@ function readAll() {
   run(() => alerts.markAllAsRead(user.value?.id), { errorSummary: t('alerts.markAllError') })
 }
 
-// There is no sign-in: the three actors of the platform are selectable from the header.
-const roleOptions = computed(() => Object.values(UserRole).map((value) => ({ value, label: t(`roles.${value}`) })))
 const roleLabel = computed(() => t(`roles.${user.value?.role ?? UserRole.OWNER}`))
-function changeRole(role) {
-  session.switchRole(role)
-  router.push('/dashboard') // the current page may not exist for the new profile
-}
 </script>
 
 <template>
@@ -210,17 +203,6 @@ function changeRole(role) {
             <span :class="{ active: locale === 'en' }">EN</span>
             <span :class="{ active: locale === 'es' }">ES</span>
           </button>
-
-          <span class="text-xs text-muted flotix-context-label">{{ t('roleSwitcher.label') }}</span>
-          <Select
-            :model-value="user?.role"
-            :options="roleOptions"
-            option-label="label"
-            option-value="value"
-            size="small"
-            :aria-label="t('roleSwitcher.label')"
-            @update:model-value="changeRole"
-          />
 
           <Button text rounded severity="secondary" :aria-label="t('notifications.title')" @click="toggleNotif">
             <template #icon>

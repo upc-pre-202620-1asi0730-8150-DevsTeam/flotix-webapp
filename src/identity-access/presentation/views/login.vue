@@ -94,7 +94,7 @@ function enterPreview() {
         </div>
         <div class="auth-row">
           <label class="auth-check"><input v-model="remember" type="checkbox" /><span>{{ t('auth.login.remember') }}</span></label>
-          <a class="auth-link" href="#" @click.prevent>{{ t('auth.login.forgot') }}</a>
+          <RouterLink class="auth-link" to="/forgot-password">{{ t('auth.login.forgot') }}</RouterLink>
         </div>
         <p v-if="error" class="auth-alert" role="alert"><i class="pi pi-exclamation-circle" aria-hidden="true" /><span>{{ errorText(error) }}</span></p>
         <button class="auth-button auth-button-primary" type="submit">{{ t('auth.login.submit') }}</button>
@@ -107,8 +107,8 @@ function enterPreview() {
 
 <style scoped>
 .auth-view { min-width: 0; }
-.auth-title { margin: 0; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
-.auth-subtitle { margin: .4rem 0 0; color: #64748b; }
+.auth-title { margin: 0; color: var(--auth-ink); font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.auth-subtitle { margin: .4rem 0 0; color: var(--auth-muted); }
 .auth-local-note { margin: .75rem 0 0; padding: .65rem .75rem; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; color: #1e3a8a; font-size: .8rem; line-height: 1.45; }
 .auth-button { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1.5px solid transparent; border-radius: 6px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s cubic-bezier(.23,1,.32,1); }
 .auth-button:active { transform: scale(.97); }
@@ -141,7 +141,7 @@ function enterPreview() {
 .auth-link:hover { text-decoration: underline; }
 .auth-alert { display: flex; align-items: flex-start; gap: .6rem; margin: 0; padding: .7rem .85rem; border-radius: 6px; background: #fde4e1; color: #a52a1c; font-size: .875rem; font-weight: 500; }
 .auth-alert i { margin-top: .2rem; }
-.auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
+.auth-foot { margin: 1.5rem 0 0; color: var(--auth-muted); font-size: .9rem; text-align: center; }
 .auth-preview { margin-top: 1rem; padding: .8rem; border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1e3a8a; font-size: .85rem; }
 .auth-preview p { margin: 0 0 .6rem; }
 .auth-preview-actions { display: flex; gap: .5rem; }
