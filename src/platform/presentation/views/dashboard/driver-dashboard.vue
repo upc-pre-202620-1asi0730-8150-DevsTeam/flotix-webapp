@@ -30,20 +30,21 @@ const incidents = useIncidentsStore()
 const alerts = useAlertsStore()
 
 const user = session.user
-const myVehicle = computed(() => fleet.vehicles.find((v) => v.driverId === user?.id) ?? null)
-const myFuelRecords = computed(() => fuel.records.filter((r) => r.driverId === user?.id).sort((a, b) => new Date(b.date) - new Date(a.date)))
+const actorId = computed(() => session.actorId ?? user?.id)
+const myVehicle = computed(() => fleet.vehicles.find((v) => v.driverId === actorId.value) ?? null)
+const myFuelRecords = computed(() => fuel.records.filter((r) => r.driverId === actorId.value).sort((a, b) => new Date(b.date) - new Date(a.date)))
 const efficiency = computed(() => (myVehicle.value ? fuel.efficiencyFor(myVehicle.value.id) : []))
 const lastEfficiency = computed(() => {
   const withKm = efficiency.value.filter((r) => r.kmPerLiter !== null)
   return withKm.length ? withKm[withKm.length - 1].kmPerLiter : null
 })
-const myIncidents = computed(() => incidents.incidents.filter((i) => i.driverId === user?.id && i.status !== IncidentStatus.RESOLVED))
+const myIncidents = computed(() => incidents.incidents.filter((i) => i.driverId === actorId.value && i.status !== IncidentStatus.RESOLVED))
 const myMaintenance = computed(() =>
   myVehicle.value
     ? maintenance.requests.filter((r) => r.vehicleId === myVehicle.value.id && ![MaintenanceStatus.COMPLETED, MaintenanceStatus.REJECTED].includes(r.status))
     : []
 )
-const unreadAlerts = computed(() => alerts.notifications.filter((n) => n.userId === user?.id && !n.isRead).length)
+const unreadAlerts = computed(() => alerts.notifications.filter((n) => n.userId === actorId.value && !n.isRead).length)
 
 const today = computed(() => formatLongDate())
 </script>

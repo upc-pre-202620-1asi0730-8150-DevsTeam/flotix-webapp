@@ -22,7 +22,7 @@ const fleet = useFleetStore()
 const session = useSessionStore()
 const { run } = useApiFeedback()
 
-const form = ref({ vehicleId: fleet.vehicles[0]?.id ?? '', driverId: session.user?.id ?? DEMO_DRIVER_ID, description: '' })
+const form = ref({ vehicleId: fleet.vehicles[0]?.id ?? '', driverId: session.actorId ?? DEMO_DRIVER_ID, description: '' })
 
 async function save() {
   const { ok } = await run(() => incidents.reportVehicleIncident({ ...form.value }), {

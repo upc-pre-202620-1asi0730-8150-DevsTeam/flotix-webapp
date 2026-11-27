@@ -24,7 +24,8 @@ const fleet = useFleetStore()
 const maintenance = useMaintenanceStore()
 
 const user = session.user
-const myRequests = computed(() => maintenance.requests.filter((r) => r.mechanicId === user?.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+const actorId = computed(() => session.actorId ?? user?.id)
+const myRequests = computed(() => maintenance.requests.filter((r) => r.mechanicId === actorId.value).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 const pending = computed(() => myRequests.value.filter((r) => r.status === MaintenanceStatus.PENDING))
 const inRepair = computed(() => myRequests.value.filter((r) => r.status === MaintenanceStatus.IN_REPAIR))
 const completedThisMonth = computed(() => myRequests.value.filter((r) => r.status === MaintenanceStatus.COMPLETED))

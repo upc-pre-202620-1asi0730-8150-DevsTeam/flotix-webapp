@@ -111,7 +111,7 @@ async function submitPayment() {
       props.mode === 'pending-order'
         ? commerce.confirmOrderPayment(item.orderId)
         : commerce.purchaseIoTDevice({
-            ownerId: session.user?.ownerId ?? session.user?.id,
+            ownerId: session.actorId ?? session.user?.id,
             fallbackOwnerId,
             sku: item.sku,
             deviceQuantity: item.quantity

@@ -27,7 +27,7 @@ async function exportReport() {
   const from = new Date(to.getFullYear() - 1, to.getMonth(), to.getDate())
   const { ok, value: report } = await run(
     () => analytics.exportReportToPdf({
-      ownerId: session.user?.id ?? DEMO_OWNER_ID,
+      ownerId: session.actorId ?? DEMO_OWNER_ID,
       reportType: t('reports.reportTypeFuel'),
       from,
       to
