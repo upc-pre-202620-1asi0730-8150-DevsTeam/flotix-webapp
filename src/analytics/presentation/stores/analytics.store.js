@@ -3,6 +3,7 @@ import { analyticsService, AnalyticsService } from '../../application/analytics.
 import { useFleetStore } from '@/fleet-management/presentation/stores/fleet.store.js'
 import { useFuelStore } from '@/fuel-control/presentation/stores/fuel.store.js'
 import { useMaintenanceStore } from '@/maintenance/presentation/stores/maintenance.store.js'
+import { useSessionStore } from '@/identity-access/presentation/stores/session.store.js'
 
 /** Pinia store — Reporting & Analytics. Wraps AnalyticsService (REST API). */
 export const useAnalyticsStore = defineStore('analytics', {
@@ -26,7 +27,8 @@ export const useAnalyticsStore = defineStore('analytics', {
   },
   actions: {
     async load() {
-      this.reports = await analyticsService.listReports()
+      const ownerId = useSessionStore().scopedOwnerId
+      this.reports = await analyticsService.listReports(ownerId)
     },
     async exportReportToPdf(payload) {
       const report = await analyticsService.exportReportToPdf(payload)

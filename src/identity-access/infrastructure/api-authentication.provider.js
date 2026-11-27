@@ -87,6 +87,7 @@ export class ApiAuthenticationProvider {
     const user = {
       id: profile.id,
       authUserId: authUser.id,
+      ownerId: authUser.ownerId ?? null,
       name: profile.fullName,
       email: profile.email,
       role: profile.role,

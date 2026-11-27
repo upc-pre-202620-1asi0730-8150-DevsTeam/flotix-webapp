@@ -26,7 +26,7 @@ const { run } = useApiFeedback()
 
 const form = ref({
   vehicleId: fleet.vehicles[0]?.id ?? '',
-  driverId: session.user?.id ?? DEMO_DRIVER_ID,
+  driverId: session.actorId ?? DEMO_DRIVER_ID,
   liters: null,
   totalCost: null,
   mileageAtRefuel: null,

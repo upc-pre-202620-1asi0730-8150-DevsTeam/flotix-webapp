@@ -28,8 +28,8 @@ export class AlertsService {
     return this.alertRepository.getAll()
   }
 
-  listNotifications() {
-    return this.notificationRepository.getAll()
+  listNotifications(userId = null) {
+    return this.notificationRepository.getAll(userId ? { userId } : {})
   }
 
   generateAlert({ vehicleId, alertType }) {

@@ -17,7 +17,7 @@ import Button from 'primevue/button'
 import Popover from 'primevue/popover'
 import Drawer from 'primevue/drawer'
 import flotixLogoMark from '@/assets/brand/flotix-logo-mark.png'
-import { bootstrap } from '@/shared/infrastructure/bootstrap.js'
+import { bootstrap, resetBootstrap } from '@/shared/infrastructure/bootstrap.js'
 import { useApiStatusStore } from '@/shared/presentation/stores/api-status.store.js'
 import { useApiFeedback } from '@/shared/presentation/composables/use-api-feedback.js'
 import { API_BASE_URL } from '@/shared/infrastructure/http-client.js'
@@ -42,7 +42,7 @@ onMounted(() => {
     apiStatus.ready = true
     return
   }
-  bootstrap()
+  bootstrap(true)
   notificationsTimer = setInterval(() => {
     if (apiStatus.ready && !apiStatus.hasError) alerts.load().catch(() => {})
   }, 30000)
@@ -54,17 +54,19 @@ function retryConnection() {
 }
 
 function signOut() {
+  resetBootstrap()
   session.signOut()
   mobileOpen.value = false
   router.replace('/login')
 }
 
 const user = computed(() => session.user)
+const actorId = computed(() => session.actorId ?? user.value?.id)
 const mobileOpen = ref(false)
 const notifPanel = ref(null)
 
 const myNotifications = computed(() =>
-  alerts.notifications.filter((n) => n.userId === user.value?.id).slice().sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt))
+  alerts.notifications.filter((n) => n.userId === actorId.value).slice().sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt))
 )
 const unreadCount = computed(() => myNotifications.value.filter((n) => !n.isRead).length)
 
@@ -94,11 +96,11 @@ const nav = computed(() => {
 const sidebarSummary = computed(() => {
   const role = user.value?.role
   if (role === UserRole.DRIVER) {
-    const mine = fleet.vehicles.find((v) => v.driverId === user.value.id)
+    const mine = fleet.vehicles.find((v) => v.driverId === actorId.value)
     return { label: t('header.sidebarSummaryDriver'), value: mine?.plate ?? t('header.unassigned'), icon: 'truck' }
   }
   if (role === UserRole.MECHANIC) {
-    const pending = maintenance.requests.filter((r) => r.mechanicId === user.value.id && r.status === MaintenanceStatus.PENDING)
+    const pending = maintenance.requests.filter((r) => r.mechanicId === actorId.value && r.status === MaintenanceStatus.PENDING)
     return { label: t('header.sidebarSummaryMechanic'), value: String(pending.length), icon: 'wrench' }
   }
   const available = fleet.vehicles.filter((v) => v.status === VehicleStatus.AVAILABLE).length
@@ -116,10 +118,15 @@ function readNotif(n) {
   if (!n.isRead) run(() => alerts.markNotificationAsRead(n.id), { errorSummary: t('alerts.markReadError') })
 }
 function readAll() {
-  run(() => alerts.markAllAsRead(user.value?.id), { errorSummary: t('alerts.markAllError') })
+  run(() => alerts.markAllAsRead(actorId.value), { errorSummary: t('alerts.markAllError') })
 }
 
 const roleLabel = computed(() => t(`roles.${user.value?.role ?? UserRole.OWNER}`))
+function changeRole(role) {
+  session.switchRole(role)
+  bootstrap(true)
+  router.push('/dashboard') // the current page may not exist for the new profile
+}
 </script>
 
 <template>

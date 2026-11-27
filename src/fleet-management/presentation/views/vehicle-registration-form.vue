@@ -30,7 +30,7 @@ const existing = editingId ? fleet.byId(editingId) : null
 const form = ref(
   existing
     ? { ...existing, driverId: existing.driverId ?? '' }
-    : { ownerId: session.user?.id ?? DEMO_OWNER_ID, driverId: '', plate: '', vehicleType: VehicleTypes[0], currentMileage: 0, status: VehicleStatus.AVAILABLE }
+    : { ownerId: session.actorId ?? DEMO_OWNER_ID, driverId: '', plate: '', vehicleType: VehicleTypes[0], currentMileage: 0, status: VehicleStatus.AVAILABLE }
 )
 
 const title = computed(() => (editingId ? t('fleet.form.titleEdit') : t('fleet.form.titleNew')))
