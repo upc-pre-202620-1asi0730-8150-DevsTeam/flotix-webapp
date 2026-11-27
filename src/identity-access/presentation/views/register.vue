@@ -18,8 +18,8 @@ const legalModalOpen = ref(false)
 const legalDocument = ref('terms')
 const error = ref('')
 
-// Plan chosen on the landing page (/register?plan=growth). Without a plan the form behaves as before.
-const plan = computed(() => findPlan(route.query.plan))
+// The URL may carry a selected plan, but only an owner account can use it.
+const requestedPlan = computed(() => findPlan(route.query.plan))
 const plans = Object.values(PLAN_CATALOG)
 const step = ref('account') // 'account' | 'payment' (payment only when a plan was selected)
 const paying = ref(false)
@@ -29,10 +29,12 @@ function planLimitText(item) {
   return item.vehicleLimit ? t('auth.plan.upTo', { count: item.vehicleLimit }) : t('auth.plan.unlimited')
 }
 function choosePlan(id) {
-  router.replace({ query: { ...route.query, plan: id } })
+  form.value.role = UserRole.OWNER
+  error.value = ''
+  const query = { ...route.query, plan: id }
+  delete query.role
+  router.replace({ query })
 }
-// Only fleet owners buy plans, so the role is fixed while a plan is selected.
-watch(plan, (value) => { if (value) form.value.role = UserRole.OWNER }, { immediate: false })
 
 function formatCardNumber() {
   card.value.number = card.value.number.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
@@ -51,11 +53,16 @@ function cardIsValid() {
 const currentDate = new Date()
 const minLicenseExpiry = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
 
+function roleFromQuery(value) {
+  const role = String(value ?? '').toLowerCase()
+  return Object.values(UserRole).find((candidate) => candidate.toLowerCase() === role) ?? UserRole.OWNER
+}
+
 function errorText(message) {
   return message.startsWith('auth.') ? t(message) : message
 }
 const form = ref({
-  role: UserRole.OWNER,
+  role: requestedPlan.value ? UserRole.OWNER : roleFromQuery(route.query.role),
   firstName: '',
   lastName: '',
   email: '',
@@ -71,12 +78,47 @@ const form = ref({
   acceptedTerms: false
 })
 
+const plan = computed(() => form.value.role === UserRole.OWNER ? requestedPlan.value : null)
+
+// A plan in the URL is active only for owners. Changing role immediately exits
+// the payment flow and removes the plan query before the user can submit.
+watch(plan, (value) => { if (value) form.value.role = UserRole.OWNER }, { flush: 'sync' })
+watch(() => form.value.role, (role) => {
+  error.value = ''
+  step.value = 'account'
+
+  if (role !== UserRole.OWNER) {
+    form.value.companyName = ''
+    form.value.fleetSize = ''
+  }
+  if (role !== UserRole.DRIVER) {
+    form.value.licenseNumber = ''
+    form.value.licenseExpiry = ''
+  }
+  if (role !== UserRole.MECHANIC) {
+    form.value.workshopName = ''
+    form.value.workshopCity = ''
+    form.value.workshopSpecialty = ''
+  }
+
+  if (role !== UserRole.OWNER && route.query.plan) {
+    const query = { ...route.query, role: role.toLowerCase() }
+    delete query.plan
+    router.replace({ query })
+  }
+}, { flush: 'sync' })
+
 function showLegalDocument(kind) {
   legalDocument.value = kind
   legalModalOpen.value = true
 }
 
 function validateAccount() {
+  if (form.value.role === UserRole.OWNER && !plan.value) {
+    error.value = 'auth.errors.ownerPlanRequired'
+    return false
+  }
+
   const roleFields = {
     [UserRole.OWNER]: [form.value.companyName, form.value.fleetSize],
     [UserRole.DRIVER]: [form.value.licenseNumber, form.value.licenseExpiry],
@@ -126,13 +168,13 @@ async function submit() {
       email: form.value.email.trim(),
       password: form.value.password,
       role: form.value.role,
-      companyName: form.value.companyName.trim(),
-      fleetSize: Number(form.value.fleetSize),
-      licenseNumber: form.value.licenseNumber.trim(),
-      licenseExpiry: form.value.licenseExpiry,
-      workshopName: form.value.workshopName.trim(),
-      workshopCity: form.value.workshopCity.trim(),
-      workshopSpecialty: form.value.workshopSpecialty.trim(),
+      companyName: form.value.role === UserRole.OWNER ? form.value.companyName.trim() : '',
+      fleetSize: form.value.role === UserRole.OWNER ? Number(form.value.fleetSize) : null,
+      licenseNumber: form.value.role === UserRole.DRIVER ? form.value.licenseNumber.trim() : '',
+      licenseExpiry: form.value.role === UserRole.DRIVER ? form.value.licenseExpiry : '',
+      workshopName: form.value.role === UserRole.MECHANIC ? form.value.workshopName.trim() : '',
+      workshopCity: form.value.role === UserRole.MECHANIC ? form.value.workshopCity.trim() : '',
+      workshopSpecialty: form.value.role === UserRole.MECHANIC ? form.value.workshopSpecialty.trim() : '',
       // Plan bought at sign-up (simulated payment): sent to the API; only the last 4 digits of the card leave the form
       plan: plan.value?.id ?? null,
       cardLast4: plan.value ? card.value.number.replace(/\D/g, '').slice(-4) : null,
@@ -164,27 +206,18 @@ async function signUpWithGoogle() {
       <h2 class="auth-title">{{ t('auth.register.title') }}</h2>
       <p class="auth-subtitle">{{ t('auth.register.subtitle') }}</p>
 
-      <div v-if="plan" class="plan-summary" data-testid="selected-plan">
-        <div class="plan-summary-head">
-          <span class="plan-kicker">{{ t('auth.plan.selected') }}</span>
-          <strong class="plan-name">{{ plan.name }}</strong>
-          <span class="plan-price">S/ {{ plan.priceMonthly }} <small>{{ t('auth.plan.perMonth') }}</small></span>
-          <span class="plan-limit">{{ planLimitText(plan) }}</span>
-        </div>
-        <div v-if="step === 'account'" class="plan-switch" role="radiogroup" :aria-label="t('auth.plan.change')">
-          <button v-for="item in plans" :key="item.id" type="button" role="radio" :aria-checked="item.id === plan.id" :class="{ active: item.id === plan.id }" @click="choosePlan(item.id)">{{ item.name }}</button>
-        </div>
-      </div>
       
-      <button v-if="!plan" type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
+      <button v-if="!plan && form.role !== UserRole.OWNER" type="button" class="auth-button auth-button-outline google-button" @click="signUpWithGoogle">
         <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.91c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.39 38.06 46.98 31.9 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         <span>{{ t('auth.register.google') }}</span>
       </button>
-      <div v-if="!plan" class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
+      <div v-if="!plan && form.role !== UserRole.OWNER" class="auth-divider"><span>{{ t('auth.login.orEmail') }}</span></div>
 
       <form class="register-form" @submit.prevent="submit">
 <div v-show="step === 'account'" class="register-fields">
-        <div v-if="!plan" class="auth-field">
+        <p v-if="plan" class="plan-owner-note"><i class="pi pi-info-circle" aria-hidden="true" /><span>{{ t('auth.plan.ownerOnly') }}</span></p>
+
+        <div class="auth-field">
           <span class="auth-label">{{ t('auth.register.roleLabel') }}</span>
           <div class="role-segment" role="radiogroup" :aria-label="t('auth.register.roleLabel')">
             <label :class="{ selected: form.role === UserRole.OWNER }"><input v-model="form.role" type="radio" :value="UserRole.OWNER" /><span>{{ t('auth.register.owner') }}</span></label>
@@ -193,7 +226,26 @@ async function signUpWithGoogle() {
           </div>
         </div>
 
-        <p v-else class="plan-owner-note"><i class="pi pi-info-circle" aria-hidden="true" /><span>{{ t('auth.plan.ownerOnly') }}</span></p>
+        <div v-if="plan" class="plan-summary" data-testid="selected-plan">
+          <div class="plan-summary-head">
+            <span class="plan-kicker">{{ t('auth.plan.selected') }}</span>
+            <strong class="plan-name">{{ plan.name }}</strong>
+            <span class="plan-price">S/ {{ plan.priceMonthly }} <small>{{ t('auth.plan.perMonth') }}</small></span>
+            <span class="plan-limit">{{ planLimitText(plan) }}</span>
+          </div>
+          <div v-if="step === 'account'" class="plan-switch" role="radiogroup" :aria-label="t('auth.plan.change')">
+            <button v-for="item in plans" :key="item.id" type="button" role="radio" :aria-checked="item.id === plan.id" :class="{ active: item.id === plan.id }" @click="choosePlan(item.id)">{{ item.name }}</button>
+          </div>
+        </div>
+        <div v-else-if="form.role === UserRole.OWNER" class="owner-plan-picker">
+          <p>{{ t('auth.register.ownerPlanPrompt') }}</p>
+          <div class="plan-choice-grid" role="group" :aria-label="t('auth.register.ownerPlanPrompt')">
+            <button v-for="item in plans" :key="item.id" type="button" @click="choosePlan(item.id)">
+              <strong>{{ item.name }}</strong>
+              <span>S/ {{ item.priceMonthly }} {{ t('auth.plan.perMonth') }}</span>
+            </button>
+          </div>
+        </div>
 
         <div v-if="form.role === UserRole.OWNER" class="auth-field">
           <label for="register-company">{{ t('auth.register.company') }} <span class="required">*</span></label>
@@ -293,8 +345,8 @@ async function signUpWithGoogle() {
 
 <style scoped>
 .auth-view { min-width: 0; }
-.auth-title { margin: 0; color: #0f172a; font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
-.auth-subtitle { margin: .4rem 0 0; color: #64748b; }
+.auth-title { margin: 0; color: var(--auth-ink); font-family: var(--flotix-font-display, 'Barlow Semi Condensed', sans-serif); font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.auth-subtitle { margin: .4rem 0 0; color: var(--auth-muted); }
 .auth-local-note { margin: .75rem 0 0; padding: .65rem .75rem; border: 1px solid #bfdbfe; border-radius: 7px; background: #eff6ff; color: #1e3a8a; font-size: .8rem; line-height: 1.45; }
 .auth-button { display: inline-flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: .55rem; border: 1.5px solid transparent; border-radius: 6px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .12s cubic-bezier(.23,1,.32,1); }
 .auth-button:active { transform: scale(.97); }
@@ -318,6 +370,12 @@ async function signUpWithGoogle() {
 .plan-switch button { min-height: 34px; border: 0; border-radius: 6px; background: transparent; color: #64748b; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
 .plan-switch button.active { background: #0879e8; color: #fff; }
 .plan-owner-note { display: flex; gap: .5rem; margin: 0; color: #64748b; font-size: .8rem; }
+.owner-plan-picker { margin-top: 1rem; padding: .85rem 1rem; border: 1px solid #dbeafe; border-radius: 10px; background: #f8fbff; }
+.owner-plan-picker > p { margin: 0 0 .65rem; color: #334155; font-size: .85rem; }
+.plan-choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.plan-choice-grid button { display: grid; gap: .2rem; min-width: 0; padding: .6rem .45rem; border: 1px solid #bfdbfe; border-radius: 7px; background: #fff; color: #0f172a; font: inherit; font-size: .8rem; cursor: pointer; }
+.plan-choice-grid button:hover, .plan-choice-grid button:focus-visible { border-color: #0879e8; background: #eff6ff; }
+.plan-choice-grid button span { color: #64748b; font-size: .72rem; }
 .checkout { display: grid; gap: 1rem; }
 .checkout-title { margin: 0; color: #0f172a; font-size: 1.15rem; }
 .checkout-sub { margin: -.6rem 0 0; color: #64748b; font-size: .9rem; }
@@ -353,8 +411,8 @@ async function signUpWithGoogle() {
 .terms-check input:checked::after { width: .3rem; height: .6rem; transform: rotate(45deg) translate(-1px,-1px); border: solid #fff; border-width: 0 2px 2px 0; content: ''; }
 .auth-alert { display: flex; align-items: flex-start; gap: .6rem; margin: 0; padding: .7rem .85rem; border-radius: 6px; background: #fde4e1; color: #a52a1c; font-size: .875rem; font-weight: 500; }
 .auth-alert i { margin-top: .2rem; }
-.auth-foot { margin: 1.5rem 0 0; color: #64748b; font-size: .9rem; text-align: center; }
+.auth-foot { margin: 1.5rem 0 0; color: var(--auth-muted); font-size: .9rem; text-align: center; }
 .auth-link { color: #0879e8; font-size: inherit; font-weight: 600; text-decoration: none; }
 .auth-link:hover { text-decoration: underline; }
-@media (max-width: 520px) { .name-grid, .driver-fields { grid-template-columns: 1fr; } .driver-fields .auth-field label { min-height: 0; } }
+@media (max-width: 520px) { .name-grid, .driver-fields { grid-template-columns: 1fr; } .driver-fields .auth-field label { min-height: 0; } .plan-choice-grid { grid-template-columns: 1fr; } }
 </style>
