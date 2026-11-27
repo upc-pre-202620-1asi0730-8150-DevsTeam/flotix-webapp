@@ -14,9 +14,6 @@ export const useSessionStore = defineStore('session', {
     getUserById: () => (id) => new LocalStorageUserRepository().getById(id)
   },
   actions: {
-    switchRole(role) {
-      this.user = identityService.switchRole(role)
-    },
     enterPreview(role) {
       this.user = identityService.enterPreview(role)
     },
